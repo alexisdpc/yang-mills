@@ -65,18 +65,24 @@ function initHero() {
     if (!paused) animationTime = now;
     const t = animationTime / 1000;
     ctx.clearRect(0, 0, width, height);
-    const size = Math.min(width * 0.48, height * 0.50);
-    const centerX = width * 0.5;
-    const centerY = height * 0.48;
+    const size = Math.min(width * 0.96, height * 0.94);
+    const centerX = width * 0.51;
+    const centerY = height * 0.53;
     const yaw = -0.64 + Math.sin(t * 0.13) * 0.025;
     const pitch = 0.40;
-    const project = ([x, y, z]) => {
+    const projectPosition = ([x, y, z]) => {
       const xx = x * Math.cos(yaw) + z * Math.sin(yaw);
       const zz = -x * Math.sin(yaw) + z * Math.cos(yaw);
       const yy = y * Math.cos(pitch) - zz * Math.sin(pitch);
       const depth = y * Math.sin(pitch) + zz * Math.cos(pitch);
       const perspective = 3.8 / (3.8 + depth);
-      return [centerX + xx * size * perspective, centerY + yy * size * perspective, depth];
+      return [xx * perspective, yy * perspective, depth];
+    };
+    // Frame the close-up around the highlighted plaquette, keeping it visible as the cube moves.
+    const focus = projectPosition([0, 0, -0.76]);
+    const project = point => {
+      const [x, y, depth] = projectPosition(point);
+      return [centerX + (x - focus[0]) * size, centerY + (y - focus[1]) * size, depth];
     };
     const glow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, size * 1.15);
     glow.addColorStop(0, 'rgba(72,177,161,0.105)');
@@ -155,8 +161,8 @@ function initHero() {
     }
     // A fine callout identifies the illustrated plaquette holonomy.
     const anchor = face[1];
-    const calloutX = Math.min(width - 48, anchor[0] + size * 0.43);
-    const calloutY = anchor[1] - size * 0.25;
+    const calloutX = Math.min(width - 48, anchor[0] + size * 0.25);
+    const calloutY = anchor[1] - size * 0.18;
     ctx.beginPath();
     ctx.moveTo(anchor[0] + 4, anchor[1] - 3);
     ctx.lineTo(calloutX - 12, calloutY + 3);
