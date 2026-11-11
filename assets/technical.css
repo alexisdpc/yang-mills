@@ -47,6 +47,7 @@
 .technical-kicker{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.3px;color:var(--teal);margin:0 0 15px}
 .technical-section h2{font-size:44px;line-height:1.12;letter-spacing:-.7px;color:var(--ink);margin:0 0 25px}
 .technical-section h3{font-size:29px;line-height:1.25;letter-spacing:-.2px;margin:32px 0 15px;color:var(--ink)}
+.technical-section h3[id]{scroll-margin-top:32px}
 .technical-section h4{font-size:16px;margin:25px 0 10px;color:var(--ink)}
 .technical-section p{margin-bottom:21px}
 .technical-section strong{font-weight:600;color:var(--ink)}

@@ -500,14 +500,139 @@
   \end{aligned}\]</div>
   <p>For fields with tensor indices, the corresponding rotation matrices also act on those indices. This is a property to prove for the limiting hierarchy. Convergence of regulated correlations, by itself, says nothing about invariance under transformations absent at finite cutoff.</p>
   <h3>How the new construction restores the symmetry</h3>
-  <p>The committee's assessment identifies three parts of the argument. They address different possible sources of preferred directions; none can be replaced by the assertion that the lattice becomes arbitrarily fine.</p>
-  <ol>
-    <li><strong>Preserve the available discrete symmetries through gauge fixing.</strong> The proof averages over symmetry-breaking choices so that its gauge fixing respects the lattice symmetries. This prevents the estimates from introducing an additional preferred axis. It is a prerequisite for the later argument, not yet a proof of invariance under arbitrary rotations.</li>
-    <li><strong>Construct a divergence-free stress tensor and local Ward identities.</strong> The source contains both translation and angular shell identities, identifying infinitesimal spacetime transformations inside correlations. The normalized translation identity below is one part: a stress-tensor insertion around a field differentiates its correlation with respect to position. Rotational covariance also needs the angular identities. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Euclid/Stress.lean" target="_blank" rel="noopener">Rotation action and Ward interfaces ↗</a></li>
-    <li><strong>Control the state at infinity.</strong> Local identities alone leave open contributions from distant boundaries and spontaneous breaking in the limiting state. The proof establishes sufficient falloff of stress-energy flux at infinity through reflection positivity in several orthogonal planes. The assessment identifies this as the step establishing that Euclidean invariance is not spontaneously broken.</li>
-  </ol>
-  <p>The last step is why an infrared argument is essential even though the lattice spacing is an ultraviolet regulator. Symmetry of local equations and symmetry of the state are distinct assertions. <a href="references/assessment-1-2026-11-10.pdf#page=9" target="_blank" rel="noopener">Assessment §6.3: Euclidean invariance ↗</a></p>
-  <h3>The stress tensor must generate translations</h3>
+  <p>The argument preserves discrete covariance, relates local angular variations to an exterior stress integral, proves that integral vanishes, and integrates the resulting infinitesimal identity. Below, the difficult spectral estimates are stated with their hypotheses and linked to their proofs. The derivation keeps the initial shell charges separate from their later normalization. <a href="references/assessment-1-2026-11-10.pdf#page=9" target="_blank" rel="noopener">Assessment §6.3 ↗</a></p>
+  <nav class="technical-note" aria-label="Steps in the symmetry argument">
+    <p><strong>Follow the argument</strong></p>
+    <ol>
+      <li><a href="#symmetry-gauge">Preserve the lattice symmetries</a></li>
+      <li><a href="#symmetry-shell">Turn local Ward identities into exterior flux</a></li>
+      <li><a href="#symmetry-infrared">Prove the exterior integral vanishes</a></li>
+      <li><a href="#symmetry-global">Integrate the angular identity</a></li>
+      <li><a href="#symmetry-components">Pass covariance to individual phases</a></li>
+    </ol>
+  </nav>
+
+  <h3 id="symmetry-gauge">1. Preserve the lattice symmetries</h3>
+  <p>The averaged object is a <em>coarse-graining kernel</em> with auxiliary frame and bond choices. Let \(U\) and \(V\) be fine and coarse lattice configurations, \(\tau\) a complete set of compatible choices, \(Q_U(\tau)\) the predicted coarse configuration, and \(N_\beta(Q,V)\) the normalized noise kernel. In abbreviated notation,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The averaged coarse-graining kernel" tabindex="0">\[\begin{aligned}
+  K_\beta(U,V)&amp;=\sum_\tau p_U(\tau)\,
+       N_\beta\!\left(Q_U(\tau),V\right),\\
+  p_U(\tau)&amp;\ge0,\qquad \sum_\tau p_U(\tau)=1.
+  \end{aligned}\]</div>
+  <p>On the small-field branch, a unique normalized minimizing frame is used. On the fallback branch, normalized axial frames are averaged uniformly over eligible root-and-coordinate-order tags. These choices are shared consistently across the configuration. This is not an arithmetic average of group-valued gauge transformations.</p>
+  <p>A signed coordinate permutation \(s\) induces a bijection \(r_s\) on the complete choice arrays. Write \(sU\) for the corresponding pullback. The frame, weight and noise constructions obey</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Covariance of frame weights, predictions and noise" tabindex="0">\[\begin{aligned}
+  p_{sU}(\tau)&amp;=p_U(r_s\tau),\\
+  Q_{sU}(\tau)&amp;=sQ_U(r_s\tau),\\
+  N_\beta(sQ,sV)&amp;=N_\beta(Q,V).
+  \end{aligned}\]</div>
+  <p>For minimizing frames, transformed minimizers are identified using uniqueness. For the axial branch, the symmetry bijects the eligible sets and preserves their cardinality. Once these facts are proved, covariance of the full kernel follows by finite-sum reindexing:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Proof of discrete covariance by reindexing" tabindex="0">\[\begin{aligned}
+  K_\beta(sU,sV)
+  &amp;=\sum_\tau p_U(r_s\tau)\,
+      N_\beta\!\left(sQ_U(r_s\tau),sV\right)\\
+  &amp;=\sum_{\tau'}p_U(\tau')\,
+      N_\beta\!\left(Q_U(\tau'),V\right)\\
+  &amp;=K_\beta(U,V).
+  \end{aligned}\]</div>
+  <p>The same construction handles compatible fine/coarse lattice translations. The proof of <code>StepData.channel</code> uses the branch hypotheses; <code>Axial.viable</code> supplies universal threshold choices for them. These results preserve the regulator's existing symmetries, without yet establishing continuous rotations. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Branch/Transport.lean" target="_blank" rel="noopener">Frame transport ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Branch/Covariant.lean" target="_blank" rel="noopener">Kernel covariance proof ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Branch/Pick.lean" target="_blank" rel="noopener">Branch thresholds ↗</a></p>
+
+  <h3 id="symmetry-shell">2. From local Ward identities to exterior flux</h3>
+  <p>For distinct insertion points, write \(S(\mathbf v;\mathbf x)=\langle\mathcal O\rangle\), with \(\mathcal O=\prod_{i=1}^{m}\Phi_{v_i}(x_i)\). At this stage \(J_{\mu\nu}\) denotes the conserved symmetric stress field and \(p_\mu,Y_A\) its raw translation and angular shell-charge maps. They must still be normalized. Here \(A^T=-A\) is a spacetime rotation generator, unrelated to the gauge connection denoted \(A\) elsewhere.</p>
+  <p>Choose a smooth window \(\chi_i\), equal to one near \(x_i\), with compact support avoiding the other insertions. The local identities have the form</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Raw translation and angular shell Ward identities" tabindex="0">\[\begin{aligned}
+  -\int d^4y\,\partial_\mu\chi_i(y)\,
+    \langle J_{\mu\nu}(y)\mathcal O\rangle
+  &amp;=S(\ldots,p_\nu v_i,\ldots;\mathbf x),\\
+  -\int d^4y\,\partial_\mu\chi_i(y)\,
+    [A(y-x_i)]^\nu\,
+    \langle J_{\mu\nu}(y)\mathcal O\rangle
+  &amp;=S(\ldots,Y_Av_i,\ldots;\mathbf x).
+  \end{aligned}\]</div>
+  <p>Repeated spacetime indices are summed from zero to three. Splitting \(Ay=A(y-x_i)+Ax_i\) combines the two charges. Define the total angular variation by</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Total angular variation with unnormalized shell charges" tabindex="0">\[\begin{aligned}
+  \mathscr D_A^{p,Y}S
+  := {}&amp;\sum_i S(\ldots,Y_Av_i,\ldots;\mathbf x)\\
+       &amp;+\sum_{i,\nu}(Ax_i)^\nu
+              S(\ldots,p_\nu v_i,\ldots;\mathbf x).
+  \end{aligned}\]</div>
+  <p>Let \(F:\mathbb R^4\to\mathbb R^4\) be smooth and compactly supported, agreeing with \(Ay\) in a neighborhood of every insertion. Subtracting the local windows and integrating by parts on supports separated from the insertions gives the exact identity</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The exact local-to-exterior stress identity" tabindex="0">\[\boxed{\displaystyle
+  \mathscr D_A^{p,Y}S
+  =-\int_{\mathbb R^4}d^4y\,
+     \partial_\mu F^\nu(y)\,
+     \langle J_{\mu\nu}(y)\mathcal O\rangle.}\]</div>
+  <p>Near an insertion, the contracted integrand cancels because \(\partial_\mu F^\nu=A^\nu{}_\mu\) and</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Cancellation between a symmetric stress tensor and a skew generator" tabindex="0">\[
+  \sum_{\mu,\nu}J_{\mu\nu}A^\nu{}_\mu=0,
+  \qquad J_{\mu\nu}=J_{\nu\mu},\quad A^T=-A.
+  \]</div>
+  <p>The remaining integral measures the exterior obstruction to invariance. Conservation is used away from collisions; the argument does not assume an unrestricted contact-term formula. <code>Euclid/Stress.lean</code> defines the shell identities, while <code>River.flux_value</code> proves this local-to-exterior implication from the stress and shell hypotheses. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Euclid/Stress.lean" target="_blank" rel="noopener">Shell definitions ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/River.lean" target="_blank" rel="noopener">Exterior identity proof ↗</a></p>
+
+  <h3 id="symmetry-infrared">3. Make the exterior contribution vanish</h3>
+  <p>Sending a boundary to infinity is not sufficient by itself: a nonzero exterior term would obstruct symmetry of the state. The proof first treats distinct insertions lying on a coordinate line. For each rotation-plane generator it constructs smooth compactly supported vector fields \(F_n\) that eventually agree with \(Ay\) near every fixed insertion. Opposing cross-derivatives cancel exactly, leaving exterior contributions that can be estimated.</p>
+  <p>The cutoffs are deliberately anisotropic. With \(\lambda=e^n\), the construction uses reciprocal length scales such as \(\lambda^{-100}\) in the rotation plane, \(\lambda^{-150}\) along a remaining insertion-line direction, and \(\lambda^{-300}\) in other directions. Their purpose is to make the different spectral error terms compatible; a spherical cutoff is not being assumed.</p>
+  <p>For these cutoffs and fixed admissible field insertions, the estimate takes the form</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Vanishing of the integrated exterior stress contribution" tabindex="0">\[\begin{aligned}
+  B_n&amp;:=-\int_{\mathbb R^4}d^4y\,
+        \partial_\mu F_n^\nu(y)\,
+        \langle J_{\mu\nu}(y)\mathcal O\rangle,\\
+  |B_n|&amp;\le C e^{-n}
+       \qquad(n\ge n_0).
+  \end{aligned}\]</div>
+  <p>The constant and starting index may depend on the fixed data. In the source, <code>Budget(a,f)</code> means an eventual bound \(\lVert f_n\rVert\le C e^{an}\). The lemmas <code>blows</code> and <code>drained</code> establish exponent \(-1\) for the exterior pieces. The local-to-exterior identity makes the same, fixed angular variation equal to \(B_n\) for every sufficiently large \(n\). Therefore,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A constant angular variation bounded by a vanishing sequence is zero" tabindex="0">\[
+  |\mathscr D_A^{p,Y}S|\le Ce^{-n}
+  \quad\Longrightarrow\quad
+  \mathscr D_A^{p,Y}S=0.
+  \]</div>
+  <p>This is the conclusion of <code>axisTurn</code>; linearity extends it from rotation planes to every skew generator. At this stage it is a collinear Ward identity. The extension to general configurations is another step below. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/Budget.lean" target="_blank" rel="noopener">Meaning of the bound ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/Route.lean" target="_blank" rel="noopener">Cutoff construction and vanishing proof ↗</a></p>
+  <h4>Where reflection positivity enters the estimate</h4>
+  <p>Each coordinate reflection \(\Theta_i\) supplies an OS positive form for observables supported on its positive side. After quotienting its null vectors, Cauchy–Schwarz gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Reflection positivity and the induced Cauchy–Schwarz bound" tabindex="0">\[\begin{aligned}
+  \langle B,C\rangle_i&amp;:=\langle(\Theta_i B)C\rangle,
+       \qquad \langle B,B\rangle_i\ge0,\\
+  |\langle B,C\rangle_i|^2
+       &amp;\le\langle B,B\rangle_i\langle C,C\rangle_i.
+  \end{aligned}\]</div>
+  <p>The associated spectral measures are positive and supported on \(E_i=p_i\ge0\). No continuous rotational covariance is used to obtain the coordinate-plane forms. The proof compares the <em>same tested correlation</em> using different axes. For the clusters with the required opposite reflection parities, this comparison bounds a positive spectral contribution by correction terms. High-frequency remainders are controlled by moment estimates; the low-energy region requires separate cluster and stress estimates.</p>
+  <p>A representative diagonal-stress estimate is the following. Let \(W_n=e^{an}\), \(a\le0\), and let \(\Pi_n(p_\perp)=\prod_{j\ne i}f_{j,n}(p_j)\) be the product of the admissible smooth, compactly supported, nonnegative, even transverse test profiles, whose widths \(e^{w_jn}\) obey \(w_j\le a\) for \(j\ne i\). With a reflection-even, pointlike representative of \(J_{ii}\), its positive spectral measure obeys, for every \(\delta>0\),</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The low-energy diagonal-stress spectral estimate" tabindex="0">\[\begin{aligned}
+  &amp;\int_{E_i\le1}
+     \frac{E_iW_n^4}{(E_i+W_n)^4}\,
+     \Pi_n(p_\perp)\,d\nu_i^{J_{ii}}(p)\\
+  &amp;\hspace{2em}\le C_\delta e^{(4a+\delta)n}
+       \qquad(n\ge n_\delta).
+  \end{aligned}\]</div>
+  <p>This uses conservation, stress symmetry and reality, discrete tensor covariance, and compatibility of field derivatives. It is a specific tested estimate, not a universal assertion about arbitrary states or profiles. Together with the collinear-cluster bounds, weighted Cauchy–Schwarz and Young inequalities control mixed stress–field contributions; the cutoff choices then yield the negative exponent in \(B_n\). Zero-energy atoms are included in the analysis. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/Switch.lean" target="_blank" rel="noopener">Comparison of reflection axes ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/Tunnel.lean" target="_blank" rel="noopener">Cluster spectral bounds ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/Mass.lean" target="_blank" rel="noopener">Diagonal-stress estimate ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/ROTATIONS/Cove.lean" target="_blank" rel="noopener">Combining the bounds ↗</a></p>
+  <aside class="technical-note"><p><strong>This decay is not a mass gap.</strong> The index \(n\) labels specially chosen expanding cutoffs. The estimate \(Ce^{-n}\) is not exponential decay of a two-point function in physical separation. Its role is to remove the exterior obstruction to a symmetry identity.</p></aside>
+
+  <h3 id="symmetry-global">4. From infinitesimal invariance to finite rotations</h3>
+  <p>The normalization argument identifies \(p_\mu=cD_\mu\) with a common nonzero scalar \(c\), where inserting \(D_\mu v_i\) differentiates the correlation at \(x_i\). The normalized angular map is \(\rho(A)=c^{-1}Y_A\). This identification uses the construction's short-distance comparison; it does not follow from stress conservation alone.</p>
+  <p>The collinear identity is extended using analytic continuation along admissible configuration-space paths, compatibility with field derivatives, and smoothness. The result for all separated configurations is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The normalized angular Ward identity at general separated points" tabindex="0">\[\begin{aligned}
+  0={}&amp;\sum_i S(v_1,\ldots,\rho(A)v_i,\ldots;\mathbf x)\\
+      &amp;+\sum_i(Ax_i)\cdot\nabla_{x_i}S(\mathbf v;\mathbf x).
+  \end{aligned}\]</div>
+  <p>Analyticity is essential here: vanishing on collinear configurations alone, a lower-dimensional set, would not imply this result for an arbitrary smooth function. The source proves the continuation through its Ward identities and derivative relations. It also constructs a compatible group action on the finite-dimensional filtered field spaces; Lie brackets alone are not substituted for that construction. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Bid/Town.lean" target="_blank" rel="noopener">Normalization and assembly ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ward/Walk.lean" target="_blank" rel="noopener">Continuation along paths ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ward/Axis.lean" target="_blank" rel="noopener">Global angular identity ↗</a></p>
+  <p>Write \(R_t=e^{tA}\) and let \(D(R_t)\) act on the field labels with infinitesimal generator \(\rho(A)\). Consider the joint position-and-label orbit</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Integrating infinitesimal covariance along a rotation orbit" tabindex="0">\[\begin{aligned}
+  f(t)&amp;=S\!\left(D(R_t)v_1,\ldots,D(R_t)v_m;
+                     R_tx_1,\ldots,R_tx_m\right),\\
+  f'(t)&amp;=0
+  \quad\Longrightarrow\quad f(t)=f(0).
+  \end{aligned}\]</div>
+  <p>The derivative includes both the moving positions and moving labels; the normalized angular identity sets their sum to zero at every point of the orbit. Thus covariance holds for every one-parameter rotation group. Together with the already preserved signed coordinate transformations, these generate \(O(4)\). The implementation proves joint differentiability before applying the chain rule, then establishes covariance under products and inverses. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/A14.lean" target="_blank" rel="noopener">Proof of finite rotation covariance ↗</a></p>
+
+  <h3 id="symmetry-components">5. Covariance of each component theory</h3>
+  <p>Invariance of a mixture does not imply invariance of every component: a symmetric average can conceal symmetry-breaking phases. The construction therefore supplies a separate phase-level argument for the compressed whole-word operators \(M(w)\) in the vacuum algebra. Covariance of widely time-separated pairs of field words, together with individual time-reflection invariance, lets the proof conjugate that reflection into arbitrary hyperplane reflections. Testing against arbitrary words and using separation in the vacuum algebra promotes the tested equalities to operator identities. Hyperplane reflections generate \(O(4)\), so evaluating at a character gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Passing orthogonal invariance of vacuum-algebra operators to each character phase" tabindex="0">\[\begin{aligned}
+  M(Qw)&amp;=M(w),\qquad Q\in O(4),\\
+  S_\xi(Qw)&amp;=\xi(M(Qw))=\xi(M(w))=S_\xi(w).
+  \end{aligned}\]</div>
+  <p>Here \(Qw\) transforms both the positions and field labels of the admissible word. This extra argument establishes orthogonal covariance of each \(S_\xi\), rather than only of \(S_{\mathrm{mix}}\). <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/B06.lean" target="_blank" rel="noopener">Individual component invariance ↗</a></p>
+
+  <h3 id="symmetry-normalization">The stress tensor must generate translations</h3>
   <p>The tensor belongs to the degree-four local-field sector. Its symmetry, reality, discrete covariance and conservation identify a restricted tensor space; the normalization must still be fixed. At separated insertions, conservation gives the schematic kernel identity</p>
   <div id="eq-82" class="technical-equation" role="region" aria-label="Stress-tensor conservation away from insertion collisions" tabindex="0">\[\sum_{\mu=0}^{3}\partial_{y^\mu}
   S^\xi_{T_{\mu\nu},v}(y,x)=0,
@@ -528,7 +653,7 @@
   =Q^{\chi_2}_\nu[v;x]
   =\partial_{x_0^\nu}S^\xi_v(x).\]</div>
   <p>Physically, the flux through a surrounding shell generates translation of the enclosed field. This fixes its translation charge and prevents an arbitrary rescaling of the stress tensor when comparing short-distance amplitudes. It does not eliminate every possible improvement: an improvement may leave that charge unchanged. Nor does a separated-insertion shell identity supply an unrestricted contact-term prescription or a dilation Ward identity. Those require additional arguments. <a href="references/assessment-1-2026-11-10.pdf#page=9" target="_blank" rel="noopener">Assessment §§6.3–7.1</a>; <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/TranslationWard-20261028.lean" target="_blank" rel="noopener">exact Ward identity and scope</a>.</p>
-  <h3>From Euclidean covariance to Lorentz covariance</h3>
+  <h3 id="symmetry-lorentz">From Euclidean covariance to Lorentz covariance</h3>
   <p>Euclidean rotations are not Lorentz boosts on the original lattice. After Euclidean covariance, reflection positivity and the required regularity and growth properties are established, analytic continuation and OS reconstruction produce the relativistic theory. Its Hilbert space carries a strongly continuous unitary action of the proper orthochronous Poincaré group. For a scalar field, the resulting covariance reads, in the distributional sense,</p>
   <div class="equation-scroll symmetry-equation" role="region" aria-label="Lorentz and translation covariance of a reconstructed scalar field" tabindex="0">\[\begin{aligned}
   U_\xi(\Lambda,b)\,\Phi_\xi(x)\,U_\xi(\Lambda,b)^{-1}
