@@ -1,0 +1,89 @@
+/* Technical companion: selectors never style KaTeX's internal spans. */
+/* Released-construction reading layer. */
+.technical-hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px 28px;margin-top:27px}
+.technical-hero-actions .button{font-size:14px;line-height:1.5}
+.technical-hero-actions>a:not(.button){font-size:14px;color:var(--teal);text-decoration:underline;text-underline-offset:4px}
+.technical-toc .toc-part-label{font-size:10px;font-weight:600;letter-spacing:.7px;line-height:1.6;text-transform:uppercase;margin:22px 8px 8px;color:var(--teal)}
+.technical-toc .toc-proof{counter-reset:chapters 10}
+.technical-toc .toc-sources{display:block;margin-top:15px;border-top:1px solid var(--line);padding-top:15px}
+.technical-toc .toc-sources:before{content:none}
+.technical-part-banner{padding:28px 30px;margin:0 0 42px;border:1px solid var(--line);border-radius:5px;background:var(--mint)}
+.technical-part-banner h2{font-size:42px;line-height:1.13;letter-spacing:-.6px;margin-bottom:18px}
+.technical-part-banner p:last-child{margin-bottom:0;font-size:15px;line-height:1.8}
+.technical-part-release{background:var(--ink);color:#d9e9df;margin-top:12px;border-color:var(--ink)}
+.technical-part-release h2{color:#f2f6ec}
+.technical-part-release .technical-kicker{color:#b7d3c6}
+.proof-scope-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.proof-scope-chips>span{font-size:11px;line-height:1.5;padding:7px 10px;border:1px solid #759d8b;border-radius:3px;color:#e4ede2}
+.technical-article code{font-size:.83em;overflow-wrap:anywhere}
+.proof-technical-figure{margin:30px auto;max-width:600px;border:1px solid var(--line);border-radius:5px;background:#f5f7ee;overflow:hidden}
+.proof-technical-figure img{display:block;width:100%;height:auto}
+.proof-technical-figure figcaption{padding:18px 22px;border-top:1px solid var(--line);font-size:13px;line-height:1.75;color:var(--muted)}
+.proof-revision-note{border-left:3px solid var(--gold);padding-left:20px;font-size:14px;line-height:1.8}
+.technical-page{--reading-width:790px}
+.technical-hero{padding-block:64px 42px;border-bottom:1px solid var(--line)}
+.technical-hero h1{font-size:clamp(48px,5.8vw,82px);line-height:1.04;max-width:940px;margin:20px 0 25px}
+.technical-hero h1 em{color:var(--teal)}
+.technical-lead{font-size:20px;line-height:1.7;max-width:780px;color:var(--muted)}
+.technical-meta{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:12px;color:var(--muted);margin:25px 0}
+.technical-meta strong{color:var(--ink);font-weight:500}
+.technical-scope{max-width:850px;font-size:14px;line-height:1.8;margin:24px 0 0;padding-left:18px;border-left:3px solid var(--gold)}
+.technical-scope a,.technical-article a{color:var(--teal);text-decoration:underline;text-decoration-color:#a8c3b7;text-underline-offset:3px}
+.technical-layout{display:grid;grid-template-columns:220px minmax(0,var(--reading-width));justify-content:space-between;gap:64px;align-items:start;margin-block:48px 90px}
+.technical-toc{position:sticky;top:28px;max-height:calc(100vh - 56px);overflow:auto;padding-right:8px}
+.technical-toc summary{font-size:12px;font-weight:600;letter-spacing:1px;list-style:none;margin-bottom:17px;cursor:pointer}
+.technical-toc summary::-webkit-details-marker{display:none}
+.technical-toc summary:after{content:'−';float:right;font-size:18px;font-weight:400}
+.technical-toc details:not([open]) summary:after{content:'+'}
+.technical-toc ol{list-style:none;padding:0;margin:0;counter-reset:chapters}
+.technical-toc li{counter-increment:chapters;margin:0}
+.technical-toc a{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:9px 8px;border-left:2px solid transparent;font-size:13px;line-height:1.5;color:var(--muted)}
+.technical-toc a:before{content:counter(chapters,decimal-leading-zero);font-size:10px;line-height:2;color:var(--teal)}
+.technical-toc a:hover,.technical-toc a[aria-current=true]{color:var(--ink);border-left-color:var(--teal);background:var(--mint)}
+.technical-toc .toc-back{display:block;margin-top:22px;padding:15px 0;border-top:1px solid var(--line);font-size:12px}
+.technical-toc .toc-back:before{content:none}
+.technical-article{min-width:0;font-size:17px;line-height:1.85;color:#294a46;counter-reset:equation}
+.technical-section{padding:0 0 48px;margin-bottom:45px;border-bottom:1px solid var(--line);scroll-margin-top:32px}
+.technical-kicker{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.3px;color:var(--teal);margin:0 0 15px}
+.technical-section h2{font-size:44px;line-height:1.12;letter-spacing:-.7px;color:var(--ink);margin:0 0 25px}
+.technical-section h3{font-size:29px;line-height:1.25;letter-spacing:-.2px;margin:32px 0 15px;color:var(--ink)}
+.technical-section h4{font-size:16px;margin:25px 0 10px;color:var(--ink)}
+.technical-section p{margin-bottom:21px}
+.technical-section strong{font-weight:600;color:var(--ink)}
+.technical-section ul,.technical-section ol{padding-left:24px;margin:20px 0 25px}
+.technical-section li{padding-left:5px;margin-bottom:11px}
+.technical-section .katex{font-size:1.06em}
+.technical-section .symmetry-equation{min-width:0;margin:24px 0;padding:18px 20px;border-left:3px solid var(--teal);background:#edf2e9;font-size:16px;overflow-x:auto}
+.technical-section .symmetry-equation .katex-display>.katex{text-align:left}
+.technical-equation{position:relative;min-width:0;overflow-x:auto;overflow-y:hidden;padding:22px 24px 31px;margin:27px 0;border:1px solid #d8e2d7;border-radius:4px;background:#f2f5ed;color:var(--ink);font-size:16px;line-height:1.6;counter-increment:equation;scrollbar-width:thin;scrollbar-color:#a3bbae transparent}
+.technical-equation:after{content:'(' counter(equation) ')';position:absolute;right:13px;bottom:6px;font:10px var(--sans);color:var(--muted)}
+.technical-equation .katex-display{margin:0;text-align:left}
+.technical-equation .katex-display>.katex{text-align:left;white-space:nowrap}
+.technical-note{padding:20px 24px;border-left:3px solid var(--teal);background:#eaf0e6;margin:27px 0;font-size:15px;line-height:1.8}
+.technical-note p:last-child{margin-bottom:0}
+.technical-section details{border-block:1px solid var(--line);margin:26px 0;padding:17px 0}
+.technical-section summary{font-weight:500;color:var(--ink);cursor:pointer}
+.technical-section details[open] summary{margin-bottom:20px}
+.technical-roadmap{margin:35px 0 0;list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding:0}
+.technical-roadmap li{position:relative;padding:15px 17px;border:1px solid var(--line);background:#eef2e8;line-height:1.4}
+.technical-roadmap a{display:block;font-size:13px;font-weight:500}
+.technical-roadmap small{display:block;font-size:10px;font-weight:400;line-height:1.5;color:var(--muted);margin-top:7px}
+.technical-roadmap li:last-child{border-color:#cbb28f;background:#f2ecdf}
+.technical-key{display:grid;grid-template-columns:70px 1fr;gap:10px 18px;margin:22px 0 0}
+.technical-key dt{color:var(--ink);font-weight:500}
+.technical-key dd{margin:0;color:var(--muted);font-size:14px;line-height:1.8}
+.technical-reading{list-style:none!important;padding:0!important}
+.technical-reading li{margin:0!important;padding:21px 0!important;border-top:1px solid var(--line);font-size:14px;line-height:1.8;scroll-margin-top:30px}
+.technical-reading li strong{display:block;font-size:15px;margin-bottom:4px}
+.technical-reading p{margin:7px 0 0;font-size:13px}
+.technical-reading .source-number{display:inline-block;margin-right:7px;color:var(--teal)}
+.technical-endlink{display:inline-flex;gap:25px;align-items:center;font-size:14px}
+.technical-section table{border-collapse:collapse;width:100%;font-size:14px;margin:25px 0}
+.technical-section th,.technical-section td{padding:14px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.technical-section th{font-weight:600;color:var(--ink)}
+@media(max-width:1100px){.technical-layout{grid-template-columns:185px minmax(0,1fr);gap:35px}.technical-roadmap{gap:8px}.technical-roadmap li{padding:13px}.technical-article{font-size:16px}.technical-equation{font-size:15px}}
+@media(max-width:850px){.technical-layout{grid-template-columns:minmax(0,1fr);gap:32px;margin-top:30px}.technical-toc{position:static;max-height:none;border-block:1px solid var(--line);padding:17px 0}.technical-toc summary{margin:0}.technical-toc details[open] summary{margin-bottom:15px}.technical-toc ol{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.technical-toc .toc-back{margin-top:10px}.technical-roadmap{grid-template-columns:repeat(3,minmax(0,1fr))}.technical-section h2{font-size:40px}.technical-hero{padding-top:44px}}
+@media(max-width:600px){.technical-hero{padding-block:35px 30px}.technical-hero h1{font-size:52px;letter-spacing:-1px}.technical-lead{font-size:17px}.technical-meta{font-size:11px;gap:8px}.technical-meta span{flex-basis:100%}.technical-scope{font-size:13px;padding-left:14px}.technical-roadmap{grid-template-columns:1fr 1fr;gap:8px}.technical-roadmap li{padding:13px}.technical-roadmap li:last-child{grid-column:1/-1}.technical-toc ol{grid-template-columns:1fr}.technical-toc a{font-size:14px}.technical-article{font-size:16px;line-height:1.8}.technical-section{padding-bottom:32px;margin-bottom:34px}.technical-section h2{font-size:37px}.technical-section h3{font-size:28px}.technical-kicker{font-size:10px}.technical-equation{font-size:15px;padding:20px 16px 31px;margin:23px 0}.technical-note{padding:17px 18px;font-size:14px}.technical-key{grid-template-columns:50px 1fr;gap:13px}.technical-key dd{font-size:13px}.technical-reading li{font-size:13px}.technical-reading li strong{font-size:14px}}
+@media(max-width:850px){.technical-toc details[open] nav{max-height:65vh;overflow:auto;overscroll-behavior:contain;padding-right:7px}.technical-toc .toc-part-label:first-child{margin-top:4px}}
+@media(max-width:600px){.technical-part-banner{padding:22px 20px;margin-bottom:32px}.technical-part-banner h2{font-size:35px}.technical-part-banner p:last-child{font-size:14px}.technical-hero-actions{gap:16px}.technical-hero-actions .button{gap:20px;font-size:13px}.proof-technical-figure figcaption{padding:15px 17px;font-size:12px}.proof-scope-chips>span{font-size:10px}.technical-toc details[open] nav{max-height:60vh}}
+@media print{.technical-toc,.technical-roadmap,.technical-meta,.technical-hero-actions{display:none}.technical-layout{display:block;margin:20px 0}.technical-hero{padding:15px 0}.technical-hero h1{font-size:42px}.technical-section{break-inside:auto}.technical-section h2{font-size:30px;break-after:avoid}.technical-article{font-size:11pt}.technical-equation{font-size:10pt;overflow:visible;break-inside:avoid}.technical-note{break-inside:avoid}.technical-part-banner{background:#eef2e8;color:#183c34;break-inside:avoid}.technical-part-banner h2,.technical-part-banner .technical-kicker{color:#183c34}.proof-scope-chips>span{color:#183c34}.proof-technical-figure{max-width:430px;break-inside:avoid}}

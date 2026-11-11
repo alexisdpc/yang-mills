@@ -1,0 +1,15 @@
+Yang–Mills group: pure Yang–Mills results and verification
+
+This repository assembles submissions, independent checks and assessments.
+The group's original code and documentation are licensed under Apache-2.0.
+Original authorship and third-party notices remain in each submission package.
+
+For the October 2026 package, see submissions/openai-20261028/NOTICE,
+submissions/openai-20261028/submission/NOTICE, the LICENSE and THIRD_PARTY.md
+files beside it, and submissions/openai-20261028/provenance/licenses/.
+
+The original submission is unchanged. The group's checks, documentation and
+verification records are kept outside the submission/ source directory.
+
+Attribution and inclusion do not imply endorsement by upstream authors or
+certification of a submission's claims by the group.

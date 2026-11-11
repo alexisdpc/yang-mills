@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="230" viewBox="0 0 360 230" role="img" aria-labelledby="gapped-title gapped-desc">
+  <title id="gapped-title">A spectrum with a positive mass gap</title>
+  <desc id="gapped-desc">The gold point is the vacuum at energy zero. An empty interval of width Delta separates it from the illustrated excitation spectrum. No states have energies strictly between zero and Delta. This is a schematic illustration, not a computed Yang–Mills spectrum.</desc>
+  <defs>
+    <linearGradient id="gapped-band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2e8177" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#2e8177" stop-opacity=".06"/>
+    </linearGradient>
+    <pattern id="gapped-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(25)">
+      <path d="M0 0V8" stroke="#2e8177" stroke-opacity=".16" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="360" height="230" rx="12" fill="#f8f8f2"/>
+  <rect x="44" y="61" width="122" height="99" fill="#e8f0e8"/>
+  <rect x="166" y="61" width="152" height="99" fill="url(#gapped-band)"/>
+  <rect x="166" y="61" width="152" height="99" fill="url(#gapped-hatch)"/>
+  <path d="M166 61H318" fill="none" stroke="#2e8177" stroke-opacity=".5"/>
+  <path d="M166 57V160" fill="none" stroke="#2e8177" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#0b3537">
+    <text x="242" y="44" text-anchor="middle" font-size="17" fill="#2e8177">Excitations</text>
+    <text x="105" y="88" text-anchor="middle" font-size="17" fill="#2e8177">No states</text>
+    <text x="105" y="119" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#2e8177">Δ</text>
+    <path d="M49 127V133M49 130H161M161 127V133" fill="none" stroke="#2e8177" stroke-width="1.2"/>
+    <path d="M25 160H333M327 155L333 160L327 165" fill="none" stroke="#0b3537" stroke-width="1.5"/>
+    <path d="M44 160V166M112 160V165M180 160V165M248 160V165M316 160V165" fill="none" stroke="#0b3537" stroke-opacity=".35"/>
+    <circle cx="44" cy="160" r="6" fill="#b88144" stroke="#f8f8f2" stroke-width="2"/>
+    <text x="44" y="187" text-anchor="middle" font-size="17">0</text>
+    <text x="44" y="212" text-anchor="middle" font-size="17">Vacuum</text>
+    <text x="328" y="212" text-anchor="end" font-size="18">Energy E</text>
+  </g>
+</svg>

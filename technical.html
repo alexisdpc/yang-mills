@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b3537">
+  <meta name="author" content="Alexis Plascencia">
+  <meta name="description" content="Graduate and research-level notes on the released Yang–Mills existence construction: Wilson lattice measure, renormalization, continuum limits, phase reconstruction, and the remaining mass-gap problem.">
+  <title>Yang–Mills: technical notes — Alexis Plascencia</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/counters.css">
+  <link rel="stylesheet" href="assets/technical.css">
+  <script defer data-math-dependency src="assets/vendor/katex/katex.min.js"></script>
+  <script defer data-math-dependency src="assets/vendor/katex/contrib/auto-render.min.js"></script>
+  <script defer src="assets/math.js"></script>
+  <script defer src="assets/counters.js"></script>
+  <script defer src="assets/technical.js"></script>
+</head>
+<body class="technical-page" id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress"></span></div>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Yang–Mills field guide home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13Z M3 9.5 16 17l13-7.5 M16 17v13 M16 2v15 M3 22.5 16 15l13 7.5"/></svg>
+      <span>YANG–MILLS<span class="brand-sub">A VISUAL FIELD GUIDE</span></span>
+    </a>
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu <span>☰</span></button>
+    <nav id="main-nav" aria-label="Main navigation"><a href="index.html">Visual guide</a><a href="#proof-theorem">The released proof</a><a href="#formulation">Foundations</a><a href="#technical-references">References <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <div class="author-strip page-width">
+    <p class="author-byline"><span>Written by</span> <a href="https://alexisplascencia.com" rel="author noopener" target="_blank">Alexis Plascencia <span aria-hidden="true">↗</span></a></p>
+    <div class="visit-counters" role="group" aria-label="Yang–Mills field guide counters from HitsCounter.dev and Hits.sh">
+      <span class="visit-total" data-visit-counter data-counter-state="loading" data-counter-url="https://hitscounter.dev/api/hit?url=https%3A%2F%2Falexisdpc.github.io%2Fyang-mills%2F&amp;output=json" role="img" aria-label="Total website visits: loading" title="Overall page visits across the guide and technical notes, counted by HitsCounter.dev"><span class="visit-total-label">Visits</span><span class="visit-total-value">—</span></span>
+      <img src="https://hits.sh/alexisdpc.github.io/yang-mills.svg?label=Hits&amp;color=2e8177" alt="Yang–Mills website hits from Hits.sh" height="20" decoding="async" referrerpolicy="no-referrer" title="Page hits to the Yang–Mills field guide, counted by Hits.sh">
+    </div>
+  </div>
+  <main id="main">
+    <section class="technical-hero page-width" aria-labelledby="technical-title">
+      <p class="eyebrow"><span class="tiny-line"></span> THE TECHNICAL COMPANION</p>
+      <h1 id="technical-title">The mathematics<br>behind <em>Yang–Mills.</em></h1>
+      <p class="technical-lead">The released existence construction, from Wilson lattice correlations to local quantum fields—and the infrared questions it leaves open.</p>
+      <div class="technical-meta"><span><strong>Level</strong> Graduate &amp; research</span><span><strong>Prerequisites</strong> QFT, Lie groups, basic functional analysis</span><span><strong>Edition</strong> 11 November 2026</span></div>
+      <p class="technical-scope">Part I develops the foundations. Part II is a first technical reading of the October 28 submission and the committee’s November 10 assessment, with links to pinned sources. It explains the reported existence result; a mass gap and uniqueness of the infinite-volume limit remain open.</p>
+      <div class="technical-hero-actions"><a class="button button-dark" href="#proof-theorem">Read the proof walkthrough <span aria-hidden="true">↓</span></a><a href="#formulation">Start with the foundations</a></div>
+      <ol class="technical-roadmap" aria-label="The logical route through the construction">
+        <li><a href="#proof-wilson">01 · Regulate<small>The actual Wilson law</small></a></li>
+        <li><a href="#proof-rg">02 · Renormalize<small>Action and local fields</small></a></li>
+        <li><a href="#proof-uv">03 · Take limits<small>UV convergence, IR extraction</small></a></li>
+        <li><a href="#proof-phases">04 · Reconstruct<small>Clustering component theories</small></a></li>
+        <li><a href="#proof-validation">05 · Read the scope<small>Verified claims and open questions</small></a></li>
+      </ol>
+    </section>
+    <div class="technical-layout page-width">
+      <aside class="technical-toc" aria-label="Contents">
+        <details open><summary>IN THESE NOTES</summary><nav aria-label="Technical sections"><p class="toc-part-label">Part I · Foundations</p><ol>
+          <li><a href="#formulation">The precise target</a></li>
+          <li><a href="#conventions">Fields &amp; conventions</a></li>
+          <li><a href="#lattice-measure">The Wilson measure</a></li>
+          <li><a href="#continuum-limit">Continuum observables</a></li>
+          <li><a href="#reconstruction">OS reconstruction</a></li>
+          <li><a href="#renormalization">Running &amp; physical scales</a></li>
+          <li><a href="#balaban-program">Bałaban’s program</a></li>
+          <li><a href="#spectral-gap">The spectral-gap estimate</a></li>
+          <li><a href="#confinement">Mass gap &amp; confinement</a></li>
+          <li><a href="#proof-reading">Reading an existence proof</a></li>
+        </ol><p class="toc-part-label">Part II · Released construction</p><ol class="toc-proof">
+          <li><a href="#proof-theorem">The theorem &amp; its quantifiers</a></li>
+          <li><a href="#proof-wilson">The starting Wilson law</a></li>
+          <li><a href="#proof-rg">Exact renormalization group</a></li>
+          <li><a href="#proof-observables">Renormalized local fields</a></li>
+          <li><a href="#proof-uv">The fixed-volume UV limit</a></li>
+          <li><a href="#proof-ir">The infinite-volume extraction</a></li>
+          <li><a href="#proof-phases">Phases &amp; reconstruction</a></li>
+          <li><a href="#proof-symmetry">Lorentz symmetry &amp; stress tensor</a></li>
+          <li><a href="#proof-identification">Identifying Yang–Mills</a></li>
+          <li><a href="#proof-ope">The OPE &amp; contact terms</a></li>
+          <li><a href="#proof-validation">Validation &amp; remaining scope</a></li>
+        </ol><a class="toc-sources" href="#technical-references">Primary sources</a></nav></details>
+        <a class="toc-back" href="index.html">← Back to the visual guide</a>
+      </aside>
+      <article class="technical-article" aria-label="Technical exposition of Yang–Mills construction">
+        <div class="technical-part-banner"><p class="technical-kicker">PART I / FOUNDATIONS</p><h2>The problem and its mathematical obligations.</h2><p>A reference layer for the conventions, axioms, and physical distinctions used in the released-proof walkthrough below.</p></div>
+        <section class="technical-section" id="formulation" aria-labelledby="formulation-title">
+  <p class="technical-kicker">01 / THE PRECISE TARGET</p>
+  <h2 id="formulation-title">Existence is a statement about a quantum theory.</h2>
+  <p>The Clay problem asks, for <em>every compact simple gauge group</em> \(G\), for a nontrivial quantum Yang–Mills theory on four-dimensional spacetime with a strictly positive mass gap. The group quantifier matters: constructing one model for \(SU(2)\) would not settle the full statement. The required axiomatic properties must be at least as strong as the Wightman or Osterwalder–Schrader frameworks cited in the official formulation. “Existence” therefore includes physical structure, not merely a finite value assigned to a formal functional integral. <a href="#ref-clay">[1, §4, p. 6]</a></p>
+  <div id="eq-1" class="technical-equation" role="region" aria-label="The objects to be constructed" tabindex="0">\[G\quad\longmapsto\quad\bigl(\mathcal H,\Omega,U,\{\mathcal O_i\}\bigr).\]</div>
+  <p>Here \(\mathcal H\) is the physical Hilbert space, \(\Omega\) is the vacuum, \(U\) represents spacetime symmetries, and the \(\mathcal O_i\) are local, gauge-invariant operator-valued distributions. In the Lorentzian formulation, the representation has positive energy and its generators satisfy the spectrum condition. Local observables commute at spacelike separation. Their short-distance behavior must also identify the intended Yang–Mills theory; the official statement discusses gauge-invariant curvature polynomials, asymptotic freedom, and the subtleties of their renormalization. <a href="#ref-clay">[1, §§3–4, pp. 5–6]</a></p>
+  <div id="eq-2" class="technical-equation" role="region" aria-label="The positive-energy spectrum condition" tabindex="0">\[\operatorname{spec}(P^0,\mathbf P)\subseteq\overline V_+,
+  \qquad \overline V_+=\{p:p^0\geq|\mathbf p|\}.\]</div>
+  <p>The Euclidean construction studied below is a route to that Lorentzian theory. Its \(\mathbb R^4\) has Euclidean signature; reconstruction supplies real-time dynamics. These signatures should not be silently interchanged in an argument.</p>
+  <div id="eq-3" class="technical-equation" role="region" aria-label="Vacuum normalization and the separate gap requirement" tabindex="0">\[H\Omega=0,\qquad H\geq0,\qquad
+  \operatorname{spec}(H)\cap(0,\Delta)=\varnothing
+  \quad\text{for some }\Delta>0.\]</div>
+  <p>Positive energy alone allows spectrum accumulating at zero. A gap excludes that accumulation in the physical vacuum representation. The nontriviality requirement also rules out satisfying the display with a Hilbert space containing only the vacuum. The actual spectral threshold must be finite. Confinement is a related dynamical question, but it is listed separately among extensions of the Millennium problem. <a href="#ref-clay">[1, §§4–5, pp. 6–7]</a></p>
+  <p>The target is <em>pure</em> Yang–Mills: no dynamical quarks or Higgs field are introduced to generate a mass. The gap belongs to the spectrum of physical states created by gauge-invariant observables. A mass parameter inferred from a gauge-dependent gluon propagator is consequently not, by itself, the requested spectral statement. Nor does the definition demand an isolated one-particle eigenvalue at the threshold. The official discussion lists such a stronger spectral property separately. A proposed construction must make clear which of these logically different assertions it establishes.</p>
+</section>
+
+<section class="technical-section" id="conventions" aria-labelledby="conventions-title">
+  <p class="technical-kicker">02 / FIX THE CONVENTIONS</p>
+  <h2 id="conventions-title">One connection, with the coupling in the action.</h2>
+  <p>We work at \(\theta=0\). For explicit coefficients, specialize to \(SU(N)\) and use Hermitian generators in the fundamental representation. Repeated spacetime and colour indices are summed unless a restriction is displayed.</p>
+  <div id="eq-4" class="technical-equation" role="region" aria-label="Hermitian generators and trace normalization" tabindex="0">\[A_\mu=A_\mu^bT^b,\qquad
+  [T^b,T^c]=if^{bcd}T^d,\qquad
+  \operatorname{tr}(T^bT^c)=\tfrac12\delta^{bc}.\]</div>
+  <p>We absorb the coupling into the connection variable. Thus the covariant derivative contains \(A\), while an overall factor in the action carries \(g\). Expanding the commutator of two covariant derivatives fixes every sign:</p>
+  <div id="eq-5" class="technical-equation" role="region" aria-label="Covariant derivative and field strength" tabindex="0">\[\begin{aligned}
+  D_\mu&=\partial_\mu-iA_\mu, & [D_\mu,D_\nu]&=-iF_{\mu\nu},\\
+  F_{\mu\nu}&=\partial_\mu A_\nu-\partial_\nu A_\mu-i[A_\mu,A_\nu].
+  \end{aligned}\]</div>
+  <p>In differential-form notation this becomes the following expression. The factor of one half belongs to the graded-commutator notation; dropping it would double the nonlinear term.</p>
+  <div id="eq-6" class="technical-equation" role="region" aria-label="Differential-form convention for curvature" tabindex="0">\[F=dA-iA\wedge A
+  =dA-\frac{i}{2}[A,A]_{\mathrm{graded}},
+  \qquad F=\frac12F_{\mu\nu}\,dx^\mu\wedge dx^\nu.\]</div>
+  <p>For a gauge transformation \(h(x)\), covariance of \(D_\mu\psi\) determines the inhomogeneous transformation of the connection. Curvature transforms by conjugation, so traces of its products are gauge invariant.</p>
+  <div id="eq-7" class="technical-equation" role="region" aria-label="Gauge transformations of connection and curvature" tabindex="0">\[\begin{aligned}
+  A_\mu^h&=hA_\mu h^{-1}-i(\partial_\mu h)h^{-1},\\
+  F_{\mu\nu}^h&=hF_{\mu\nu}h^{-1}.
+  \end{aligned}\]</div>
+  <p>With these choices, the positive Euclidean action has equivalent matrix and component forms. The distinction between summing all ordered index pairs and only \(\mu&lt;\nu\) explains the factor of two:</p>
+  <div id="eq-8" class="technical-equation" role="region" aria-label="Equivalent normalizations of the Euclidean action" tabindex="0">\[\begin{aligned}
+  S_E[A]&=\frac1{2g^2}\int d^4x\,\operatorname{tr}(F_{\mu\nu}F_{\mu\nu})\\
+  &=\frac1{4g^2}\int d^4x\,F^b_{\mu\nu}F^b_{\mu\nu}\\
+  &=\frac1{g^2}\int d^4x\sum_{\mu&lt;\nu}\operatorname{tr}(F_{\mu\nu}^2).
+  \end{aligned}\]</div>
+  <p>For general compact simple \(G\), a positive \(\operatorname{Ad}\)-invariant inner product replaces the chosen matrix trace. Its normalization is part of the coupling convention. Taking that inner product to be \(2\operatorname{tr}(XY)\) in the present Hermitian realization recovers the preceding action. This is the invariant content behind superficially different normalizations. <a href="#ref-clay">[1, §1, pp. 1–2]</a></p>
+  <div id="eq-9" class="technical-equation" role="region" aria-label="Action for an invariant Lie-algebra inner product" tabindex="0">\[S_E[A]=\frac1{4g^2}\int d^4x\,
+  (F_{\mu\nu},F_{\mu\nu})_{\mathfrak g}.\]</div>
+  <p>In natural units, the engineering dimensions make four dimensions special: the coupling is dimensionless. Composite operators subsequently acquire scale-dependent renormalizations, so engineering dimensions alone do not determine their quantum correlations.</p>
+  <div id="eq-10" class="technical-equation" role="region" aria-label="Engineering mass dimensions in four dimensions" tabindex="0">\[\hbar=c=1,\qquad [x]=-1,\quad[A_\mu]=1,
+  \quad[F_{\mu\nu}]=2,\quad[g]=0,\quad[S_E]=0.\]</div>
+  <p>The action also fixes the classical equation. For compactly supported variations, integration by parts and invariance of the trace give the following expression, with the derivative acting in the adjoint representation on curvature:</p>
+  <div id="eq-11" class="technical-equation" role="region" aria-label="First variation and the classical Yang–Mills equation" tabindex="0">\[\begin{aligned}
+  \delta S_E&=-\frac2{g^2}\int d^4x\,
+  \operatorname{tr}\bigl((D_\mu F_{\mu\nu})\delta A_\nu\bigr),\\
+  D_\mu F_{\mu\nu}&=\partial_\mu F_{\mu\nu}-i[A_\mu,F_{\mu\nu}]=0.
+  \end{aligned}\]</div>
+  <p>This variation concerns smooth classical fields. Solving the resulting nonlinear partial differential equation is not the same problem as constructing its quantum theory: the latter requires control of all fluctuations and renormalized observables. The distinction persists even if particular classical solutions are known exactly.</p>
+</section>
+
+<section class="technical-section" id="lattice-measure" aria-labelledby="lattice-measure-title">
+  <p class="technical-kicker">03 / A FINITE, EXACT STARTING POINT</p>
+  <h2 id="lattice-measure-title">The Wilson measure and its classical normalization.</h2>
+  <p>Take a periodic box of side \(R\), with \(R/a\) an integer. A link matrix transports a colour vector from its terminal site back to its initial site. This orientation fixes its small-spacing sign consistently with our covariant derivative.</p>
+  <div id="eq-12" class="technical-equation" role="region" aria-label="Lattice geometry and link convention" tabindex="0">\[\begin{aligned}
+  \Lambda_{a,R}&=(a\mathbb Z/R\mathbb Z)^4,\\
+  U_\mu(x)&\in SU(N),\qquad
+  U_\mu(x)=1-iaA_\mu(x)+O(a^2).
+  \end{aligned}\]</div>
+  <p>Gauge transformations act independently at lattice sites. Opposite orientations use inverse matrices. The closed product around a plaquette therefore transforms only at its basepoint:</p>
+  <div id="eq-13" class="technical-equation" role="region" aria-label="Link and plaquette transformations" tabindex="0">\[\begin{aligned}
+  U_\mu^h(x)&=h(x)U_\mu(x)h(x+a\hat\mu)^{-1},\\
+  U_{\mu\nu}(x)&=U_\mu(x)U_\nu(x+a\hat\mu)\\
+  &\quad\cdot U_\mu(x+a\hat\nu)^{-1}U_\nu(x)^{-1},\\
+  U_{\mu\nu}^h(x)&=h(x)U_{\mu\nu}(x)h(x)^{-1}.
+  \end{aligned}\]</div>
+  <p>The Wilson action sums each elementary square once. Its gauge invariance follows directly from conjugation invariance of the trace; no gauge-fixing term is required to define this finite integral. <a href="#ref-wilson">[2]</a></p>
+  <div id="eq-14" class="technical-equation" role="region" aria-label="Wilson lattice action" tabindex="0">\[\begin{aligned}
+  S_W(U)&=\beta\sum_x\sum_{\mu&lt;\nu}
+  \left(1-\frac1N\operatorname{Re}\operatorname{tr}U_{\mu\nu}(x)\right),\\
+  \beta&=\frac{2N}{g_0^2}.
+  \end{aligned}\]</div>
+  <p>Normalized Haar measure supplies one integration per independent link. Its left and right invariance preserves gauge symmetry in the measure as well as in the action.</p>
+  <div id="eq-15" class="technical-equation" role="region" aria-label="Partition function and lattice expectations" tabindex="0">\[\begin{aligned}
+  Z_{a,R}&=\int e^{-S_W(U)}\prod_\ell dU_\ell,\\
+  \langle\mathcal O\rangle_{a,R}
+  &=Z_{a,R}^{-1}\int\mathcal O(U)e^{-S_W(U)}\prod_\ell dU_\ell.
+  \end{aligned}\]</div>
+  <p>Every plaquette term lies between zero and two. If \(N_p\) is the finite number of plaquettes, compactness gives a simple existence estimate:</p>
+  <div id="eq-16" class="technical-equation" role="region" aria-label="Elementary finite-lattice partition-function bounds" tabindex="0">\[0&lt;e^{-2\beta N_p}\leq Z_{a,R}\leq1.\]</div>
+  <p>This estimate deteriorates with the number of plaquettes. It establishes finite-lattice existence, not the uniform estimates needed for a continuum theory.</p>
+  <p>Dividing by the partition function removes an overall normalization, including field-independent contributions to the action. It does not make the limiting observables automatically finite. Numerator and denominator can each contain substantial regulator dependence, while composite insertions need their own renormalization. Conversely, a vanishing unnormalized partition function along a sequence of regulators would not alone prove the failure of normalized expectations. The relevant issue is control of the ratios and the resulting hierarchy, not the numerical size of the partition function considered in isolation.</p>
+  <p>To check the normalization, evaluate links on a fixed smooth classical connection. Expanding the holonomy and using traceless curvature yields</p>
+  <div id="eq-17" class="technical-equation" role="region" aria-label="Smooth-background expansion of a plaquette" tabindex="0">\[\begin{aligned}
+  U_{\mu\nu}(x)&=\exp\!\left[-ia^2F_{\mu\nu}(x)+O(a^3)\right],\\
+  1-\frac1N\operatorname{Re}\operatorname{tr}U_{\mu\nu}(x)
+  &=\frac{a^4}{2N}\operatorname{tr}\bigl(F_{\mu\nu}(x)^2\bigr)+O(a^5).
+  \end{aligned}\]</div>
+  <p>Multiplication by \(2N/g_0^2\), followed by the Riemann-sum limit, reproduces the continuum coefficient:</p>
+  <div id="eq-18" class="technical-equation" role="region" aria-label="Classical continuum matching of the Wilson action" tabindex="0">\[\begin{aligned}
+  S_W&\longrightarrow\frac1{g_0^2}\int d^4x
+  \sum_{\mu&lt;\nu}\operatorname{tr}F_{\mu\nu}^2\\
+  &=\frac1{2g_0^2}\int d^4x\,
+  \operatorname{tr}(F_{\mu\nu}F_{\mu\nu}).
+  \end{aligned}\]</div>
+  <p>This is a classical consistency calculation at fixed coupling and controlled smooth background. Typical quantum fields need not be smooth, and the quantum continuum limit requires coupling renormalization. The expansion cannot justify exchanging a limit with the full path integral. <a href="#ref-clay">[1, §6.5, pp. 11–12]</a></p>
+</section>
+
+<section class="technical-section" id="continuum-limit" aria-labelledby="continuum-limit-title">
+  <p class="technical-kicker">04 / WHAT MUST ACTUALLY CONVERGE</p>
+  <h2 id="continuum-limit-title">Renormalized observables, tested as distributions.</h2>
+  <p>A continuum construction should identify local gauge-invariant observables, such as curvature composites, rather than demand pointwise convergence of a gauge potential. Composite operators generally mix with other local operators allowed by the symmetries, including the identity where appropriate. Schematically, after fixing a renormalization prescription and scale \(\mu\),</p>
+  <div id="eq-19" class="technical-equation" role="region" aria-label="Renormalization and mixing of local observables" tabindex="0">\[\mathcal O_i^{\mathrm{ren}}(x;a,\mu)
+  =\sum_j Z_{ij}(a,\mu)\,\mathcal O_j^{\mathrm{lat}}(x;a).\]</div>
+  <p>The coefficients may contain dimensional powers of the cutoff as well as logarithms. Products at coincident points require additional contact prescriptions. Accordingly, the appropriate convergence language is that of distributions. For a smooth compactly supported test function, the lattice approximation to a smeared field is</p>
+  <div id="eq-20" class="technical-equation" role="region" aria-label="Smeared renormalized lattice observable" tabindex="0">\[\mathcal O_i^{\mathrm{ren}}(f;a,R)
+  =a^4\sum_{x\in\Lambda_{a,R}}
+  f(x)\,\mathcal O_i^{\mathrm{ren}}(x;a,\mu).\]</div>
+  <p>Test functions have fixed physical support as the regulators change. This prevents an apparent convergence obtained merely by shrinking every observable to an irrelevant scale. The desired hierarchy contains all suitable products of these smeared observables, with compatible prescriptions:</p>
+  <div id="eq-21" class="technical-equation" role="region" aria-label="The regulated Schwinger-function hierarchy" tabindex="0">\[S_{n;a,R}(f_1,\ldots,f_n)
+  =\left\langle\prod_{r=1}^n
+  \mathcal O_{i_r}^{\mathrm{ren}}(f_r;a,R)\right\rangle_{a,R}.\]</div>
+  <p>A proposed theorem must specify a limiting procedure. One possible target is a continuum limit at fixed volume, followed by an infinite-volume limit; another uses an explicitly controlled joint sequence. Neither order is automatic, and interchanging them requires a separate argument.</p>
+  <div id="eq-22" class="technical-equation" role="region" aria-label="A schematic iterated distributional limit" tabindex="0">\[S_n(f_1,\ldots,f_n)
+  =\lim_{R\to\infty}\lim_{a\to0}
+  S_{n;a,R}(f_1,\ldots,f_n).\]</div>
+  <p>The displayed limit is a construction target, not a theorem being asserted here. Useful estimates would bound distributions by test-function seminorms uniformly in the regulators, in a stated range of parameters. For example, a bound of the schematic form</p>
+  <div id="eq-23" class="technical-equation" role="region" aria-label="A schematic regulator-uniform distributional estimate" tabindex="0">\[|S_{n;a,R}(f_1,\ldots,f_n)|
+  \leq C_n\prod_{r=1}^n p_{m_n}(f_r)\]</div>
+  <p>can provide compactness or continuity information when its constants and topology are specified. It does not by itself prove convergence, nontriviality, or the required short-distance behavior. Convergence away from coincident points likewise leaves the distributional extensions unresolved. The official problem explicitly warns that weak existence alone is insufficient without establishing the physical properties of the limit. <a href="#ref-clay">[1, §4 and §6.5, including p. 12, footnote 2]</a></p>
+  <p>There are two further distinctions to keep visible. First, the existence of a convergent subsequence does not establish independence of the chosen regulator sequence or renormalization conditions; the construction must state the sense in which its continuum object is identified. Second, finite bounds at each correlation order do not specify how their constants grow with that order. A reconstruction theorem may require quantitative growth control across the entire hierarchy. These are separate analytic obligations, rather than consequences of writing a formal generating functional.</p>
+</section>
+
+<section class="technical-section" id="reconstruction" aria-labelledby="reconstruction-title">
+  <p class="technical-kicker">05 / FROM EUCLIDEAN DATA TO STATES</p>
+  <h2 id="reconstruction-title">Reflection positivity builds the physical inner product.</h2>
+  <p>Let \(\mathfrak A_+\) be an algebra of suitable gauge-invariant Euclidean observables supported at strictly positive times. Write \(\mathcal S\) for their Schwinger functional; this notation does not assume a continuum measure on ordinary smooth connections. For scalar observables, time reflection and complex conjugation define an antilinear operation. Tensor observables require the corresponding reflected index transformation.</p>
+  <div id="eq-24" class="technical-equation" role="region" aria-label="Time reflection and its antilinear action" tabindex="0">\[\theta(t,\mathbf x)=(-t,\mathbf x),\qquad
+  \Theta F=\overline{F\circ\theta}.\]</div>
+  <p>Reflection positivity is positivity of a particular sesquilinear form, not ordinary positivity of a probability density. It must hold for every finite collection of allowed positive-time observables:</p>
+  <div id="eq-25" class="technical-equation" role="region" aria-label="Reflection-positive sesquilinear form" tabindex="0">\[\begin{aligned}
+  (F,G)_{\mathrm{OS}}&=\mathcal S((\Theta F)G),\\
+  \sum_{i,j}\overline c_i c_j\,
+  \mathcal S((\Theta F_i)F_j)&\geq0.
+  \end{aligned}\]</div>
+  <p>The finite-dimensional positivity condition implies a Cauchy–Schwarz inequality. In particular, an observable with zero norm has zero inner product with every other allowed observable. This is why quotienting out null vectors is mathematically consistent, rather than an arbitrary removal of inconvenient states:</p>
+  <div id="eq-26" class="technical-equation" role="region" aria-label="Cauchy–Schwarz inequality for the reflected inner product" tabindex="0">\[|(F,G)_{\mathrm{OS}}|^2
+  \leq(F,F)_{\mathrm{OS}}(G,G)_{\mathrm{OS}}.\]</div>
+  <p>The reconstructed norm is determined by correlations across the reflection plane. It is generally different from an ordinary Euclidean square-integrability norm on field configurations.</p>
+  <p>The null vectors must be removed before completing the space. The constant observable represents the vacuum:</p>
+  <div id="eq-27" class="technical-equation" role="region" aria-label="The Osterwalder–Schrader quotient Hilbert space" tabindex="0">\[\mathcal N=\{F:(F,F)_{\mathrm{OS}}=0\},\qquad
+  \mathcal H=\overline{\mathfrak A_+/\mathcal N},\qquad \Omega=[1].\]</div>
+  <p>Under the remaining reconstruction hypotheses, positive Euclidean time translations descend to a strongly continuous self-adjoint contraction semigroup. Its generator is the physical Hamiltonian:</p>
+  <div id="eq-28" class="technical-equation" role="region" aria-label="Euclidean time evolution and the positive Hamiltonian" tabindex="0">\[T(t)=e^{-tH},\qquad t\geq0,\qquad H\geq0,\qquad T(t)\Omega=\Omega.\]</div>
+  <p><strong>Reflection positivity alone is insufficient.</strong> Reconstruction also needs the applicable Euclidean covariance, permutation symmetry, and regularity or growth conditions; clustering is associated with the unique-vacuum requirement. The precise hypotheses depend on the field framework. The 1975 Osterwalder–Schrader paper corrects and extends the 1973 treatment, so both are relevant. <a href="#ref-os">[3]</a></p>
+  <p>Wilson lattice regularization has reflection positivity in the appropriate lattice formulation. Passing it to a limit requires convergence of the very reflected products defining this form; arbitrary approximations or composite-field prescriptions cannot be assumed to preserve it. Restoring continuous Euclidean symmetries and controlling growth remain additional obligations. <a href="#ref-clay">[1, §6.5, p. 11]</a></p>
+  <p>Even successful reconstruction yields only a nonnegative Hamiltonian. It supplies the setting in which the separate mass-gap question becomes precise; it does not supply a positive lower bound above the vacuum.</p>
+</section>
+
+        <section class="technical-section" id="renormalization" aria-labelledby="renormalization-title">
+  <p class="technical-kicker">06 / RUNNING COUPLING AND PHYSICAL SCALE</p>
+  <h2 id="renormalization-title">Asymptotic freedom does not determine the infrared spectrum</h2>
+  <p>Use the convention \(\beta(g)=\mu\,dg/d\mu\), with no matter fields and \(f^{acd}f^{bcd}=C_A\delta^{ab}\). For \(SU(N)\), \(C_A=N\). The first two coefficients are universal under analytic changes between mass-independent coupling schemes with the same leading normalization. They describe a weak-coupling expansion; neither coefficient is a nonperturbative spectral estimate. The original asymptotic-freedom papers and the PDG review give the relevant conventions. <a href="#ref-gross">[6]</a> <a href="#ref-politzer">[7]</a> <a href="#ref-pdg">[8]</a></p>
+  <div id="eq-29" class="technical-equation" role="region" aria-label="Pure Yang Mills beta function through two loops" tabindex="0">\[\begin{aligned}\beta(g)&amp;=-b_0g^3-b_1g^5+O(g^7),\\ b_0&amp;=\frac{11C_A}{3(4\pi)^2},\qquad b_1=\frac{34C_A^2}{3(4\pi)^4}.\end{aligned}\]</div>
+  <p>At one loop, differentiating the inverse squared coupling makes the equation linear. Integrating between two high-energy scales gives logarithmic weakening, provided both couplings remain in the perturbative regime:</p>
+  <div id="eq-30" class="technical-equation" role="region" aria-label="Integration of the one loop running coupling" tabindex="0">\[\frac{d\,g^{-2}}{d\log\mu}=2b_0+2b_1g^2+\cdots,\qquad \frac{1}{g^2(\mu)}\underset{\text{one loop}}{=}\frac{1}{g^2(\mu_0)}+2b_0\log\frac{\mu}{\mu_0}.\]</div>
+  <p>Integrating the reciprocal beta function at small coupling yields the conventional scheme-dependent scale \(\Lambda_{\mathsf s}\). The power prefactor is the two-loop correction to the essential exponential; higher orders enter the indicated factor.</p>
+  <div id="eq-31" class="technical-equation" role="region" aria-label="Dimensional transmutation with the two loop prefactor" tabindex="0">\[\Lambda_{\mathsf s}=\mu\,\exp\!\left[-\frac{1}{2b_0g_{\mathsf s}^2(\mu)}\right]\bigl(b_0g_{\mathsf s}^2(\mu)\bigr)^{-b_1/(2b_0^2)}\bigl[1+O(g_{\mathsf s}^2)\bigr].\]</div>
+  <p>The prefactor follows by expanding the reciprocal beta function, rather than assuming that the one-loop solution remains exact. The logarithm in its integral produces the power of the coupling. This calculation is local to the ultraviolet regime: integrating a truncated beta function into strong coupling does not control the omitted terms there.</p>
+  <div id="eq-32" class="technical-equation" role="region" aria-label="Reciprocal beta function giving the logarithmic two loop correction" tabindex="0">\[\frac1{\beta(g)}=-\frac1{b_0g^3}+\frac{b_1}{b_0^2g}+O(g),\qquad\int\frac{dg}{\beta(g)}=\frac1{2b_0g^2}+\frac{b_1}{b_0^2}\log g+O(g^2).\]</div>
+  <p>The normalization of this integration constant is a convention, not an observable. For example, the following analytic redefinition leaves \(b_0,b_1\) unchanged but rescales \(\Lambda\). A comparison between a lattice coupling and \(\overline{\mathrm{MS}}\) therefore requires matching.</p>
+  <div id="eq-33" class="technical-equation" role="region" aria-label="Scheme dependence of the transmutation scale" tabindex="0">\[g_{\mathsf s'}^2=g_{\mathsf s}^2+c\,g_{\mathsf s}^4+O(g_{\mathsf s}^6)\quad\Longrightarrow\quad \frac{\Lambda_{\mathsf s'}}{\Lambda_{\mathsf s}}=\exp\!\left(\frac{c}{2b_0}\right).\]</div>
+  <p>For a continuum pure theory at fixed theta angle, dimensional analysis permits masses and string tensions to be expressed in units of this scale. It supplies neither their existence nor the positivity of their dimensionless coefficients. In particular, the perturbative formula becoming unreliable near \(\Lambda\) is not a derivation of confinement or a mass gap.</p>
+  <div id="eq-34" class="technical-equation" role="region" aria-label="Unknown nonperturbative mass and string tension ratios" tabindex="0">\[M=c_M\Lambda_{\mathsf s},\qquad \sigma=c_\sigma\Lambda_{\mathsf s}^{\,2};\qquad c_M>0\ \text{and}\ c_\sigma>0\ \text{require dynamical input}.\]</div>
+  <p>Finally, distinguish physical and lattice units. In a massive correlation channel, retaining a finite physical correlation length while removing the cutoff requires its length in lattice sites to diverge. The vanishing of the dimensionless lattice mass is therefore compatible with a positive continuum mass:</p>
+  <div id="eq-35" class="technical-equation" role="region" aria-label="Physical mass and lattice correlation length" tabindex="0">\[\widehat m(a)=a\,m_{\mathrm{phys}},\qquad \xi_{\mathrm{lat}}=\frac{\xi_{\mathrm{phys}}}{a}=\frac{1}{a\,m_{\mathrm{phys}}}\longrightarrow\infty\quad(a\to0).\]</div>
+</section>
+
+<section class="technical-section" id="balaban-program" aria-labelledby="balaban-program-title">
+  <p class="technical-kicker">07 / CONSTRUCTIVE RENORMALIZATION</p>
+  <h2 id="balaban-program-title">What a multiscale construction must control</h2>
+  <p>Wilson regularization makes the finite-lattice theory an integral over compact-group variables. Bałaban’s program organizes that integral into successive scales, using averaging maps compatible with gauge transformations and gauges adapted to local geometry. This is substantially more structure than replacing neighboring matrices by their arithmetic average. A schematic normalized blocking kernel gives the exact marginalization identity below; it is an explanatory model, not a transcription of Bałaban’s particular transformation. <a href="#ref-wilson">[2]</a> <a href="#ref-balaban">[4]</a></p>
+  <div id="eq-36" class="technical-equation" role="region" aria-label="Schematic normalized renormalization group blocking kernel" tabindex="0">\[e^{-S_{k+1}(V)}=\int K_k(V,U)e^{-S_k(U)}\,dU,\qquad K_k\geq0,\qquad\int K_k(V,U)\,dV=1.\]</div>
+  <p>With invariant integration measures, covariance of the kernel transfers gauge invariance to the coarse density. The coarse gauge transformation \(\bar h\) must be defined consistently with the fine transformation \(h\); arbitrary independent transformations of the two arguments are not intended.</p>
+  <div id="eq-37" class="technical-equation" role="region" aria-label="Gauge covariance of a blocking kernel" tabindex="0">\[U_{xy}^{h}=h_xU_{xy}h_y^{-1},\qquad K_k(V^{\bar h},U^h)=K_k(V,U)\quad\Longrightarrow\quad S_{k+1}(V^{\bar h})=S_{k+1}(V).\]</div>
+  <p>After blocking, the action does not stay inside a one-parameter Wilson family. An exact description generates all symmetry-allowed interactions, including extended loops. One can organize local operators and the remaining contributions on connected collections of blocks, called polymers. With overlaps assigned consistently, a schematic organization is</p>
+  <div id="eq-38" class="technical-equation" role="region" aria-label="Effective action with local operators and polymer terms" tabindex="0">\[S_k[V]=E_k\,|\Lambda_k|+\frac{1}{g_k^2}\mathcal W_k[V]+\sum_i c_{k,i}\mathcal O_{k,i}[V]+\sum_{X\subset\Lambda_k}\mathcal R_k(X;V).\]</div>
+  <p>The operator sum is generally infinite. Discarding it produces an approximation unless a theorem bounds the discarded terms. In a convergent polymer analysis, decay in polymer size must compensate for the growing number of possible polymers. A representative type of weighted estimate is shown here; its norm, domain, and scale dependence must be specified in an actual proof.</p>
+  <div id="eq-39" class="technical-equation" role="region" aria-label="Illustrative summable polymer remainder estimate" tabindex="0">\[\sup_{b\in\Lambda_k}\sum_{X\ni b}e^{\kappa|X|}\,\|\mathcal R_k(X)\|_k\leq\varepsilon_k,\qquad \kappa>0.\]</div>
+  <p>Small-field regions permit expansions around controlled background configurations. Large-field regions need separate bounds from the action's suppression, together with control of boundaries and combinatorics. Small bare coupling does not make every configuration small. Bałaban’s 1987 analysis constructs localized effective actions and recursive coupling renormalization in the small-field region; the later large-field papers extend the effective-density analysis. <a href="#ref-balaban">[4]</a></p>
+  <div id="eq-40" class="technical-equation" role="region" aria-label="Inductive effective density bounds under a weak coupling condition" tabindex="0">\[\begin{aligned}0&lt;g_j\leq\gamma\quad(0\leq j\leq k)\quad&amp;\Longrightarrow\quad\rho_k\ \text{obeys the inductive bounds},\\ &amp;\gamma\ \text{sufficiently small}.\end{aligned}\]</div>
+  <p>Gauge fixing here is an analytical device, not a physical observable. A construction must show that gauge choices do not change the gauge-invariant quantities eventually reconstructed. Similarly, an exponential decay bound for a single-scale fluctuation covariance is not the mass-gap estimate: after all scales are combined, arbitrarily long-wavelength physical modes may still contribute. The constants and their dependence on scale must remain visible throughout this comparison.</p>
+  <aside class="technical-note"><strong>A historical hypothesis matters.</strong> Theorem 1 of Bałaban’s 1989 paper retains the small-effective-coupling assumption. Its introduction says that a second-order calculation intended to remove that assumption had not been published. Ultraviolet stability of effective densities, even with cutoff-uniform bounds, does not by itself establish convergence of physical observables, the infinite-volume theory, the reconstruction axioms, or a positive mass gap. The paper explicitly leaves further observable analysis to subsequent work. <a href="https://link.springer.com/article/10.1007/BF01238433" target="_blank" rel="noopener">Original publication, pp. 355–356 ↗</a></aside>
+</section>
+
+<section class="technical-section" id="spectral-gap" aria-labelledby="spectral-gap-title">
+  <p class="technical-kicker">08 / SPECTRAL THEORY AND CORRELATIONS</p>
+  <h2 id="spectral-gap-title">A uniform statement about the physical Hilbert space</h2>
+  <p>Assume reconstruction has produced a nonnegative self-adjoint Hamiltonian \(H\) and a unique normalized vacuum \(\Omega\). Write \(P_0=|\Omega\rangle\langle\Omega|\) and \(Q=1-P_0\). The gap is a spectral exclusion, equivalently a quadratic-form inequality on the form domain. It need not correspond to an isolated one-particle eigenstate. <a href="#ref-clay">[1]</a></p>
+  <div id="eq-41" class="technical-equation" role="region" aria-label="Equivalent spectral and quadratic form formulations of a mass gap" tabindex="0">\[\operatorname{spec}(H)\subset\{0\}\cup[\Delta,\infty)\quad\Longleftrightarrow\quad H\geq\Delta Q,\qquad\Delta>0.\]</div>
+  <p>Functional calculus turns spectral support into a contraction estimate, valid at every positive Euclidean time. Conversely, the operator-norm estimate excludes spectrum below \(\Delta\) on the vacuum-orthogonal subspace:</p>
+  <div id="eq-42" class="technical-equation" role="region" aria-label="Mass gap and Euclidean semigroup norm equivalence" tabindex="0">\[H\geq\Delta Q\quad\Longleftrightarrow\quad\|e^{-tH}Q\|\leq e^{-t\Delta}\quad\text{for all }t\geq0.\]</div>
+  <p>Use a properly smeared physical observable \(A\), with \(A\Omega\) in the Hilbert space, and remove its vacuum expectation. Point fields are distributions and cannot be substituted without domain control. The spectral theorem supplies a positive finite measure for the resulting state:</p>
+  <div id="eq-43" class="technical-equation" role="region" aria-label="Spectral measure of a smeared physical state" tabindex="0">\[\psi=QA\Omega,\qquad d\nu_\psi(E)=d\langle\psi,\mathbf1_{(-\infty,E]}(H)\psi\rangle,\qquad\nu_\psi([0,\infty))=\|\psi\|^2.\]</div>
+  <div id="eq-44" class="technical-equation" role="region" aria-label="Positive Euclidean autocorrelation as a Laplace transform" tabindex="0">\[\begin{aligned}C_\psi(t)&amp;=\langle\psi,e^{-tH}\psi\rangle=\int_{[0,\infty)}e^{-tE}\,d\nu_\psi(E)\\ &amp;=\|e^{-tH/2}\psi\|^2\leq e^{-t\Delta}\|\psi\|^2.\end{aligned}\]</div>
+  <p>The converse requires enough states. Suppose a linear dense set in \(Q\mathcal H\) obeys exponential bounds with one common rate \(\Delta\); the finite prefactor may depend on the state. Positivity, rather than cancellation, then forces each spectral measure to vanish below that rate:</p>
+  <div id="eq-45" class="technical-equation" role="region" aria-label="Deriving spectral exclusion from a common autocorrelation decay rate" tabindex="0">\[C_\psi(t)\leq K_\psi e^{-\Delta t}\quad\Longrightarrow\quad\nu_\psi([0,\Delta-\epsilon])\leq e^{(\Delta-\epsilon)t}C_\psi(t)\leq K_\psi e^{-\epsilon t}\longrightarrow0.\]</div>
+  <p>For every \(0&lt;\epsilon&lt;\Delta\), the associated spectral projection annihilates a dense set and hence vanishes. A single glueball correlator only tests states to which its operator couples. Different positive rates in different channels, with infimum zero, also fail to prove a global gap. Finite-time numerical fits do not supply the all-time inequality.</p>
+  <p>The logarithmic slope makes the channel limitation explicit. For a nonzero state and positive time, exponentially weighted spectral moments exist, so the effective mass is a mean energy with a time-dependent positive weight. Its derivative is minus the corresponding variance. It approaches the bottom of this state's spectral support, which may sit above the bottom of the full physical spectrum.</p>
+  <div id="eq-46" class="technical-equation" role="region" aria-label="Effective mass as the tilted spectral mean energy" tabindex="0">\[m_{\mathrm{eff},\psi}(t)=-\frac{d}{dt}\log C_\psi(t)=\frac{\int E e^{-tE}\,d\nu_\psi(E)}{\int e^{-tE}\,d\nu_\psi(E)}.\]</div>
+  <div id="eq-47" class="technical-equation" role="region" aria-label="Monotonicity and asymptotic threshold of a positive autocorrelation" tabindex="0">\[\frac{d}{dt}m_{\mathrm{eff},\psi}(t)=-\operatorname{Var}_{\nu_{\psi,t}}(E)\leq0,\qquad\lim_{t\to\infty}m_{\mathrm{eff},\psi}(t)=\inf\operatorname{supp}\nu_\psi.\]</div>
+  <p>A continuum threshold can therefore produce an exponential multiplied by a power of time; an isolated pole is unnecessary for a positive spectral lower bound. Positivity is crucial to these deductions. A general cross-correlator can exhibit cancellations, whereas the autocorrelation above is the Laplace transform of a positive measure.</p>
+  <p>A positive, injective, self-adjoint lattice transfer operator gives the analogous relation at a cutoff. On its physical Hilbert space, normalize by its largest eigenvalue \(\lambda_0\); for a nonzero excited eigenvalue \(\lambda_n\),</p>
+  <div id="eq-48" class="technical-equation" role="region" aria-label="Transfer matrix eigenvalues and physical excitation energies" tabindex="0">\[\begin{aligned}\widehat T_{a,R}&amp;=\frac{T_{a,R}}{\lambda_0}=e^{-aH_{a,R}},\\ E_n(a,R)-E_0(a,R)&amp;=-\frac1a\log\frac{\lambda_n}{\lambda_0}.\end{aligned}\]</div>
+  <p>The ratio is dimensionless; division by the temporal spacing restores energy units. Merely showing \(\lambda_1&lt;\lambda_0\) at each finite cutoff and box does not prevent the gap from collapsing:</p>
+  <div id="eq-49" class="technical-equation" role="region" aria-label="Finite volume gap versus uniform physical gap" tabindex="0">\[m_1(a,R)>0\ \text{for each }(a,R)\quad\not\Longrightarrow\quad\liminf_{\substack{a\to0\\R\to\infty}}m_1(a,R)>0.\]</div>
+  <p>Here \(m_1(a,R)\) is the smallest positive excitation energy and \(R\) is the physical spatial box size; transfer-matrix evolution runs in Euclidean time. Even a uniform lower bound must be transferred to the reconstructed limit using proved convergence of states or correlation functions. Both cutoff removal and growth of the box must respect the chosen physical normalization.</p>
+</section>
+
+<section class="technical-section" id="confinement" aria-labelledby="confinement-title">
+  <p class="technical-kicker">09 / STATIC SOURCES AND LONG-DISTANCE DYNAMICS</p>
+  <h2 id="confinement-title">Area laws ask a different spectral question</h2>
+  <p>A Wilson loop probes parallel transport around a closed curve in a specified representation \(\mathcal R\). Retaining this page's Hermitian connection and \(D=d-iA\), parallel transport includes a factor of \(i\). Its continuum renormalization must handle perimeter and, for nonsmooth loops, cusp divergences.</p>
+  <div id="eq-50" class="technical-equation" role="region" aria-label="Wilson loop in a chosen representation" tabindex="0">\[W_{\mathcal R}(C)=\frac1{d_{\mathcal R}}\operatorname{Tr}_{\mathcal R}\,\mathcal P\exp\!\left(i\oint_C A\right).\]</div>
+  <p>For a rectangle of spatial length \(r\) and Euclidean duration \(T\), transfer-matrix evolution involves a sector containing two external static sources. At a reflection-positive cutoff, the positive spectral weights project onto the lowest source-sector energy when the trial state overlaps it. Subtracting the static self-energies defines a renormalized potential. <a href="#ref-wilson">[2]</a> <a href="#ref-greensite">[5]</a></p>
+  <div id="eq-51" class="technical-equation" role="region" aria-label="Static source spectral decomposition of a rectangular Wilson loop" tabindex="0">\[\begin{aligned}\langle W_{\mathcal R}(r,T)\rangle_{a}&amp;=\sum_n w_n(r,a)e^{-T\mathcal E_n(r,a)},\quad w_n\geq0,\\ V_{\mathcal R}(r)&amp;=-\lim_{T\to\infty}\frac1T\log\langle W_{\mathcal R}^{\mathrm{ren}}(r,T)\rangle.\end{aligned}\]</div>
+  <p>An asymptotic area law, with sufficiently controlled limits and subleading perimeter terms, gives a linearly rising potential. Its coefficient has dimensions of mass squared:</p>
+  <div id="eq-52" class="technical-equation" role="region" aria-label="Area law and the asymptotic static string tension" tabindex="0">\[-\log\langle W_{\mathcal R}^{\mathrm{ren}}(r,T)\rangle\sim\sigma_{\mathcal R}rT,\qquad \sigma_{\mathcal R}=\lim_{r\to\infty}\frac{V_{\mathcal R}(r)}r>0.\]</div>
+  <p>The vacuum mass gap concerns gauge-invariant excitations without these external sources. It does not automatically give a string tension. In pure \(SU(N)\), gluons can completely screen sources with zero center charge, also called zero <em>N-ality</em>. Sources with nonzero center charge cannot be completely screened by gluons alone. <a href="#ref-greensite">[5]</a></p>
+  <aside class="technical-note" id="n-ality">
+    <p><strong>What is N-ality?</strong> The center of \(SU(N)\) is \(\mathbb Z_N\). In an irreducible representation \(\mathcal R\), its generator \(z=e^{2\pi i/N}I_N\) acts as the phase \(e^{2\pi i k_{\mathcal R}/N}\). The integer \(k_{\mathcal R}\), defined modulo \(N\), is the representation's <em>N-ality</em>; equivalently, it is the number of boxes in its Young diagram modulo \(N\).</p>
+    <p>Gluons transform in the adjoint representation and have \(k=0\), so adding gluons preserves a source's N-ality. For \(SU(3)\), an external octet source has \(k=0\) and can form a singlet with a gluon, since \(\mathbf 8\otimes\mathbf 8\supset\mathbf 1\). A fundamental triplet has \(k=1\), which gluons cannot remove. Zero center charge does not mean the source is already a color singlet. This selection rule alone does not prove confinement. <a href="references/0301023v2.pdf#page=9">[5, §§2, 4.3]</a></p>
+  </aside>
+  <p>Dynamical fundamental matter can break the string. Moreover, the Clay problem includes simple groups with trivial center: in \(G_2\), gluons can screen fundamental sources, so their asymptotic string can break even in the pure theory. An area law for every representation cannot be made part of the universal mass-gap requirement. <a href="#ref-greensite">[5]</a> <a href="https://arxiv.org/abs/hep-lat/0302023" target="_blank" rel="noopener">Holland et al., exceptional confinement ↗</a></p>
+  <div id="eq-53" class="technical-equation" role="region" aria-label="Logical distinction between a mass gap and a Wilson loop area law" tabindex="0">\[\operatorname{spec}(H)\cap(0,\Delta)=\varnothing\qquad\text{and}\qquad\sigma_{\mathcal R}>0\quad\text{are distinct dynamical assertions}.\]</div>
+</section>
+
+<section class="technical-section" id="proof-reading" aria-labelledby="proof-reading-title">
+  <p class="technical-kicker">10 / READING AN EXISTENCE PROOF</p>
+  <h2 id="proof-reading-title">Identify the theorem before auditing the estimates</h2>
+  <p>An existence proof should be assessed through its exact theorem statements and dependencies. The November 10 assessment connects the released construction to Wilson regularization and Bałaban’s methods, and explicitly leaves the mass gap and uniqueness of the infinite-volume limit unresolved. The checklist here explains the logical distinctions; <a href="#proof-theorem">Part II</a> applies them to the released sources. <a href="references/assessment-1-2026-11-10.pdf#page=6" target="_blank" rel="noopener">Assessment, pp. 1, 6–7 ↗</a></p>
+  <p><strong>Specify the limit.</strong> Record the gauge group, boundary conditions, coupling trajectory, theta angle, observable algebra, and topology of convergence. Local composite fields can mix and need counterterms; convergence of the partition function alone does not settle their correlations. A representative target is convergence of suitably renormalized smeared Schwinger functions:</p>
+  <div id="eq-54" class="technical-equation" role="region" aria-label="Target convergence of renormalized smeared Schwinger functions" tabindex="0">\[\begin{aligned}S_n(f_1,\ldots,f_n)&amp;=\lim_{\substack{a\to0\\R\to\infty}}\left\langle\prod_{j=1}^{n}\mathcal O^{\mathrm{ren}}_{j,a}(f_j)\right\rangle_{a,R},\\ &amp;f_j\in\mathcal S(\mathbb R^4).\end{aligned}\]</div>
+  <p>The limit notation abbreviates a stated joint or iterated procedure, not permission to interchange limits. At finite spacetime volume, tests can first have compact support away from the boundary; extension to Schwartz tests then needs estimates on growth and tails. If only subsequential convergence is proved, identify whether the claimed properties hold for every selected limit and whether uniqueness is actually needed for the stated result.</p>
+  <p><strong>Check reconstruction.</strong> Prove the required covariance, symmetry, positivity, clustering, and growth estimates for the full hierarchy. Reflection positivity must hold for all admissible finite combinations of positive-time observables, not just one two-point function:</p>
+  <div id="eq-55" class="technical-equation" role="region" aria-label="Reflection positivity for arbitrary positive time observable combinations" tabindex="0">\[\sum_{i,j}\overline{c_i}c_j\,\langle(\Theta F_i)F_j\rangle\geq0,\qquad \operatorname{supp}F_i\subset\{t>0\}.\]</div>
+  <p>Here \(\Theta\) includes complex conjugation and Euclidean time reflection. The corrected Osterwalder–Schrader reconstruction theorem needs an appropriate growth condition; merely listing the original 1973 axioms with ordinary temperedness overlooks the correction in the 1975 paper. <a href="#ref-os">[3]</a></p>
+  <p><strong>Identify Yang–Mills.</strong> A nonzero Hilbert space is insufficient: verify the local observable correspondence and short-distance behavior required by the official problem. Check which gauge groups the theorem covers, how continuum symmetries emerge, and what is actually established about uniqueness and nontriviality. <a href="#ref-clay">[1]</a></p>
+  <p><strong>Audit formal dependencies.</strong> Inspect imported axioms, theorem assumptions, placeholders, and the connection between formal definitions and physical quantities. A machine-checked implication retains its hypotheses. Establishing existence would still leave a separate, quantitative demand on the resulting Hamiltonian:</p>
+  <div id="eq-56" class="technical-equation" role="region" aria-label="The separate quantified mass gap obligation" tabindex="0">\[\forall\,G\ \text{compact simple},\quad\exists\,\Delta_G>0:\quad H_G\geq\Delta_G\bigl(1-|\Omega_G\rangle\langle\Omega_G|\bigr).\]</div>
+  <p>No uniform lower bound over different groups is required. Within each theory, however, the bound must survive the continuum and infinite-volume limits in physical units. That is the additional statement a complete Millennium solution must establish.</p>
+</section>
+
+        <div class="technical-part-banner technical-part-release"><p class="technical-kicker">PART II / THE RELEASED CONSTRUCTION</p><h2>From the Wilson measure to a local quantum theory.</h2><p>A source-linked walkthrough of the October 28 submission, released November 10, 2026. The aim is to expose the objects, quantifiers, and estimates that make the existence statement meaningful.</p><div class="proof-scope-chips"><span>Existence construction</span><span>Subsequential infrared limit</span><span>Mass gap still open</span></div></div>
+
+<section class="technical-section" id="proof-theorem" aria-labelledby="proof-theorem-title">
+  <p class="technical-kicker">11 / THE THEOREM AND ITS QUANTIFIERS</p>
+  <h2 id="proof-theorem-title">Read the quantifiers before the proof.</h2>
+  <p>The release constructs a family of Wilson lattice theories, removes the ultraviolet cutoff at fixed physical volume, extracts an infinite-volume limit, and reconstructs relativistic quantum fields from its clustering components. The committee’s assessment treats this as an existence construction. It explicitly does <em>not</em> identify a positive spectral gap or a unique infinite-volume theory. The following is a technical reading of the assessment and selected definitions and theorem statements. <a href="references/assessment-1-2026-11-10.pdf#page=1" target="_blank" rel="noopener">Assessment, pp. 1–3 ↗</a></p>
+  <p>The concrete input is a closed matrix subgroup \(G\subset U(m)\) with nonabelian simple real Lie algebra \(\mathfrak g\), together with a positive parameter \(b\) in the blocking kernel. This is the submission’s matrix realization of the compact simple gauge-group setting. The penalty \(b\) is fixed before the family is chosen; it is not a physical gluon mass. Let \(C\) denote the resulting family, including its cutoff schedule, local lattice representatives, and renormalization data. A useful compressed reading of the committee’s <code>CombinedAcceptance</code> statement is</p>
+  <div id="eq-57" class="technical-equation" role="region" aria-label="The combined existence theorem and order of choices" tabindex="0">\[\forall\,G,\ \forall\,b&gt;0,\quad \exists\,C:\quad
+  \forall\,p,\ \exists\,q,S,F,\quad
+  \operatorname{Accepted}(C,p\mathbin{\mathrm{refine}}q,S,F).\]</div>
+  <p>Here \(p\) is a requested extraction order, \(q\) is its refinement, \(S\) is a continuum correlation hierarchy, and \(F\) contains the fields, phase construction, stress tensor, and relativistic reconstruction associated with that hierarchy. The lattice clause replaces the ultraviolet extraction by the <em>full chosen</em> ultraviolet sequence while retaining a refined volume sequence. These choices are coordinated: the same family and the same reconstructed object serve all the clauses. <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/checks/AcceptanceSpec.lean" target="_blank" rel="noopener">Acceptance specification ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/checks/CombinedAcceptance.lean" target="_blank" rel="noopener">Combined theorem ↗</a></p>
+  <div id="eq-58" class="technical-equation" role="region" aria-label="The properties tied to the same construction witness" tabindex="0">\[\begin{aligned}
+  \operatorname{Accepted}(F)={}&amp;\text{lattice and scale}\ \wedge\ \text{phase and OS}\ \\
+  &amp;\wedge\ \text{translation Ward identity}\ \wedge\ \text{local fields}\\
+  &amp;\wedge\ \text{leading trace law}\ \wedge\ \text{positive lattice probe}\\
+  &amp;\wedge\ \text{retained source conclusions}.
+  \end{aligned}\]</div>
+  <p>The last line matters. A short public theorem can conceal connections between its abstract labels and the actual Wilson observables. The stronger construction retains <code>C.Makes</code>, which links the local representatives to classical curvature data, and <code>Spec.Final</code>, which carries the selected reconstruction. The combined acceptance theorem preserves these connections while adding independently formulated checks. It does not turn every retained source clause into an independent semantic verification. Throughout this account, “the source proves” and “the committee separately checks” are distinguished where their scopes differ. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/Construction.lean" target="_blank" rel="noopener">Joint source construction ↗</a></p>
+</section>
+
+<section class="technical-section" id="proof-wilson" aria-labelledby="proof-wilson-title">
+  <p class="technical-kicker">12 / THE STARTING WILSON LAW</p>
+  <h2 id="proof-wilson-title">A Wilson law with fixed conventions.</h2>
+  <p><strong>Convention switch.</strong> Part I used Hermitian matrices. The released submission uses an anti-Hermitian connection: \(A^{\mathrm{ah}}=-iA^{\mathrm{h}}\). We follow its convention in Part II, and do not transfer numerical coupling normalizations between the two parts without converting the trace normalization. The curvature and invariant inner product used in the assessment are</p>
+  <div id="eq-59" class="technical-equation" role="region" aria-label="The submission's anti-Hermitian curvature and invariant metric" tabindex="0">\[\begin{aligned}
+  F_{\mu\nu}&amp;=\partial_\mu A_\nu-\partial_\nu A_\mu+[A_\mu,A_\nu],\\
+  D_\mu X&amp;=\partial_\mu X+[A_\mu,X],\qquad
+  \langle X,Y\rangle_{\mathfrak g}=-\frac1m\operatorname{ReTr}(XY).
+  \end{aligned}\]</div>
+  <p>At cutoff \((N,p)\), the physical torus has side length \(L_p\) and spacing \(a_N\). A link variable \(U_e\in G\) is assigned to each positively oriented edge, with \(U_{-e}=U_e^{-1}\). The plaquette holonomy \(U_\square\) is the ordered product around its boundary. Compactness of \(G\) and normalized Haar measure give an ordinary finite-dimensional probability law:</p>
+  <div id="eq-60" class="technical-equation" role="region" aria-label="The finite Wilson probability measure used in the construction" tabindex="0">\[d\mu_{N,p}(U)=\frac1{Z_{N,p}}
+  \exp\!\left[-\beta_{N,p}\sum_\square\left(1-\frac1m\operatorname{ReTr}U_\square\right)\right]
+  \prod_{e&gt;0}dh(U_e).\]</div>
+  <p>Each positively oriented plaquette is counted once. Expanding a smooth-link plaquette explains the classical normalization, although the proof uses the exact lattice law rather than this expansion as a replacement for it. In these conventions the cutoff coupling satisfies \(\beta=1/g_0^2\), with formal continuum action</p>
+  <div id="eq-61" class="technical-equation" role="region" aria-label="Classical action and Wilson coupling in the assessment's normalization" tabindex="0">\[S_E[A]=\frac1{2g_0^2}\int d^4x\sum_{\mu&lt;\nu}\|F_{\mu\nu}(x)\|_{\mathfrak g}^2,
+  \qquad \beta_{N,p}=g_0(N,p)^{-2}.\]</div>
+  <p>This \(\beta\) differs from frequently used lattice conventions such as \(2N/g^2\). In the committee’s bridge to an independently formalized lattice-gauge library, the parameter passed to that library is \(\beta_{\mathrm{LGT}}=\beta_{\mathrm{submission}}/m\). The bridge proves equality of the finite probability laws under the configuration identification, and the combined theorem ties the same law to the subsequent moments. Such a normalization check is essential: merely naming a measure “Wilson” would not establish that connection. <a href="references/assessment-1-2026-11-10.pdf#page=4" target="_blank" rel="noopener">Assessment, pp. 4–5 ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/checks/CombinedAcceptance.lean" target="_blank" rel="noopener">Finite-law bridge ↗</a></p>
+  <p>The continuum output is a hierarchy of correlations and its reconstructed local quantum fields. The submission does not assert that it has constructed a probability measure \(e^{-S_E[A]}DA\) on a space of continuum gauge potentials. That distinction avoids assigning a literal measure-theoretic meaning to an undefined \(DA\). The precise relationship to Yang–Mills comes through the starting lattice law, the field dictionary, and the quantitative continuum properties described below.</p>
+</section>
+
+<section class="technical-section" id="proof-rg" aria-labelledby="proof-rg-title">
+  <p class="technical-kicker">13 / EXACT RENORMALIZATION GROUP</p>
+  <h2 id="proof-rg-title">Exact blocking and a bounded RG trajectory.</h2>
+  <p>The central mechanism is constructive renormalization. Successively integrate fine degrees of freedom, express the resulting density on a coarser lattice, and control the terms that accumulate. The transfer is an exact integral transformation. In schematic notation, writing \(m+1\) for the finer scale and absorbing the chosen coupling into the blocking kernel,</p>
+  <div id="eq-62" class="technical-equation" role="region" aria-label="Exact transfer of a fine-scale density to a coarse lattice" tabindex="0">\[\rho_m(V)=\int K_m(U,V)\rho_{m+1}(U)\,dU,
+  \qquad \int K_m(U,V)\,dV=1.\]</div>
+  <p>The second identity preserves the partition integral; the source supplies the integrability statements needed to use it. Blocking is not implemented by simply dropping high-frequency modes from a polynomial approximation. The representation has an explicit vacuum term, a canonical action with a distinguished inverse coupling, regular interaction terms, and a polymer-gas factor. Suppressing the extensive indexing and norm parameters, the source’s representation has the form</p>
+  <div id="eq-63" class="technical-equation" role="region" aria-label="Schematic represented density with canonical action and polymer activities" tabindex="0">\[\rho_m(U)=
+  e^{v_m|\Lambda_m|-S_{\mathrm{can},m}(U)-E_m(U)}\,
+  \mathcal G_m(U).\]</div>
+  <p>Here \(\mathcal G_m\) denotes the polymer-gas factor, not the gauge group. The small-field analysis produces a controlled local expansion. Large-field configurations are retained and estimated through the additional activities. The representation’s “lawful” conditions constrain both the action channels and the activities; their envelopes make the exact densities integrable. The difficult task is to keep these bounds valid after many transfers while the scale schedule and the allowed error budgets change. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/RG/History.lean" target="_blank" rel="noopener">Represented histories, <code>Rep</code>, <code>Lawful</code>, and <code>Transfer</code> ↗</a></p>
+  <p>The coupling is the actual scalar in this represented canonical action, with a fixed kinetic normalization. It is not an unrelated number attached to the measure. With \(\ell_m\) the blocking ratio, the history records a bounded departure from the universal leading running:</p>
+  <div id="eq-64" class="technical-equation" role="region" aria-label="Controlled one-step running of the represented inverse coupling" tabindex="0">\[\left|\beta_{m+1}-\beta_m-c_G\log\ell_m\right|\leq d_{m+1},
+  \qquad c_G=\frac{11C_G}{24\pi^2}.\]</div>
+  <p>The cutoff and volume indices are suppressed in this display. \(C_G\) is the adjoint Casimir constant in the submission’s chosen invariant metric. The schedule is selected so that the drift is small relative to the logarithmic step. Its stage index \(J_m\) tends to infinity, and one recorded feasibility requirement is</p>
+  <div id="eq-65" class="technical-equation" role="region" aria-label="A scale-schedule bound making the accumulated drift subleading" tabindex="0">\[\frac{d_{m+1}}{\log\ell_m}\leq \frac1{J_{m+1}^{\,2}},
+  \qquad J_m\longrightarrow\infty.\]</div>
+  <p>This illustrates how scale choices make errors subleading. It is not, by itself, the complete RG induction: the history also has bounds on polymer norms, support, derivatives, small-field thresholds, and compatibility of the represented densities. The resulting theorem gives a volume-uniform asymptotic statement for the endpoint Wilson coupling:</p>
+  <div id="eq-66" class="technical-equation" role="region" aria-label="Volume-uniform leading running of the Wilson coupling" tabindex="0">\[\lim_{N\to\infty}\sup_p
+  \left|\frac{\beta_{N,p}}{\log(a_N^{-1})}-\frac{11C_G}{24\pi^2}\right|=0.\]</div>
+  <p><strong>Where Bałaban enters.</strong> The assessment explicitly describes the proof as following Bałaban’s general approach to the marginal RG map, with improvements including gauge fixing invariant under the discrete lattice symmetries and propagated control of irrelevant terms. This is the concrete connection to his constructive program. The release’s continuum-observable, reconstruction, and identification results require further arguments beyond a bounded partition function or a leading beta coefficient. Nor does the displayed running law assert agreement with perturbation theory to every loop order. <a href="references/assessment-1-2026-11-10.pdf#page=6" target="_blank" rel="noopener">Assessment, p. 6 ↗</a></p>
+</section>
+
+<section class="technical-section" id="proof-observables" aria-labelledby="proof-observables-title">
+  <p class="technical-kicker">14 / RENORMALIZED LOCAL FIELDS</p>
+  <h2 id="proof-observables-title">A common dictionary of local fields.</h2>
+  <p>The proof needs more than one well-behaved observable. It supplies a compatible family of local field labels built from gauge-invariant curvature polynomials and covariant derivatives. Curvature has weight two; each derivative raises the weight by one. Products add weights. At any finite degree cutoff, the raw label space \(V_d\) is finite-dimensional:</p>
+  <div id="eq-67" class="technical-equation" role="region" aria-label="The engineering-degree filtration of local curvature labels" tabindex="0">\[\deg F=2,\qquad \deg D=1,\qquad
+  -\operatorname{Tr}(F_{\mu\nu}F_{\rho\sigma})\in V_4,
+  \quad -\operatorname{Tr}(D_\lambda F_{\mu\nu}D_\kappa F_{\rho\sigma})\in V_6.\]</div>
+  <p>A local section associates a label with a gauge-invariant polynomial \(L_v\) of finitely many nearby links. Its smooth-connection expansion has to reproduce the prescribed curvature data to the required order. This condition is part of <code>C.Makes</code>; a convenient-looking plaquette expression cannot simply be substituted for the actual symmetry-compatible local section. Quantum renormalization then mixes labels within the finite-degree space. For a basis \(v_1,\ldots,v_M\), the renormalized insertion is</p>
+  <div id="eq-68" class="technical-equation" role="region" aria-label="Linear mixing of bare local lattice representatives" tabindex="0">\[I_{N,p}(v,x;U)=\sum_{j=1}^{M}c_j(N,p;v)\,L_{v_j}(x;U).\]</div>
+  <p>The coefficients are linear in the label, depend on both cutoffs, and can diverge as the spacing vanishes. Their role is to make the <em>correlations</em> converge. They are defined using the constructed RG transformations, rather than supplied as explicit Feynman-integral formulae. <a href="references/assessment-1-2026-11-10.pdf#page=5" target="_blank" rel="noopener">Assessment, pp. 5–6 ↗</a></p>
+  <figure class="proof-technical-figure"><img src="assets/proof-mixing.svg" width="600" height="650" loading="lazy" alt="Bare local curvature observables are combined by a cutoff-dependent mixing matrix to produce renormalized insertions and continuum correlations."><figcaption>Renormalization acts on a space of operators. The convergence statement is at fixed physical volume, along the chosen spacing sequence, for separated insertions and the allowed test functions.</figcaption></figure>
+  <p>The committee’s source walkthrough makes the actual formula more explicit. At degree \(d\), let \(B_{d,N,p}\) denote the inverse terminal renormalization followed by the inverse threshold scaling. Both maps are linear equivalences at finite cutoff. With \(\mathcal L_d\) denoting the translated local section,</p>
+  <div id="eq-69" class="technical-equation" role="region" aria-label="The exact insertion formula and finite-cutoff coefficient equivalence" tabindex="0">\[I^{(d)}_{N,p}(v,x)=a_N^{-d}\,
+  \mathcal L_d\!\left(B_{d,N,p}v,x\right),
+  \qquad B_{d,N,p}:V_d\overset{\sim}{\longrightarrow}V_d.\]</div>
+  <p>Finite-cutoff invertibility says no raw coefficient direction is thrown away by this change of basis. It does not bound its inverse uniformly in \(N\), and it does not prove that every raw direction gives a nonzero continuum field. The latter question requires the null-space and faithfulness results. <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/OctoberChain.lean" target="_blank" rel="noopener">OctoberChain, insertion formula and its limitations ↗</a></p>
+  <div id="eq-70" class="technical-equation" role="region" aria-label="Local fields are labels modulo their correlation-null relations" tabindex="0">\[\mathcal F_d=V_d/\mathcal N_d,
+  \qquad \mathcal F=\bigcup_d\mathcal F_d.\]</div>
+  <p>The quotient accounts for relations such as those associated with Bianchi identities and equations of motion, formulated through correlations. The construction identifies this finite-degree field content with a corresponding gauge-invariant free-curvature polynomial space modulo its relations. This is a statement about the vector space of local fields, not equality of interacting and free correlation functions. The same correlation-null spaces occur in every component phase. The accepted reconstruction also supplies dense field words and faithfulness: a nonzero quotient label acts nontrivially for some test function. <a href="references/assessment-1-2026-11-10.pdf#page=4" target="_blank" rel="noopener">Assessment, pp. 4, 8 ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/checks/AcceptanceSpec.lean" target="_blank" rel="noopener">Accepted operator content ↗</a></p>
+</section>
+
+<section class="technical-section" id="proof-uv" aria-labelledby="proof-uv-title">
+  <p class="technical-kicker">15 / THE FIXED-VOLUME ULTRAVIOLET LIMIT</p>
+  <h2 id="proof-uv-title">A Cauchy theorem at fixed physical volume.</h2>
+  <p>Fix a volume index \(p\), a finite list of field labels \(\boldsymbol v=(v_1,\ldots,v_n)\), and a smooth compactly supported joint test function \(f\). Its support lies strictly inside the physical box and avoids every collision \(x_i=x_j\). The test may depend jointly on all insertion points; it need not factor into one-point tests. The finite-cutoff object is a Riemann sum of renormalized lattice moments:</p>
+  <div id="eq-71" class="technical-equation" role="region" aria-label="The smeared lattice correlation whose ultraviolet limit is proved" tabindex="0">\[C_{N,p}(\boldsymbol v;f)=a_N^{4n}\sum_{x_1,\ldots,x_n\in\Lambda_{N,p}}
+  f(a_Nx_1,\ldots,a_Nx_n)\,
+  \mathbb E_{\mu_{N,p}}\!\left[\prod_{j=1}^{n}I_{N,p}(v_j,x_j)\right].\]</div>
+  <p>The power \(a_N^{4n}\) belongs to the integration measure; the engineering dimensions and mixing of the operators are already inside \(I_{N,p}\). Comparing sufficiently fine cutoffs with the common RG normalization establishes the Cauchy property. At this level, its quantifiers read</p>
+  <div id="eq-72" class="technical-equation" role="region" aria-label="The Cauchy assertion at fixed volume, labels, and allowed test" tabindex="0">\[\forall\,\varepsilon&gt;0,\quad\exists\,N_0:\quad
+  \forall\,N,M\geq N_0,\qquad
+  |C_{N,p}(\boldsymbol v;f)-C_{M,p}(\boldsymbol v;f)|&lt;\varepsilon.\]</div>
+  <p>The estimates also control position dependence. One source interface, <code>FixedBounds</code>, quantifies over a finite list of physical field labels, any requested finite list of position differences, and a positive physical separation \(r\). It supplies a bound after some UV threshold, uniformly over all volume indices and configurations satisfying the periodic separation condition. In condensed notation,</p>
+  <div id="eq-73" class="technical-equation" role="region" aria-label="Uniform bounds for fixed labels and finite position differences" tabindex="0">\[\forall\,\boldsymbol v,\alpha,\quad\forall\,r&gt;0,\quad\exists\,B,N_0:\quad
+  \sup_{\substack{N\geq N_0,\ p\\x\ \mathrm{periodically}\ r\text{-separated}}}
+  |\delta_{a_N}^{\alpha}G_{N,p}(\boldsymbol v;x)|\leq B.\]</div>
+  <p>Here \(\alpha\) abbreviates a finite sequence of difference directions, and \(G_{N,p}\) is the lattice correlation kernel. The displayed notation is a summary of that interface, not a claim of one universal bound independent of degree, arity, derivative order, or separation. Those data are fixed <em>before</em> \(B\) and \(N_0\) are chosen. These controls underpin smooth separated-point kernels and the later compactness argument. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Discrete.lean" target="_blank" rel="noopener">Source <code>FixedBounds</code> ↗</a></p>
+  <div id="eq-74" class="technical-equation" role="region" aria-label="The fixed-volume continuum correlation and its smooth separated-point kernel" tabindex="0">\[S_p(\boldsymbol v;f)=\lim_{N\to\infty}C_{N,p}(\boldsymbol v;f)
+  =\int f(x)\,S_p(\boldsymbol v;x)\,d^{4n}x.\]</div>
+  <p>The limit exists along the <strong>entire chosen spacing sequence</strong> \(a_N\). The kernel is smooth away from coincidences modulo \(L_p\mathbb Z^4\). This improves on merely finding a convergent UV subsequence, but it is not regulator universality: the theorem does not say that arbitrary choices of spacing schedule, action, or renormalization prescription produce the same limit. Nor does it establish convergence of these lattice moments on tests meeting collision diagonals. The source has additional contact-extension statements, discussed separately in <a href="#proof-ope">§20</a>. Keeping those claims apart is necessary because ultraviolet singularities are concentrated exactly where these tests are excluded. <a href="references/assessment-1-2026-11-10.pdf#page=6" target="_blank" rel="noopener">Assessment, Theorem 4.1, p. 6 ↗</a></p>
+</section>
+
+<section class="technical-section" id="proof-ir" aria-labelledby="proof-ir-title">
+  <p class="technical-kicker">16 / THE INFINITE-VOLUME EXTRACTION</p>
+  <h2 id="proof-ir-title">Compactness gives existence, not uniqueness.</h2>
+  <p>After taking the UV limit at each fixed physical volume, the construction lets \(L_p\) tend to infinity. This second step has a different logical strength. Fix a compact set \(K\) of distinct-point configurations and a finite label list. For all sufficiently large boxes containing \(K\), the continuum kernels have a common bound and modulus of continuity:</p>
+  <div id="eq-75" class="technical-equation" role="region" aria-label="Local boundedness and equicontinuity uniform in sufficiently large physical volumes" tabindex="0">\[\begin{aligned}
+  \sup_{p\geq p_0(K)}\sup_{x\in K}|S_p(\boldsymbol v;x)|&amp;\leq M_K,\\
+  |S_p(\boldsymbol v;x)-S_p(\boldsymbol v;y)|&amp;\leq\omega_K(|x-y|),
+  \quad\omega_K(r)\longrightarrow0\quad(r\downarrow0).
+  \end{aligned}\]</div>
+  <p>The assessment attributes these estimates to reflection positivity, chessboard estimates, transfer-operator representations, and Cauchy estimates, using the previously established control of the renormalized lattice observables. The abstract compactness machinery is not specific to Yang–Mills; the construction-specific work supplies the bounds that permit its use. Arzelà–Ascoli and a simultaneous extraction then give one subsequence for the entire correlation hierarchy, rather than selecting an unrelated subsequence for each observable. <a href="references/assessment-1-2026-11-10.pdf#page=7" target="_blank" rel="noopener">Assessment, Theorem 5.1, p. 7 ↗</a></p>
+  <div id="eq-76" class="technical-equation" role="region" aria-label="A simultaneous infrared subsequence for all finite label lists and allowed tests" tabindex="0">\[\begin{aligned}
+  &amp;\forall\,p:\mathbb N\nearrow\mathbb N,\quad\exists\,q:\mathbb N\nearrow\mathbb N,
+  \quad\exists\,S_{\mathrm{mix}},\\
+  &amp;\forall\,\boldsymbol v,f,\qquad
+  S_{p(q(k))}(\boldsymbol v;f)\longrightarrow
+  \int f(x)S_{\mathrm{mix}}(\boldsymbol v;x)\,d^{4n}x.
+  \end{aligned}\]</div>
+  <p>The arrows \(\nearrow\) here mean strictly increasing maps of indices. The tests are again smooth, compactly supported, and away from collisions. Once their support is fixed, sufficiently large boxes contain it. The resulting infinite-volume kernels are smooth on the distinct-point configuration space. The theorem guarantees such a refinement for every prescribed increasing volume sequence; it does not identify the limits obtained from different refinements.</p>
+  <figure class="proof-technical-figure"><img src="assets/proof-limits.svg" width="600" height="650" loading="lazy" alt="Two successive cutoff removals: the full chosen lattice-spacing sequence at fixed physical volume, followed by a subsequence of increasing physical volumes."><figcaption>The two arrows have different strengths. The UV limit uses every term of the chosen spacing sequence. The IR limit uses a selected volume subsequence; its uniqueness remains unresolved.</figcaption></figure>
+  <div id="eq-77" class="technical-equation" role="region" aria-label="The order of the two limits defining the mixed continuum hierarchy" tabindex="0">\[S_{\mathrm{mix}}(\boldsymbol v;f)=
+  \lim_{k\to\infty}\left[\lim_{N\to\infty}
+  C_{N,p(q(k))}(\boldsymbol v;f)\right].\]</div>
+  <p>This order is part of the theorem. It does not authorize interchanging the limits or replacing them with an arbitrary joint trajectory \((a,R)\to(0,\infty)\). The notation \(S_{\mathrm{mix}}\) anticipates another issue: the extracted hierarchy need not cluster. The construction therefore supplies additional structure beyond compactness—its local-field content, phase decomposition, reconstruction, stress tensor, and short-distance estimates. Those further results support the existence claim under the committee’s adopted criterion, while leaving the unresolved infrared uniqueness question visible. <a href="references/assessment-1-2026-11-10.pdf#page=1" target="_blank" rel="noopener">Assessment, scope statement ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/OctoberChain.lean" target="_blank" rel="noopener">Accepted construction chain ↗</a></p>
+</section>
+
+<section class="technical-section" id="proof-phases" aria-labelledby="proof-phases-title">
+  <p class="technical-kicker">17 / PHASES AND RECONSTRUCTION</p>
+  <h2 id="proof-phases-title">From an extracted mixture to a vacuum representation.</h2>
+  <p>The infinite-volume extraction produces a Euclidean hierarchy \(S_{\mathrm{mix}}\). Reflection positivity supplies a positive semidefinite form, but the resulting state need not cluster. Its OS reconstruction can therefore have several translation-invariant vectors. The construction resolves this issue inside each extracted theory by decomposing its vacuum sector; it does not prove that the original large-volume sequence selects a unique phase.</p>
+  <p>The relevant algebra is generated by time-translated <em>whole field words</em>, restricted to the ground-state subspace and projected back onto it. Proving this algebra commutative is an analytic step. Its Gelfand representation and the Riesz–Markov theorem then provide a compact metric character space \(X\) and a probability measure \(\nu\):</p>
+  <div id="eq-78" class="technical-equation" role="region" aria-label="The commutative vacuum algebra and its character space" tabindex="0">\[\mathcal A_0\simeq C(X),\qquad
+  \xi(ab)=\xi(a)\xi(b),\qquad \nu(X)=1.\]</div>
+  <p>Evaluating the compressed words at a character defines component correlations. Their relation to the lattice-limit hierarchy is an actual barycenter identity, valid for the stated field labels and test functions:</p>
+  <div id="eq-79" class="technical-equation" role="region" aria-label="The extracted hierarchy as an average over component theories" tabindex="0">\[S_{\mathrm{mix}}(v;f)=\int_X S_\xi(v;f)\,d\nu(\xi).\]</div>
+  <figure class="proof-technical-figure"><img src="assets/proof-phases.svg" width="600" height="650" loading="lazy" alt="An extracted mixed Euclidean hierarchy decomposes over a character space into clustering components, each with its own reconstructed vacuum theory."><figcaption>Phase decomposition supplies a unique vacuum within each component. It does not select a unique component or identify theories obtained from different infinite-volume extractions.</figcaption></figure>
+  <p>Each \(S_\xi\) satisfies the source's Euclidean axioms, including clustering. Analytic continuation and distributional boundary values produce its Wightman functions \(W_\xi\). For the vector space \(\mathcal P\) of finite linear combinations of smeared field words, the Hilbert-space construction is explicit:</p>
+  <div id="eq-80" class="technical-equation" role="region" aria-label="The field-word quotient and Hilbert-space completion" tabindex="0">\[\begin{aligned}
+  \langle u,v\rangle_\xi&amp;=W_\xi(u^*v),&
+  \mathcal N_\xi&amp;=\{u:\langle u,u\rangle_\xi=0\},\\
+  \mathcal H_\xi&amp;=\overline{\mathcal P/\mathcal N_\xi},&
+  \Phi^\xi_v(f)[w]&amp;=[(v,f)w].
+  \end{aligned}\]</div>
+  <p>The empty word is \(\Omega_\xi\); the quotient words form a common dense, invariant domain. The reconstructed fields have the stated adjoints, temperateness, cyclicity, locality, Poincaré covariance and faithfulness. In particular, reconstruction establishes both positive energy and uniqueness of the translation-invariant vector <em>within that component</em>:</p>
+  <div id="eq-81" class="technical-equation" role="region" aria-label="The spectrum condition and component vacuum uniqueness" tabindex="0">\[\operatorname{spec}(P_\xi)\subseteq\overline V_+,\qquad
+  \{\psi:U_\xi(a)\psi=\psi\ \text{for every }a\}
+  =\mathbb C\Omega_\xi.\]</div>
+  <p>The same local-field dictionary is retained across components. Their Wightman boundary distributions act on unrestricted joint Schwartz tests; this is stronger in test-function domain than the separate scalar Euclidean comparison discussed below. The representing measure has full support and the component correlations depend continuously on the character. These facts would identify the components if the mixture itself clustered. They do not prove that it does.</p>
+  <p>There are three distinct uniqueness questions: the vacuum in a reconstructed component, the component within one mixture, and the extracted infinite-volume theory. Only the first is established here. Individual components are also not proved to be periodic finite-volume subsequential limits in their own right. Finally, clustering comes without the exponential rate needed for a mass gap. <a href="references/assessment-1-2026-11-10.pdf#page=8" target="_blank" rel="noopener">Assessment §§6.1–6.2</a>; <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/OctoberChain.lean" target="_blank" rel="noopener">phase and reconstruction walkthrough</a>.</p>
+</section>
+
+<section class="technical-section" id="proof-symmetry" aria-labelledby="proof-symmetry-title">
+  <p class="technical-kicker">18 / SPACETIME SYMMETRY AND NORMALIZATION</p>
+  <h2 id="proof-symmetry-title">Recovering Lorentz symmetry from the lattice.</h2>
+  <h3>What the regulator breaks</h3>
+  <p><strong>The lattice regulator is not Lorentz invariant.</strong> More precisely, the construction starts in Euclidean signature: the symmetry to recover there is continuous Euclidean covariance, before reconstructing a Minkowski theory. At nonzero spacing, a hypercubic lattice singles out coordinate axes. Coordinate permutations, sign changes and lattice translations remain, but arbitrary rotations and arbitrarily small translations do not preserve its sites. Exact lattice <em>gauge</em> invariance concerns the internal description of the fields; it does not supply these missing spacetime symmetries.</p>
+  <p>Nor does the continuum limit alone settle the issue. Taking \(a\to0\) at fixed physical size \(L\) gives a theory on a finite torus, whose identifications still distinguish directions. The target is continuous Euclidean covariance of the <em>continuum, infinite-volume</em> correlations. For scalar labels invariant under \(O(4)\), its orthogonal-and-translation covariance can be written</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Continuous Euclidean covariance of scalar correlation functions" tabindex="0">\[\begin{aligned}
+  S_n^\xi(Qx_1+b,\ldots,Qx_n+b)&amp;=S_n^\xi(x_1,\ldots,x_n),\\
+  Q\in O(4),\qquad b&amp;\in\mathbb R^4.
+  \end{aligned}\]</div>
+  <p>For fields with tensor indices, the corresponding rotation matrices also act on those indices. This is a property to prove for the limiting hierarchy. Convergence of regulated correlations, by itself, says nothing about invariance under transformations absent at finite cutoff.</p>
+  <h3>How the new construction restores the symmetry</h3>
+  <p>The committee's assessment identifies three parts of the argument. They address different possible sources of preferred directions; none can be replaced by the assertion that the lattice becomes arbitrarily fine.</p>
+  <ol>
+    <li><strong>Preserve the available discrete symmetries through gauge fixing.</strong> The proof averages over symmetry-breaking choices so that its gauge fixing respects the lattice symmetries. This prevents the estimates from introducing an additional preferred axis. It is a prerequisite for the later argument, not yet a proof of invariance under arbitrary rotations.</li>
+    <li><strong>Construct a divergence-free stress tensor and local Ward identities.</strong> The source contains both translation and angular shell identities, identifying infinitesimal spacetime transformations inside correlations. The normalized translation identity below is one part: a stress-tensor insertion around a field differentiates its correlation with respect to position. Rotational covariance also needs the angular identities. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Euclid/Stress.lean" target="_blank" rel="noopener">Rotation action and Ward interfaces ↗</a></li>
+    <li><strong>Control the state at infinity.</strong> Local identities alone leave open contributions from distant boundaries and spontaneous breaking in the limiting state. The proof establishes sufficient falloff of stress-energy flux at infinity through reflection positivity in several orthogonal planes. The assessment identifies this as the step establishing that Euclidean invariance is not spontaneously broken.</li>
+  </ol>
+  <p>The last step is why an infrared argument is essential even though the lattice spacing is an ultraviolet regulator. Symmetry of local equations and symmetry of the state are distinct assertions. <a href="references/assessment-1-2026-11-10.pdf#page=9" target="_blank" rel="noopener">Assessment §6.3: Euclidean invariance ↗</a></p>
+  <h3>The stress tensor must generate translations</h3>
+  <p>The tensor belongs to the degree-four local-field sector. Its symmetry, reality, discrete covariance and conservation identify a restricted tensor space; the normalization must still be fixed. At separated insertions, conservation gives the schematic kernel identity</p>
+  <div id="eq-82" class="technical-equation" role="region" aria-label="Stress-tensor conservation away from insertion collisions" tabindex="0">\[\sum_{\mu=0}^{3}\partial_{y^\mu}
+  S^\xi_{T_{\mu\nu},v}(y,x)=0,
+  \qquad y\notin\{x_0,\ldots,x_n\}.\]</div>
+  <p>Conservation alone would survive \(T\mapsto cT\), so it cannot normalize the operator. Choose a smooth compactly supported window \(\chi\), equal to one near a central insertion \(x_0\), whose support avoids all spectator positions. Its derivative lies in a shell separated from every insertion. The checked translation identity is</p>
+  <div id="eq-83" class="technical-equation" role="region" aria-label="The normalized translation Ward identity" tabindex="0">\[\begin{aligned}
+  &amp;-\sum_{\mu=0}^{3}\int_{\mathbb R^4}d^4y\,
+  (\partial_\mu\chi)(y)\,
+  S^\xi_{T_{\mu\nu},v_0,\ldots,v_n}
+       (y,x_0,\ldots,x_n)\\
+  &amp;\hspace{2em}=
+  \partial_{x_0^\nu}
+  S^\xi_{v_0,\ldots,v_n}(x_0,\ldots,x_n).
+  \end{aligned}\]</div>
+  <p>The minus sign and unit coefficient are part of the theorem. It applies to every central quotient field, every finite spectator word and every character phase, using the same tensor. The proof first identifies the shell insertion with the abstract field derivative, then identifies that derivative with differentiation of the correlation kernel. This second step connects the algebraic field dictionary to actual spacetime translations.</p>
+  <p>The committee's adapter separately checks existence of admissible windows and integrability of the shell integrand. Smoothness away from coincidences and compact support make the integral well defined. Calling the left-hand side \(Q^\chi_\nu[v;x]\), any two admissible windows give</p>
+  <div id="eq-84" class="technical-equation" role="region" aria-label="Independence of the admissible Ward window" tabindex="0">\[Q^{\chi_1}_\nu[v;x]
+  =Q^{\chi_2}_\nu[v;x]
+  =\partial_{x_0^\nu}S^\xi_v(x).\]</div>
+  <p>Physically, the flux through a surrounding shell generates translation of the enclosed field. This fixes its translation charge and prevents an arbitrary rescaling of the stress tensor when comparing short-distance amplitudes. It does not eliminate every possible improvement: an improvement may leave that charge unchanged. Nor does a separated-insertion shell identity supply an unrestricted contact-term prescription or a dilation Ward identity. Those require additional arguments. <a href="references/assessment-1-2026-11-10.pdf#page=9" target="_blank" rel="noopener">Assessment §§6.3–7.1</a>; <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/TranslationWard-20261028.lean" target="_blank" rel="noopener">exact Ward identity and scope</a>.</p>
+  <h3>From Euclidean covariance to Lorentz covariance</h3>
+  <p>Euclidean rotations are not Lorentz boosts on the original lattice. After Euclidean covariance, reflection positivity and the required regularity and growth properties are established, analytic continuation and OS reconstruction produce the relativistic theory. Its Hilbert space carries a strongly continuous unitary action of the proper orthochronous Poincaré group. For a scalar field, the resulting covariance reads, in the distributional sense,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Lorentz and translation covariance of a reconstructed scalar field" tabindex="0">\[\begin{aligned}
+  U_\xi(\Lambda,b)\,\Phi_\xi(x)\,U_\xi(\Lambda,b)^{-1}
+  &amp;=\Phi_\xi(\Lambda x+b),\\
+  \Lambda\in SO^+(1,3),\qquad b&amp;\in\mathbb R^{1,3}.
+  \end{aligned}\]</div>
+  <p>Tensor fields transform with their Lorentz representations as well. Thus Lorentz covariance belongs to the reconstructed Minkowski fields, and depends on the proved Euclidean properties. A formal substitution of imaginary time, without those properties, would not establish a positive Hilbert space or a unitary relativistic theory. This recovery of spacetime symmetry is part of the existence construction; it does not establish a mass gap. <a href="references/assessment-1-2026-11-10.pdf#page=8" target="_blank" rel="noopener">Assessment §6.1: relativistic reconstruction ↗</a></p>
+</section>
+
+<section class="technical-section" id="proof-identification" aria-labelledby="proof-identification-title">
+  <p class="technical-kicker">19 / IDENTIFYING THE INTERACTION</p>
+  <h2 id="proof-identification-title">A quantitative logarithm in the stress-trace correlator.</h2>
+  <p>The axioms of a relativistic field theory do not identify Yang–Mills by themselves. The released construction starts from its Wilson law and retains its invariant-polynomial field labels. A more quantitative discriminator is the centered trace of the normalized stress tensor in the selected phase \(\xi_*\):</p>
+  <div id="eq-85" class="technical-equation" role="region" aria-label="The centered trace in the selected phase" tabindex="0">\[\Theta=\sum_{\mu=0}^{3}T_{\mu\mu}
+  -S_{\xi_*}\!\left(\sum_{\mu=0}^{3}T_{\mu\mu}\right)\mathbf1.\]</div>
+  <p>In fixed reference length units, the theorem proves the full positive-distance limit</p>
+  <div id="eq-86" class="technical-equation" role="region" aria-label="The leading logarithmic stress-trace two-point law" tabindex="0">\[\lim_{r\downarrow0}r^8\log^2(1/r)\,
+  \left\langle\Theta(-re_0/2)\Theta(re_0/2)\right\rangle_{\xi_*}
+  =\frac{3\,\dim_{\mathbb R}\mathfrak g}{\pi^4}>0.\]</div>
+  <p>This is not merely convergence on a selected sequence of separations. The proof combines a renormalization-group comparison with the free curvature-square field and a logarithmic clock, then uses spectral monotonicity to upgrade the controlled comparison to the full limit. The committee also identifies the radial kernel, giving the corresponding limit for arbitrary nonzero displacement tending to zero.</p>
+  <p>Centering removes the phase's finite one-point function. This changes the disconnected constant in the two-point function, but cannot change the leading singularity after multiplication by \(r^8\log^2(1/r)\), which tends to zero.</p>
+  <p>The numerical coefficient has a useful perturbative explanation, explicitly separate from that analytic proof. For this comparison only, use canonically normalized component fields, with the coupling in the nonlinear curvature term. This differs from the release's anti-Hermitian connection with the coupling outside the action. With ordered spacetime indices summed, free Wick contraction gives</p>
+  <div id="eq-87" class="technical-equation" role="region" aria-label="The free curvature-square normalization used for comparison" tabindex="0">\[Q=F^a_{\mathrm{can},\mu\nu}F^a_{\mathrm{can},\mu\nu},
+  \qquad
+  \langle Q(x)Q(0)\rangle_{\mathrm{free},c}
+  =\frac{48\,\dim\mathfrak g}{\pi^4|x|^8}.\]</div>
+  <p>Writing \(\ell=\log(1/(\Lambda r))\), one-loop running and the trace-anomaly normalization then predict</p>
+  <div id="eq-88" class="technical-equation" role="region" aria-label="Why the trace coefficient is three times the Lie-algebra dimension" tabindex="0">\[\begin{aligned}
+  \beta_g(g)&amp;=-b_0g^3+O(g^5),&
+  g^2(1/r)&amp;\sim\frac{1}{2b_0\ell},\\
+  T^\mu{}_\mu&amp;=\frac{\beta_g(g)}{2g}[Q]
+                 \sim-\frac{[Q]}{4\ell},&
+  \frac{48}{4^2}&amp;=3.
+  \end{aligned}\]</div>
+  <p>A fixed \(\Lambda&gt;0\) shifts the logarithm by a constant and leaves the leading limit unchanged. Notice that \(b_0\) cancels: this amplitude alone does not independently verify the numerical Yang–Mills beta-function coefficient. The separate effective-coupling result addresses that coefficient.</p>
+  <p>The positive amplitude proves that this trace observable is nontrivial. Its inverse logarithm squared also excludes the formalized class of finite Wick-polynomial constructions from fixed-mass free fields. The scope matters: this is not an exclusion of every continuous-mass generalized free field. Likewise, the leading ultraviolet comparison is not a proof of agreement with every perturbative coefficient for every local field. <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/LeadingTrace-20261028.lean" target="_blank" rel="noopener">Trace theorem, coefficient derivation and limitations</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/TraceExtension/Wick/Refute.lean" target="_blank" rel="noopener">finite-free obstruction</a>.</p>
+</section>
+
+<section class="technical-section" id="proof-ope" aria-labelledby="proof-ope-title">
+  <p class="technical-kicker">20 / LOCAL PRODUCTS AND COLLISIONS</p>
+  <h2 id="proof-ope-title">An OPE with controlled finite remainders.</h2>
+  <p>Let \(v_i\) be a cluster of fields with filtration degrees \(d_i\), total degree \(w=\sum_i d_i\), and let \(u_j\) be separated spectator fields. The construction supplies output fields \(o_\alpha\), finitely many at each degree \(d_\alpha\), and coefficient functions \(C_\alpha\). These are chosen before the phase, spectators or truncation degree. For every \(\varepsilon&gt;0\), the coefficient estimate has the form</p>
+  <div id="eq-89" class="technical-equation" role="region" aria-label="The small-distance bound on OPE coefficients" tabindex="0">\[|C_\alpha(v;rx)|
+  \lesssim r^{d_\alpha-w-\varepsilon},
+  \qquad 0&lt;r&lt;\rho.\]</div>
+  <p>The cluster shape stays away from additional collisions while all its distances shrink proportionally to \(r\). Spectators stay a fixed positive distance from the expansion center and from one another. For every finite degree cutoff \(D\), the correlation expansion and remainder satisfy</p>
+  <div id="eq-90" class="technical-equation" role="region" aria-label="The common OPE and its controlled remainder" tabindex="0">\[\begin{aligned}
+  S^s_{v,u}(rx,y)
+  &amp;=\sum_{d_\alpha\le D}
+  C_\alpha(v;rx)\,S^s_{o_\alpha,u}(0,y)+R_D^s,\\
+  |R_D^s|&amp;\lesssim r^{D+1-w-\varepsilon}.
+  \end{aligned}\]</div>
+  <p>Here \(s\) can be the mixture or any character phase. The radius can be chosen uniformly over those states and the allowed geometries, once the labels, cutoff and geometric bounds are fixed. The arbitrarily small exponent loss accommodates logarithms. Filtration degree is not an assertion of an exact interacting scaling dimension.</p>
+  <p>Common coefficients leave room for different phases: the expectation values of the output fields can still differ. Independence from the choice of extracted infinite-volume limit is not proved either. Crucially, “every finite \(D\)” is a controlled asymptotic expansion, not convergence of an infinite operator series. \(D\) counts field degree, not loop order; this theorem does not compute all perturbative OPE coefficients. Nested expansions require their stated separation and scale conditions.</p>
+  <p>The OPE also supports extensions across collision diagonals. With \(\Delta_n=\bigcup_{i&lt;j}\{x_i=x_j\}\), the extension has the schematic distributional meaning</p>
+  <div id="eq-91" class="technical-equation" role="region" aria-label="Extension of correlations across collision diagonals" tabindex="0">\[\widetilde S_n\in\mathcal D'((\mathbb R^4)^n),
+  \qquad
+  \widetilde S_n\big|_{(\mathbb R^4)^n\setminus\Delta_n}=S_n.\]</div>
+  <p>This does not establish uniqueness of the extension, its full OS axioms, or direct lattice convergence on tests crossing the diagonals. Contact distributions supported on \(\Delta_n\) are invisible away from collisions. This also explains a limitation of the independent scalar OS comparison, which uses diagonal-flat Schwartz tests:</p>
+  <div id="eq-92" class="technical-equation" role="region" aria-label="The diagonal-flat Euclidean Schwartz test space" tabindex="0">\[\mathcal S_0
+  =\{f\in\mathcal S((\mathbb R^4)^n):
+  \partial^\alpha f|_{\Delta_{ij}}=0
+  \text{ for every }\alpha,\ i&lt;j\}.\]</div>
+  <p>Such tests cannot determine contact counterterms. Their role in this Euclidean comparison should not be confused with the unrestricted Schwartz domain of the reconstructed Wightman boundary distributions. <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/CommonOPE-20261028.lean" target="_blank" rel="noopener">Coefficient, remainder and phase-uniformity checks</a>; <a href="references/assessment-1-2026-11-10.pdf#page=12" target="_blank" rel="noopener">assessment §7.5</a>.</p>
+</section>
+
+<section class="technical-section" id="proof-validation" aria-labelledby="proof-validation-title">
+  <p class="technical-kicker">21 / VALIDATION AND THE REMAINING PROBLEM</p>
+  <h2 id="proof-validation-title">What was checked—and what remains to prove.</h2>
+  <p>The committee's combined acceptance target retains one native construction witness for its physical checks, with the group, penalty and extraction quantifiers stated in §11. The logical distinction is that one object must satisfy the conjunction:</p>
+  <div id="eq-93" class="technical-equation" role="region" aria-label="One witness for all checks is stronger than separate existence claims" tabindex="0">\[\exists F\,\bigwedge_j\mathcal A_j(F)
+  \ \Longrightarrow\
+  \bigwedge_j\exists F_j\,\mathcal A_j(F_j),
+  \qquad\text{converse not automatic}.\]</div>
+  <p>Here \(F\) is attached to the same Wilson family, extraction and field table throughout. This prevents different requirements from being satisfied by unrelated theories. The combined target includes the lattice-law bridge, scalar OS comparison, operator dictionary, normalized Ward identity, leading trace law and source conclusions. The independent OS bridge specifically checks the selected centered trace-scalar hierarchy, including arity-linear growth; it is not an independently specified all-field OS interface.</p>
+  <p>The additional explicit OPE target has its own endpoint. It combines public properties and OPE bounds on one hierarchy, but its existential witness is not automatically identified with the combined target's witness. Its adapter can instead be applied directly when a particular hierarchy's source OPE is available.</p>
+  <p>The released records report a clean Lean 4.32.0 rebuild of 9,470 project modules with zero errors, an axiom audit, and Comparator passes for the public, combined and OPE endpoints on October 30, November 3 and November 5. Comparator checked statements, definitions, permitted axioms and proofs with its built-in Lean kernel. The macOS runs did not test Linux process isolation or use an additional external kernel implementation. The permitted proof dependencies were <code>propext</code>, <code>Classical.choice</code> and <code>Quot.sound</code>. Deliberate reference stubs and negative controls are distinguished from accepted solution dependencies.</p>
+  <p>These are the committee's recorded checks. Kernel acceptance checks implications from formal definitions. The committee's human review addresses whether those definitions capture the intended mathematics, and explicitly describes that review as extensive rather than exhaustive. <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/checks.md" target="_blank" rel="noopener">Check scope and witness distinctions</a>; <a href="references/assessment-1-2026-11-10.pdf#page=14" target="_blank" rel="noopener">validation records and review limits</a>.</p>
+  <p>In particular, retaining a source conclusion in a larger accepted theorem does not independently validate every definition it contains. The separate adapters make selected comparisons explicit; their success should be read at that stated scope.</p>
+  <p>The central missing infrared estimate is still a strictly positive spectral gap. With the vacuum projector removed, one would need</p>
+  <div id="eq-94" class="technical-equation" role="region" aria-label="The spectral-gap estimate not established by the release" tabindex="0">\[H_\xi\ge\Delta
+  \bigl(1-|\Omega_\xi\rangle\langle\Omega_\xi|\bigr),
+  \qquad \Delta&gt;0.\]</div>
+  <p>Clustering alone is weaker. As an elementary spectral illustration, a measure with support arbitrarily close to zero can give a decaying correlation without any exponential gap:</p>
+  <div id="eq-95" class="technical-equation" role="region" aria-label="A decaying spectral correlation without a gap" tabindex="0">\[\int_0^\infty e^{-tE}E^\alpha e^{-E}\,dE
+  =\frac{\Gamma(\alpha+1)}{(1+t)^{\alpha+1}}
+  \longrightarrow0,\qquad \alpha&gt;-1.\]</div>
+  <p>The release also leaves open uniqueness of the infinite-volume limit, a continuum probability measure, construction and area laws for Wilson loops, single-particle spectral analysis, and full perturbative agreement. The positive short-distance probe is not a substitute for an intrinsic spectral mass. The achievement described here is the reported existence construction with these precise limitations; the full Millennium existence-and-mass-gap problem remains open. <a href="references/assessment-1-2026-11-10.pdf#page=13" target="_blank" rel="noopener">Assessment §8: open questions</a>.</p>
+</section>
+        <section class="technical-section" id="technical-references" aria-labelledby="technical-references-title">
+          <p class="technical-kicker">THE READING DESK</p>
+          <h2 id="technical-references-title">Primary sources &amp; further reading</h2>
+          <p>Read the original hypotheses alongside the explanations. Part II links to fixed revisions of both release repositories, so the claims remain traceable if their default branches change. The assessment is also available locally.</p>
+          <ol class="technical-reading">
+            <li id="ref-clay"><strong><span class="source-number">[1]</span> Arthur Jaffe &amp; Edward Witten · Quantum Yang–Mills Theory</strong><a href="references/yangmills.pdf#page=5" target="_blank" rel="noopener">Read the supplied official exposition ↗</a><p>§§3–4 give the axiomatic setting and prize problem (PDF pp. 5–6). §§5–6 separate the mass gap from further physical properties and explain the constructive program.</p></li>
+            <li id="ref-wilson"><strong><span class="source-number">[2]</span> Kenneth G. Wilson · Confinement of quarks (1974)</strong><a href="https://doi.org/10.1103/PhysRevD.10.2445" target="_blank" rel="noopener">Physical Review D 10, 2445–2459 ↗</a><p>The lattice formulation, loop observables, and the relation between confinement and the area law.</p></li>
+            <li id="ref-os"><strong><span class="source-number">[3]</span> Konrad Osterwalder &amp; Robert Schrader · Axioms for Euclidean Green’s functions</strong><a href="https://doi.org/10.1007/BF01645738" target="_blank" rel="noopener">Part I (1973) ↗</a> · <a href="https://doi.org/10.1007/BF01608978" target="_blank" rel="noopener">Part II (1975) ↗</a><p>Read both papers: Part II corrects and extends the reconstruction results. Positivity must be accompanied by the appropriate regularity and growth assumptions.</p></li>
+            <li id="ref-balaban"><strong><span class="source-number">[4]</span> Tadeusz Bałaban, John Imbrie &amp; Arthur Jaffe · Exact Renormalization Group for Gauge Theories (1984)</strong><a href="references/balaban.pdf" target="_blank" rel="noopener">Read the supplied chapter ↗</a><p>An introduction to exact block transformations and ultraviolet control. Its main worked setting is the abelian Higgs model in two or three dimensions; it is not itself a four-dimensional pure Yang–Mills existence proof.</p><p>For the later four-dimensional analysis, see Bałaban, <a href="https://doi.org/10.1007/BF01215223" target="_blank" rel="noopener">Renormalization group approach to lattice gauge field theories I (1987) ↗</a>, and <a href="https://doi.org/10.1007/BF01238433" target="_blank" rel="noopener">Large field renormalization II (1989) ↗</a>. Read the stated effective-coupling hypothesis in Theorem 1 of the latter.</p></li>
+            <li id="ref-greensite"><strong><span class="source-number">[5]</span> Jeff Greensite · The Confinement Problem in Lattice Gauge Theory (2003)</strong><a href="references/0301023v2.pdf#page=2" target="_blank" rel="noopener">Read the supplied review ↗</a><p>Start with §2 for confinement criteria and then the discussions of center symmetry, Wilson loops, screening, and string breaking.</p></li>
+            <li id="ref-gross"><strong><span class="source-number">[6]</span> David J. Gross &amp; Frank Wilczek · Ultraviolet Behavior of Non-Abelian Gauge Theories (1973)</strong><a href="https://doi.org/10.1103/PhysRevLett.30.1343" target="_blank" rel="noopener">Physical Review Letters 30, 1343–1346 ↗</a><p>The original asymptotic-freedom result.</p></li>
+            <li id="ref-politzer"><strong><span class="source-number">[7]</span> H. David Politzer · Reliable Perturbative Results for Strong Interactions? (1973)</strong><a href="https://doi.org/10.1103/PhysRevLett.30.1346" target="_blank" rel="noopener">Physical Review Letters 30, 1346–1349 ↗</a><p>The independent original calculation establishing asymptotic freedom.</p></li>
+            <li id="ref-pdg"><strong><span class="source-number">[8]</span> Particle Data Group · Quantum Chromodynamics</strong><a href="https://pdg.lbl.gov/2025/reviews/rpp2025-rev-qcd.pdf" target="_blank" rel="noopener">Review of Particle Physics, QCD review (2025) ↗</a><p>Conventions for the beta function, running coupling, and the scale parameter. The notes specialize to pure gauge theory with no dynamical quarks.</p></li>
+            <li id="ref-assessment"><strong><span class="source-number">[9]</span> Yang–Mills group · Validation of the OpenAI Yang–Mills construction</strong><a href="references/assessment-1-2026-11-10.pdf" target="_blank" rel="noopener">Read the November 10, 2026 assessment ↗</a> · <a href="https://github.com/yang-mills-group/YM/tree/55ba9fc36293b3f4d52c6b1f813169a0be76ee98" target="_blank" rel="noopener">Pinned review repository ↗</a><p>Part I states the construction and its limits; Part II records the formal verification, independent checks, and their scope. Revision <code>55ba9fc36293b3f4d52c6b1f813169a0be76ee98</code>. The committee describes this as an initial assessment and does not claim to fully understand the proof.</p></li>
+            <li id="ref-submission"><strong><span class="source-number">[10]</span> OpenAI · October 28, 2026 Yang–Mills submission</strong><a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/tree/3456e5e75cf8d4cd558955a5c7638fba2d68f464" target="_blank" rel="noopener">Pinned original source repository ↗</a><p>The released Lean source underlying this walkthrough, revision <code>3456e5e75cf8d4cd558955a5c7638fba2d68f464</code>. The explanations here are based on the assessment and source reading.</p></li>
+          </ol>
+        </section>
+        <a class="technical-endlink" href="index.html">Return to the visual field guide <span aria-hidden="true">↗</span></a>
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer page-width"><a class="footer-brand" href="index.html">Yang–Mills, <em>made visible.</em></a><p>An independent field guide.<br>Foundations and a first reading of the released proof.</p><a href="#top" class="back-top">Back to top ↑</a></footer>
+  <noscript><div class="noscript-note">All technical text and references are available. Enable JavaScript to typeset the equations.</div></noscript>
+</body>
+</html>

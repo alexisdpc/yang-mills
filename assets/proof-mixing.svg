@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="650" viewBox="0 0 600 650" role="img" aria-labelledby="mixing-title mixing-desc">
+  <title id="mixing-title">Renormalizing local composite fields through operator mixing</title>
+  <desc id="mixing-desc">Start with local gauge-invariant lattice representatives in a fixed finite-degree field space. A cutoff- and volume-dependent mixing matrix combines their coefficients to form a renormalized insertion I sub v. These coefficients include the appropriate powers of the spacing and can diverge as the cutoff is removed. The proof controls correlations of the resulting insertions, rather than requiring each bare field or mixing coefficient to have a finite limit. The displayed three fields and matrix entries are schematic; the field space can have another dimension.</desc>
+  <defs>
+    <marker id="mixing-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#2e8177" stroke-width="1.5" stroke-linejoin="round"/></marker>
+  </defs>
+  <rect width="600" height="650" rx="16" fill="#f8f8f2"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#0b3537">
+    <text x="32" y="45" font-size="28" font-weight="600">Renormalizing local fields</text>
+    <rect x="32" y="78" width="536" height="127" rx="10" fill="#e8f0e8"/>
+    <text x="300" y="115" text-anchor="middle" font-size="25">Local lattice representatives</text>
+    <rect x="64" y="135" width="128" height="48" rx="7" fill="#fdfdf8" stroke="#bfd1c4"/>
+    <rect x="236" y="135" width="128" height="48" rx="7" fill="#fdfdf8" stroke="#bfd1c4"/>
+    <rect x="408" y="135" width="128" height="48" rx="7" fill="#fdfdf8" stroke="#bfd1c4"/>
+    <text x="128" y="169" text-anchor="middle" font-family="Georgia, serif" font-size="31">O₁</text>
+    <text x="300" y="169" text-anchor="middle" font-family="Georgia, serif" font-size="31">O₂</text>
+    <text x="472" y="169" text-anchor="middle" font-family="Georgia, serif" font-size="31">O₃</text>
+    <g fill="none" stroke="#2e8177" stroke-width="1.4" opacity=".45">
+      <path d="M128 206C128 230 128 236 128 260M128 206C128 230 300 236 300 260M128 206C128 230 472 236 472 260"/>
+      <path d="M300 206C300 230 128 236 128 260M300 206V260M300 206C300 230 472 236 472 260"/>
+      <path d="M472 206C472 230 128 236 128 260M472 206C472 230 300 236 300 260M472 206V260"/>
+    </g>
+    <rect x="32" y="261" width="536" height="144" rx="10" fill="#0b3537"/>
+    <text x="300" y="300" text-anchor="middle" font-size="26" fill="#f8f8f2">Cutoff-dependent mixing Z(a, L)</text>
+    <g fill="#b8d3c5">
+      <circle cx="80" cy="331" r="4"/><circle cx="105" cy="331" r="4"/><circle cx="130" cy="331" r="4"/>
+      <circle cx="80" cy="352" r="4"/><circle cx="105" cy="352" r="4" fill="#e4b673"/><circle cx="130" cy="352" r="4"/>
+      <circle cx="80" cy="373" r="4"/><circle cx="105" cy="373" r="4"/><circle cx="130" cy="373" r="4"/>
+    </g>
+    <path d="M66 321H58V382H66M144 321H152V382H144" fill="none" stroke="#b8d3c5" stroke-width="1.5"/>
+    <text x="344" y="362" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#d7eadb">I<tspan baseline-shift="sub" font-size="22">v</tspan><tspan baseline-shift="baseline"> = ∑</tspan><tspan baseline-shift="sub" font-size="22">j</tspan><tspan baseline-shift="baseline"> Z</tspan><tspan baseline-shift="sub" font-size="22">vj</tspan><tspan baseline-shift="baseline"> O</tspan><tspan baseline-shift="sub" font-size="22">j</tspan></text>
+    <path d="M300 406V458" stroke="#2e8177" stroke-width="2" marker-end="url(#mixing-arrow)"/>
+    <rect x="32" y="473" width="536" height="91" rx="10" fill="#e8f0e8" stroke="#2e8177"/>
+    <text x="300" y="511" text-anchor="middle" font-size="27">Renormalized local insertions</text>
+    <text x="300" y="544" text-anchor="middle" font-size="24" fill="#2e8177">Their correlations converge as a → 0.</text>
+    <text x="300" y="602" text-anchor="middle" font-size="24">The coefficients may diverge.</text>
+    <text x="300" y="631" text-anchor="middle" font-size="24" fill="#5c716d">The correlations remain controlled.</text>
+  </g>
+</svg>

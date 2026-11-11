@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="650" viewBox="0 0 600 650" role="img" aria-labelledby="limits-title limits-desc">
+  <title id="limits-title">Two limits with different convergence guarantees</title>
+  <desc id="limits-desc">At a fixed physical volume L sub p, renormalized Wilson lattice correlations converge along the entire spacing sequence a sub N chosen by the construction. This gives continuum correlations S sub p. Sending the volume to infinity then requires a subsequence. A solid branch shows one extracted mixed limit; a dotted branch indicates that different volume subsequences have not been proved to give the same limit. The branch is schematic, not evidence that distinct limits actually exist.</desc>
+  <defs>
+    <marker id="limits-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#2e8177" stroke-width="1.5" stroke-linejoin="round"/></marker>
+    <marker id="limits-maybe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#b88144" stroke-width="1.5" stroke-linejoin="round"/></marker>
+  </defs>
+  <rect width="600" height="650" rx="16" fill="#f8f8f2"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#0b3537">
+    <text x="32" y="45" font-size="28" font-weight="600">Two limits, two guarantees</text>
+    <rect x="32" y="78" width="536" height="150" rx="10" fill="#0b3537"/>
+    <g stroke="#a9d0bc" stroke-width="1.4" opacity=".65" fill="none">
+      <path d="M57 110H137M57 130H137M57 150H137M57 170H137M57 190H137M57 110V190M77 110V190M97 110V190M117 110V190M137 110V190"/>
+      <path d="M77 130H97V150H77Z" stroke="#e4b673" stroke-width="3" opacity="1"/>
+    </g>
+    <text x="163" y="116" font-size="26" fill="#f8f8f2">Wilson lattice correlations</text>
+    <text x="163" y="161" font-family="Georgia, serif" font-size="34" fill="#d7eadb">a<tspan baseline-shift="sub" font-size="22">N</tspan><tspan baseline-shift="baseline"> → 0</tspan></text>
+    <text x="163" y="201" font-size="24" fill="#c6dcd1">Fixed physical volume L<tspan baseline-shift="sub" font-size="16">p</tspan></text>
+    <path d="M300 231V287" stroke="#2e8177" stroke-width="2" marker-end="url(#limits-arrow)"/>
+    <rect x="69" y="242" width="462" height="31" fill="#f8f8f2"/>
+    <text x="300" y="265" text-anchor="middle" font-size="24" fill="#2e8177">UV: the full chosen spacing sequence</text>
+    <rect x="32" y="301" width="536" height="87" rx="10" fill="#e8f0e8" stroke="#c4d5c8"/>
+    <text x="300" y="337" text-anchor="middle" font-size="27">Continuum correlations S<tspan baseline-shift="sub" font-size="18">p</tspan></text>
+    <text x="300" y="369" text-anchor="middle" font-size="24" fill="#5c716d">One fixed physical volume</text>
+    <path d="M300 389V442H164V479" fill="none" stroke="#2e8177" stroke-width="2" marker-end="url(#limits-arrow)"/>
+    <path d="M300 442H438V479" fill="none" stroke="#b88144" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#limits-maybe)"/>
+    <rect x="113" y="402" width="374" height="31" fill="#f8f8f2"/>
+    <text x="300" y="425" text-anchor="middle" font-size="24" fill="#2e8177">IR: extract a volume subsequence</text>
+    <rect x="32" y="492" width="264" height="84" rx="10" fill="#e8f0e8" stroke="#2e8177"/>
+    <text x="164" y="530" text-anchor="middle" font-family="Georgia, serif" font-size="32">S<tspan baseline-shift="sub" font-size="21">mix</tspan></text>
+    <text x="164" y="560" text-anchor="middle" font-size="24">An extracted limit</text>
+    <rect x="312" y="492" width="256" height="84" rx="10" fill="#f6efe4" stroke="#b88144" stroke-dasharray="5 6"/>
+    <text x="440" y="529" text-anchor="middle" font-size="25">Another limit?</text>
+    <text x="440" y="559" text-anchor="middle" font-size="24" fill="#805a31">Not ruled out</text>
+    <text x="300" y="619" text-anchor="middle" font-size="24">Infinite-volume uniqueness is open.</text>
+  </g>
+</svg>

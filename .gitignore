@@ -1,0 +1,23 @@
+# Local proof-source clones and research material
+/upstream/
+
+# Generated website output, previews and temporary work
+/dist/
+/.preview/
+/tmp/
+node_modules/
+*.log
+
+# Local configuration, credentials and editor state
+.env
+.env.*
+!.env.example
+/.codex/
+/.agents/
+/.vscode/
+/.idea/
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

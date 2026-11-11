@@ -1,0 +1,20 @@
+Local webfont assets
+
+DM Sans: Google Fonts, latin subset, normal variable weight 400-700.
+Instrument Serif: Google Fonts, latin subset, normal and italic weight 400.
+Both families distributed under SIL Open Font License 1.1; see adjacent OFL files.
+
+dm-sans-latin.woff2
+https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2
+
+instrument-serif-latin.woff2
+https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zUTjg.woff2
+
+instrument-serif-italic-latin.woff2
+https://fonts.gstatic.com/s/instrumentserif/v5/jizHRFtNs2ka5fXjeivQ4LroWlx-6zAjjH7M.woff2
+
+DM-Sans-OFL.txt
+https://raw.githubusercontent.com/google/fonts/main/ofl/dmsans/OFL.txt
+
+Instrument-Serif-OFL.txt
+https://raw.githubusercontent.com/google/fonts/main/ofl/instrumentserif/OFL.txt

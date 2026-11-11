@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="650" viewBox="0 0 600 650" role="img" aria-labelledby="phases-title phases-desc">
+  <title id="phases-title">Decomposing a mixed limit into clustering components</title>
+  <desc id="phases-desc">The mixed infinite-volume Euclidean correlations are an integral of component correlations over characters of a commutative vacuum-sector algebra. Each component clusters and admits a Wightman reconstruction with a unique vacuum within that component. Three branches are drawn only to illustrate the decomposition. Neither three distinct phases, nor a unique phase, nor equality of the component theories is asserted. The proof does not establish that each individual phase is itself a limit of the original periodic finite-volume states.</desc>
+  <defs>
+    <marker id="phase-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#2e8177" stroke-width="1.5" stroke-linejoin="round"/></marker>
+  </defs>
+  <rect width="600" height="650" rx="16" fill="#f8f8f2"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#0b3537">
+    <text x="32" y="45" font-size="28" font-weight="600">From a mixture to phases</text>
+    <rect x="32" y="78" width="536" height="116" rx="10" fill="#0b3537"/>
+    <text x="300" y="116" text-anchor="middle" font-size="26" fill="#f8f8f2">Mixed Euclidean correlations</text>
+    <text x="300" y="163" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#d7eadb">S<tspan baseline-shift="sub" font-size="22">mix</tspan><tspan baseline-shift="baseline"> = ∫ S</tspan><tspan baseline-shift="sub" font-size="22">ξ</tspan><tspan baseline-shift="baseline"> dν(ξ)</tspan></text>
+    <path d="M300 195V224M108 224H492M108 224V257M300 224V257M492 224V257" fill="none" stroke="#2e8177" stroke-width="2"/>
+    <path d="M108 249V263" stroke="#2e8177" stroke-width="2" marker-end="url(#phase-arrow)"/>
+    <path d="M300 249V263" stroke="#2e8177" stroke-width="2" marker-end="url(#phase-arrow)"/>
+    <path d="M492 249V263" stroke="#2e8177" stroke-width="2" marker-end="url(#phase-arrow)"/>
+    <rect x="24" y="277" width="168" height="101" rx="10" fill="#e8f0e8" stroke="#c4d5c8"/>
+    <rect x="216" y="277" width="168" height="101" rx="10" fill="#e8f0e8" stroke="#c4d5c8"/>
+    <rect x="408" y="277" width="168" height="101" rx="10" fill="#e8f0e8" stroke="#c4d5c8"/>
+    <circle cx="108" cy="298" r="4" fill="#b88144"/><circle cx="300" cy="298" r="4" fill="#b88144"/><circle cx="492" cy="298" r="4" fill="#b88144"/>
+    <text x="108" y="329" text-anchor="middle" font-size="27">Phase ξ₁</text>
+    <text x="300" y="329" text-anchor="middle" font-size="27">Phase ξ₂</text>
+    <text x="492" y="329" text-anchor="middle" font-size="27">Phase ξ₃</text>
+    <text x="108" y="359" text-anchor="middle" font-size="24" fill="#2e8177">Clustering</text>
+    <text x="300" y="359" text-anchor="middle" font-size="24" fill="#2e8177">Clustering</text>
+    <text x="492" y="359" text-anchor="middle" font-size="24" fill="#2e8177">Clustering</text>
+    <path d="M108 379V436" stroke="#2e8177" stroke-width="2" marker-end="url(#phase-arrow)"/>
+    <path d="M300 379V436" stroke="#2e8177" stroke-width="2" marker-end="url(#phase-arrow)"/>
+    <path d="M492 379V436" stroke="#2e8177" stroke-width="2" marker-end="url(#phase-arrow)"/>
+    <rect x="72" y="394" width="72" height="30" rx="6" fill="#f8f8f2"/>
+    <rect x="264" y="394" width="72" height="30" rx="6" fill="#f8f8f2"/>
+    <rect x="456" y="394" width="72" height="30" rx="6" fill="#f8f8f2"/>
+    <text x="108" y="417" text-anchor="middle" font-size="24" fill="#2e8177">OS</text>
+    <text x="300" y="417" text-anchor="middle" font-size="24" fill="#2e8177">OS</text>
+    <text x="492" y="417" text-anchor="middle" font-size="24" fill="#2e8177">OS</text>
+    <rect x="24" y="450" width="168" height="80" rx="10" fill="#fdfdf8" stroke="#2e8177"/>
+    <rect x="216" y="450" width="168" height="80" rx="10" fill="#fdfdf8" stroke="#2e8177"/>
+    <rect x="408" y="450" width="168" height="80" rx="10" fill="#fdfdf8" stroke="#2e8177"/>
+    <text x="108" y="482" text-anchor="middle" font-size="24">Wightman</text><text x="108" y="512" text-anchor="middle" font-size="26">QFT</text>
+    <text x="300" y="482" text-anchor="middle" font-size="24">Wightman</text><text x="300" y="512" text-anchor="middle" font-size="26">QFT</text>
+    <text x="492" y="482" text-anchor="middle" font-size="24">Wightman</text><text x="492" y="512" text-anchor="middle" font-size="26">QFT</text>
+    <text x="300" y="568" text-anchor="middle" font-size="24">A unique vacuum within each phase.</text>
+    <rect x="32" y="592" width="536" height="38" rx="7" fill="#f6efe4"/>
+    <text x="300" y="618" text-anchor="middle" font-size="24" fill="#805a31">Schematic branches; phase uniqueness is open.</text>
+  </g>
+</svg>

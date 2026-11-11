@@ -1,0 +1,56 @@
+[
+  {
+    "id": "official-problem",
+    "title": "Quantum Yang–Mills Theory",
+    "authors": "Arthur Jaffe and Edward Witten",
+    "year": 2006,
+    "localPath": "references/yangmills.pdf",
+    "description": "The official Clay problem exposition: a nontrivial quantum Yang–Mills theory on four-dimensional space, the required axioms, and a strictly positive mass gap.",
+    "readingHint": "Start with §4, p. 6. Read §5 for the distinction between the prize problem and extensions such as confinement, and §6.5, pp. 11–12, for the lattice and renormalization-group program."
+  },
+  {
+    "id": "exact-rg",
+    "title": "Exact Renormalization Group for Gauge Theories",
+    "authors": "Tadeusz Bałaban, John Imbrie and Arthur Jaffe",
+    "year": 1984,
+    "localPath": "references/balaban.pdf",
+    "description": "A foundational account of exact block transformations, ultraviolet stability, and control of effects beyond a finite list of couplings. The main worked setting is the abelian Higgs model in two or three dimensions.",
+    "readingHint": "Begin with the introduction, printed pp. 79–83. This chapter explains the historical method; it is not the later four-dimensional theorem or the released 2026 construction."
+  },
+  {
+    "id": "confinement-introduction",
+    "title": "An Introduction to the Confinement Problem — reading sample",
+    "authors": "Jeff Greensite",
+    "year": 2011,
+    "localPath": "references/intro%20to%20confinement.pdf",
+    "description": "An 18-page sample from Lecture Notes in Physics 821, introducing global and local symmetry, lattice gauge theory, and Monte Carlo ideas.",
+    "readingHint": "Chapter 2, “Global Symmetry, Local Symmetry, and the Lattice,” starts on PDF page 2. The supplied file is a sample, not the complete book."
+  },
+  {
+    "id": "confinement-review",
+    "title": "The Confinement Problem in Lattice Gauge Theory",
+    "authors": "Jeff Greensite",
+    "year": 2003,
+    "localPath": "references/0301023v2.pdf",
+    "description": "A substantial review of confinement in SU(N) lattice gauge theory, with particular attention to center symmetry, static sources, center vortices, and competing mechanisms.",
+    "readingHint": "Begin with §2, “What is Confinement?” The supplied file is arXiv:hep-lat/0301023v2, dated 5 March 2003; statements about the research frontier are historical."
+  },
+  {
+    "id": "committee-statement",
+    "title": "Third Statement on the Existence of Quantum Yang–Mills Theory",
+    "authors": "Michael R. Douglas, David J. Gross, Arthur Jaffe, Igor R. Klebanov and Nikita Nekrasov",
+    "year": 2026,
+    "localPath": "references/solution.jpeg",
+    "description": "The committee’s 9 November 2026 statement announces release of the Lean submission and its validation assessment, and says its checks support existence under standard definitions.",
+    "readingHint": "This is an announcement image, not the proof manuscript. Its existence claim must be kept separate from a proof of the positive mass gap. The announced release date is 10 November 2026."
+  },
+  {
+    "id": "released-assessment",
+    "title": "Validation of the OpenAI Yang–Mills construction",
+    "authors": "Yang–Mills group",
+    "year": 2026,
+    "localPath": "references/assessment-1-2026-11-10.pdf",
+    "description": "The 10 November assessment of the 28 October Lean submission: existence, cutoff limits, phase decomposition, reconstruction, stress tensor and OPE, with recorded independent checks.",
+    "readingHint": "Read pp. 5–12 for the construction and its scope, p. 13 for open questions, and pp. 14–19 for validation. This is an assessment of the released formal source, not the separate informal manuscript."
+  }
+]

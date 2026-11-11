@@ -1,0 +1,14 @@
+# Keep website source consistent across Windows and GitHub Actions.
+* text=auto eol=lf
+
+# Preserve reference documents, images and fonts byte-for-byte.
+*.pdf binary
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+# Preserve upstream license formatting, including its trailing whitespace.
+assets/fonts/*-OFL.txt -whitespace
