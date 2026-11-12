@@ -1427,65 +1427,354 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
   <p>The inner limit uses the full chosen UV sequence; the outer limit uses a selected volume subsequence. Compactness supplies existence for every prescribed increasing volume sequence, without identifying different refinements. It neither permits exchanging the two limits nor proves convergence along an arbitrary joint trajectory \((a,R)\to(0,\infty)\). Nor does boundedness plus equicontinuity imply clustering or exponential decay. The subsequent phase decomposition and reconstruction address additional requirements, while infrared uniqueness and the mass gap remain separate questions. <a href="references/assessment-1-2026-11-10.pdf#page=7" target="_blank" rel="noopener">Assessment, Theorem 5.1 ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/OctoberChain.lean" target="_blank" rel="noopener">Accepted construction chain ↗</a></p>
 </section>
 
-<section class="technical-section" id="proof-phases" aria-labelledby="proof-phases-title">
+<section class="technical-section phase-detail" id="proof-phases" aria-labelledby="proof-phases-title">
   <p class="technical-kicker">17 / PHASES AND RECONSTRUCTION</p>
   <h2 id="proof-phases-title">From an extracted mixture to a vacuum representation.</h2>
   <p>The extracted hierarchy \(S_{\mathrm{mix}}\) need not cluster. Its reflection-positive OS Hilbert space can have several zero-energy vectors. The construction decomposes this ground sector into character phases, then reconstructs a vacuum theory in every component. This does not prove that the periodic large-volume sequence selects one phase.</p>
 
-  <h3 id="phase-algebra">1. Why the vacuum algebra is commutative</h3>
-  <p>Let \(P_0\) project onto the kernel of the OS Hamiltonian \(H\). For a separated whole field word \(w\), the source first constructs a bounded slab operator \(T_w\), then a ground-space compression \(M_w=P_0T_w|_{P_0\mathcal H}\). Its value is independent of the admissible placement used to define it. These are compressed <em>whole words</em>, not arbitrary products of point fields whose domains have been ignored. The vectors \(M_w\Omega\) span a dense subspace of the ground sector. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Compress.lean" target="_blank" rel="noopener">Compression, placement independence and density ↗</a></p>
-  <p>Large Euclidean-time separation inserts heat operators between words. The spectral theorem gives \(e^{-tH}\to P_0\) strongly as \(t\to\infty\), even without a gap. Long trains of separated words therefore approach products of the \(M_w\). To exchange two middle words, the proof arranges four blocks in a time–space plane at positions proportional to \((0,0),(1,2),(2,1),(3,3)\). Interchanging the two axes reverses the middle order while preserving the outer blocks. Euclidean covariance and permutation symmetry equate the finite-separation configurations; their long-train limits give</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Four-word exchange identity proving commutativity of the ground algebra" tabindex="0">\[\langle\Omega,M_aM_bM_cM_d\Omega\rangle
-  =\langle\Omega,M_aM_cM_bM_d\Omega\rangle.\]</div>
-  <p>Using reflected words for adjoints, this identity tests \([M_b,M_c]\) between a dense family of vectors. Every such matrix element vanishes; boundedness then gives \([M_b,M_c]=0\). Thus commutativity is proved by long-train geometry and density, not by assuming that local fields commute at arbitrary Euclidean positions. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Permute.lean" target="_blank" rel="noopener">Four-word exchange and commuting generators ↗</a></p>
+  <p class="proof-revision-note"><strong>Comparison with Armstrong’s draft.</strong> The expanded argument follows §17, “Slabs, phases and reconstruction”: source labels H1.1–H1.3 for the compression algebra and character fields, and H2.1–H2.4 for continuation, reconstruction and vacuum uniqueness. These are labels in the TeX source, not the PDF’s numbered lemma references. The argument uses the mixed-state rotation theorem explained in <a href="#proof-symmetry">§18</a>; invariance of each character is a further result. The comparison uses revision <code>f958ee2</code>, whose phase chapter is unchanged from the preceding draft. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/part2/H-section.tex" target="_blank" rel="noopener">Read the draft’s phase and reconstruction chapter ↗</a> · <a href="#ref-armstrong">Manuscript and review status [11]</a>.</p>
+  <ol class="rg-local-nav" aria-label="Phase decomposition and reconstruction derivation">
+    <li><a href="#phase-algebra">Bounded slabs and the commutative ground algebra</a></li>
+    <li><a href="#phase-characters">Character phases, positivity and the field dictionary</a></li>
+    <li><a href="#phase-boundary">Complex times and joint Schwartz boundary values</a></li>
+    <li><a href="#phase-wightman">Fields, spectrum, locality and the OS comparison</a></li>
+    <li><a href="#phase-vacuum">Vacuum uniqueness in every phase and irreducibility</a></li>
+  </ol>
 
-  <h3 id="phase-characters">2. Characters turn a mixture into components</h3>
-  <p>Take the norm-closed unital star algebra generated by the \(M_w\). Gelfand representation identifies this commutative C*-algebra with continuous functions on its spectrum \(X\). Separability makes \(X\) compact metric. The normalized vacuum functional is represented by a probability measure:</p>
+  <h3 id="phase-algebra">1. From reflected insertions to a commutative vacuum algebra</h3>
+  <p>The starting point is the mixed hierarchy \(S=S_{\mathrm{mix}}\), its reflection-positive OS Hilbert space \(\mathcal H\), and its vacuum vector \(\Omega\). A positive-time word \(v\) represents a vector \([v]\), with \(\langle[v],[u]\rangle=S(\theta v\,u)\); \(\theta\) includes complex conjugation and time reflection. Quotienting by zero-norm combinations and completing gives \(\mathcal H\). The argument below uses continuous Euclidean covariance of the mixture as an input. Covariance of <em>each character phase</em> is a further conclusion.</p>
+
+  <h4 id="phase-detail-heat">Positive-time evolution and the ground projection</h4>
+  <p>Translating positive-time words forward defines \(E_t\). Reflection positivity gives the identity and estimate</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The repeated reflection argument for heat contractions" tabindex="0">\[
+  \|E_t v\|^2=\langle v,E_{2t}v\rangle
+  \leq\|v\|\,\|E_{2t}v\|,\qquad
+  \|E_t v\|\leq
+  \|v\|^{\,1-2^{-j}}\|E_{2^jt}v\|^{\,2^{-j}}.
+  \]</div>
+  <p>The separated-correlation bounds keep the final orbit bounded for fixed \(v,t&gt;0\). Letting \(j\to\infty\) proves contractivity and preservation of null vectors. Continuity of the Gram entries then gives a strongly continuous, self-adjoint contraction semigroup, written \(E_t=e^{-tH}\) with \(H\geq0\). Its large-time limit is the orthogonal projection \(P_0\) onto the common fixed vectors, equivalently \(\ker H\).</p>
+  <p>The source also proves this limit directly. For \(0\leq u\leq v\), positivity, the semigroup identity and monotonicity of \(\|E_t\psi\|\) give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Strong heat convergence without a mass gap" tabindex="0">\[
+  \|E_u\psi-E_v\psi\|^2
+  \leq\|E_u\psi\|^2-\|E_v\psi\|^2.
+  \]</div>
+  <p>The right side tends to zero because the squared norms decrease to a finite limit. The resulting vector limit is fixed by every \(E_s\) and retains the inner products of \(\psi\) with fixed vectors, identifying it with \(P_0\psi\). This proves strong convergence; it supplies neither exponential decay nor convergence in operator norm. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/OS/Core.lean" target="_blank" rel="noopener">Semigroup estimate and ground limit: <code>emerges</code> ↗</a></p>
+
+  <h4 id="phase-detail-slab">Why a whole slab insertion is bounded</h4>
+  <p>For a word \(w=\prod_{i=1}^n A_i(x_i)\) in a slab of width \(h\), assume pairwise sup-distance at least \(r\), times in \([r,h-r]\), \(0&lt;r\leq1\), and fixed bounds \(d,R\) on field degrees and coefficient norms. The raw insertion rule is \(A_wv=w\,\tau_{he_4}v\). It is initially a rule on word combinations, so boundedness on the completed quotient must be proved.</p>
+  <p>The repeated reflected-word estimate supplies, at a suitable subwidth, \(D=C^n(n/r)^{Qn}\) and an exterior-dependent constant \(K_v\), independent of the repetition number. Write \(A=A_w\), let \(B\) be its formal reflected adjoint, and set \(T=BA\). Then</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Removing the exterior-dependent constant from a slab insertion bound" tabindex="0">\[
+  \|T^jv\|\leq K_vD^{2j},\qquad
+  d_j=D^{-2j}\|T^jv\|,\qquad
+  d_j^2\leq\|v\|d_{2j}.
+  \]</div>
+  <p>The last inequality follows by moving the formal adjoints in \(\|T^jv\|^2=\langle v,T^{2j}v\rangle\) and applying Cauchy–Schwarz. If \(s=\sup_jd_j\), boundedness gives \(s^2\leq\|v\|s\), hence \(s\leq\|v\|\). Consequently \(\|Av\|^2=\langle v,Tv\rangle\leq D^2\|v\|^2\). This removes \(K_v\), proves that insertion respects null vectors, and yields a unique bounded extension \(\mathsf B_h(w)\). A remaining width is supplied by right multiplication with a heat contraction.</p>
+  <p>The analytic input here is the repeated-word bound. Armstrong’s source label F4 derives it from chessboard roots: the repeated main pattern uses a fixed number of residue classes, while the exterior word contributes only a prefactor independent of the repetition count. The original source extends the wordwise estimate to finite linear combinations before applying the power argument. Thus the argument controls the whole dense domain, not just individual word vectors. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/part2/F-infinite-volume.tex" target="_blank" rel="noopener">Armstrong draft, source label F4 ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/OS/Train.lean" target="_blank" rel="noopener">Raw insertion power argument and bounded producer ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/B01.lean" target="_blank" rel="noopener">Width padding and common slab family ↗</a></p>
+  <p>Testing against dense positive-word vectors gives the adjoint and concatenation identities. Bounds for differentiated labels in a smaller buffer give operator-norm smoothness, using the integrated Taylor remainder:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Slab insertion identities" tabindex="0">\[
+  \begin{aligned}
+  \mathsf B_h(w)^*&amp;=\mathsf B_h(\tau_{he_4}\theta w),\\
+  \mathsf B_h(w)\mathsf B_k(v)&amp;=\mathsf B_{h+k}(w\,\tau_{he_4}v),\\
+  \partial_{x_i^a}\mathsf B_h(w)&amp;=\mathsf B_h(\partial_{i,a}w),\qquad
+  \|\mathsf B_h(w)\|\leq C^n(n/r)^{Qn}.
+  \end{aligned}
+  \]</div>
+
+  <h4 id="phase-detail-compression">Removing spatial motion on the ground sector</h4>
+  <p>Let \(U_y\) denote spatial translations. Their commutation with \(E_t\) alone does not prove \(U_yP_0=P_0\). The missing input is rotation covariance. Separated pair correlations have the form \(\langle v,U_yE_{t-c}v'\rangle\). Strong heat convergence makes any fixed time offset negligible, uniformly in the spatial translation because \(U_y\) is unitary. For fixed spatial \(y\), choose an orthogonal map taking \(y+e_4\) to the positive time axis. The rotated original time axis still has positive time component. Rotating the two displacements \(te_4+y+e_4\) and \(te_4\) turns their difference into a fixed time shift, which disappears as \(t\to\infty\). Removing the extra \(e_4\) and using density gives \(U_yP_0=P_0\).</p>
+  <p>Now compress an admissibly placed <em>whole word</em> to \(\mathcal H_0=P_0\mathcal H\): \(M_w=P_0\mathsf B_h(w)|_{\mathcal H_0}\). Heat padding, translation covariance and \(U_yP_0=P_0\) make this independent of slab width and common placement. In particular, \(M_w\Omega=P_0[w]\), so these vectors span a dense subspace of \(\mathcal H_0\). <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Lean.lean" target="_blank" rel="noopener">Rotations imply <code>inert</code> spatial action ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Compress.lean" target="_blank" rel="noopener">Compression, placement independence and density ↗</a></p>
+
+  <h4 id="phase-detail-exchange">Long trains and the four-word exchange</h4>
+  <p>In a long train, each intervening heat operator becomes \(P_0\). This remains valid when spatial displacements vary arbitrarily: if \(\psi_j\to\psi\) and \(t_j\to\infty\), then</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniformity in spatial displacements for long trains" tabindex="0">\[
+  \|U_{y_j}E_{t_j}\psi_j-P_0\psi\|
+  \leq\|\psi_j-\psi\|+\|(E_{t_j}-P_0)\psi\|\longrightarrow0.
+  \]</div>
+  <p>Successive use of concatenation therefore identifies a train limit with \(\langle\Omega,M_{w_1}\cdots M_{w_m}\Omega\rangle\). Place four clusters at \(0,j(e_4+2e_1),j(2e_4+e_1),3j(e_4+e_1)\). Exchanging axes \(1\) and \(4\) reverses the middle time order, but also rotates every word. A second train along the invariant ray \(e_4+e_1\) removes this simultaneous rotation. Both steps are needed to obtain</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The ground-algebra exchange identity" tabindex="0">\[
+  \langle\Omega,M_aM_bM_cM_d\Omega\rangle
+  =\langle\Omega,M_aM_cM_bM_d\Omega\rangle.
+  \]</div>
+  <p>Adjoint closure and density of \(M_w\Omega\) turn this identity into vanishing matrix elements of \([M_b,M_c]\) on a dense set, hence commuting bounded operators. It does not assert \(M_{uv}=M_uM_v\) for words at fixed separation. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Moments.lean" target="_blank" rel="noopener">Long-train limit ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Permute.lean" target="_blank" rel="noopener"><code>same_up</code>, <code>exchanges</code> and commuting generators ↗</a></p>
+
+  <h3 id="phase-characters">2. Characters, full support and the field content of every phase</h3>
+  <h4 id="phase-detail-spectrum">A faithful vacuum measure</h4>
+  <p>Let \(\mathcal A_0\) be the norm-closed unital star algebra generated by the \(M_w\). Countable dense positions and basis labels, together with norm continuity, make it separable. Gelfand representation identifies it with continuous functions on a compact metric character space \(X\); the normalized vacuum functional becomes a probability measure:</p>
   <div id="eq-78" class="technical-equation" role="region" aria-label="The commutative vacuum algebra and its character space" tabindex="0">\[\mathcal A_0\simeq C(X),\qquad
   \xi(ab)=\xi(a)\xi(b),\qquad \nu(X)=1.\]</div>
-  <p>Define \(S_\xi(w)=\xi(M_w)\). Positivity, compatibility and the required bounds must be transferred to these character values; multiplicativity alone is insufficient. The source’s operator-bound transfer uses long trains and a power argument: an additional character-dependent constant disappears after taking \(n\)-th roots and sending the train length \(n\to\infty\). Cyclicity also gives full support of \(\nu\). The resulting barycenter identity is</p>
+  <p>Commutativity and cyclicity make \(\Omega\) separating: if \(a\Omega=0\), then \(ab\Omega=ba\Omega=0\) on a dense set, so \(a=0\). Thus</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Faithfulness implies full support of the character measure" tabindex="0">\[
+  \int_X|\xi(a)|^2\,d\nu(\xi)=\|a\Omega\|^2=0
+  \quad\Longrightarrow\quad a=0.
+  \]</div>
+  <p>If a nonempty open subset of \(X\) had zero measure, a nonzero continuous function supported there would contradict this implication. Hence \(\nu\) has full support. Set \(S_\xi(w)=\xi(M_w)\). The vacuum state gives the pointwise barycenter identity; uniform separated-support bounds also allow smearing:</p>
   <div id="eq-79" class="technical-equation" role="region" aria-label="The extracted hierarchy as an average over component theories" tabindex="0">\[S_{\mathrm{mix}}(v;f)=\int_X S_\xi(v;f)\,d\nu(\xi).\]</div>
-  <p><a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Spectrum.lean" target="_blank" rel="noopener">Character space and full-support measure ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Pack.lean" target="_blank" rel="noopener">Transferring operator bounds to characters ↗</a>. The separate argument preserving spacetime covariance in every component is explained in <a href="#symmetry-components">the symmetry discussion</a>.</p>
+  <p>Characters multiply products in \(\mathcal A_0\); they do not make \(S_\xi(uv)\) factor into singleton correlations. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Ground/Spectrum.lean" target="_blank" rel="noopener">Separating vector, spectrum and full support ↗</a></p>
+
+  <h4 id="phase-detail-positive">Positivity and the same slab bounds in every character</h4>
+  <p>To prove phase reflection positivity, take positive-time words \(w_i\) in a common slab and define \(Y_i=\mathsf B_h(w_i)|_{\mathcal H_0}:\mathcal H_0\to\mathcal H\). These maps need not preserve \(\mathcal H_0\). The exact OS identity gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Operator positivity transferred to each character" tabindex="0">\[
+  M_{\theta w_iw_j}=Y_i^*Y_j,\qquad
+  \sum_{i,j}\overline c_i c_jM_{\theta w_iw_j}
+  =\left(\sum_i c_iY_i\right)^*\left(\sum_jc_jY_j\right)\geq0.
+  \]</div>
+  <p>This positive operator belongs to \(\mathcal A_0\), so its character value is nonnegative. Completing the resulting positive Gram kernel constructs the phase OS space. Linearity, derivative and stress identities follow from corresponding compressed operator identities, with the slab bounds justifying the required integrals. Characterwise spacetime covariance additionally uses the bounded-real lattice variance argument explained in <a href="#symmetry-components">the symmetry discussion</a>.</p>
+  <p>The phase insertion bound requires another power argument. Put \(v_j=(A_{w^\dagger}A_w)^jv\) and \(Y(v)=\mathsf B(v)|_{\mathcal H_0}\). Concatenation gives \(Y(v_j)=(\mathsf B_h(w)^*\mathsf B_h(w))^jY(v)\), hence</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Transfer of repeated insertion bounds to the phase Hilbert space" tabindex="0">\[
+  \|[v_j]_\xi\|^2
+  =\xi\!\left(Y(v_j)^*Y(v_j)\right)
+  \leq\|Y(v)\|^2\|\mathsf B_h(w)\|^{4j},
+  \qquad
+  \|\mathsf B_h^\xi(w)\|\leq\|\mathsf B_h(w)\|.
+  \]</div>
+  <p>The first estimate supplies the repeated Gram bound; the earlier power argument yields the second, including removal of the exterior prefactor. Consequently the same \(C,Q\) work for every character. This is not direct evaluation of \(\mathsf B_h(w)\) by \(\xi\): that operator acts on the full mixed Hilbert space, whereas \(\xi\) is defined on the compressed commutative algebra. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Pack.lean" target="_blank" rel="noopener">Repeated Gram transfer and <code>sameBound</code> ↗</a></p>
+
+  <h4 id="phase-detail-null">Why no phase loses a quotient field</h4>
+  <p>Let \(\mathcal N_d(S)\subset V_d\) be the coefficient combinations whose insertions vanish in the mixed hierarchy. Testing the corresponding compressed identities against positive words proves \(\mathcal N_d(S)\subset\mathcal N_d(S_\xi)\). The reverse inclusion is substantial: a field present in a mixture could otherwise disappear in one component.</p>
+  <p>The proof uses the corrected lifts and finite free-Maxwell test rows established earlier. For a trial \(\ell\), write \(s,s'\) for the free singleton values and \(c\) for the connected free pair, so its pair value is \(ss'+c\). For the corresponding inserted words define</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Centered single and pair tests in the ground algebra" tabindex="0">\[
+  \begin{aligned}
+  \Delta_1&amp;=M_u-s1,\qquad \Delta'_1=M_v-s'1,\\
+  \Delta_2&amp;=M_{uv}-sM_v-s'M_u+(ss'-c)1.
+  \end{aligned}
+  \]</div>
+  <p>Chessboard bounds for \(2j\) alternating conjugated copies, followed by the ordered cutoff limits and long-train limit, imply</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="All moment bounds imply an error bound in every phase" tabindex="0">\[
+  \int_X|\xi(\Delta)|^{2j}\,d\nu(\xi)\leq\gamma_\ell^{2j}
+  \quad(j\geq1)
+  \quad\Longrightarrow\quad
+  |\xi(\Delta)|\leq\gamma_\ell\quad\text{for every }\xi\in X.
+  \]</div>
+  <p>Indeed, a value exceeding \(b&gt;\gamma_\ell\) persists on an open set \(O\) by continuity. Full support would give \(0&lt;\nu(O)\leq(\gamma_\ell/b)^{2j}\) for every \(j\), a contradiction. Expanding \(\Delta_2\) therefore bounds the pair error by \(\gamma_\ell(1+|s|+|s'|)\), uniformly over characters.</p>
+  <p>The finite row maps on the corrected lifts converge to the injective free test map \(R_{\mathrm{free}}\). On its finite-dimensional domain, \(\sigma_*=\min_{\|z\|=1}\|R_{\mathrm{free}}z\|&gt;0\). Taking a trial with \(\|R_{\xi,\ell}-R_{\mathrm{free}}\|&lt;\sigma_*/2\) makes its phase row map injective. Since it factors through \(V_d/\mathcal N_d(S_\xi)\), it bounds that quotient’s dimension below by the free dimension. The first null inclusion and the already established mixed-field dimension bound it above by the same number. Equal dimensions and inclusion give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The null dictionary is the same in every phase" tabindex="0">\[
+  \mathcal N_d(S_\xi)=\mathcal N_d(S)
+  \qquad(d\in\mathbb N,\ \xi\in X).
+  \]</div>
+  <p>This preserves the field dictionary in every component. It does not identify different components, prove a mass gap, or by itself prove their ground spaces one-dimensional; vacuum uniqueness requires the additional argument below. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Phase/Detect.lean" target="_blank" rel="noopener">Moment detection and uniform character errors ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Phase/Picks.lean" target="_blank" rel="noopener">Free test rows and <code>lift_detect</code> ↗</a></p>
+  <p><strong>Comparison with the manuscript.</strong> Armstrong’s source labels H1.1–H1.3 and phase-slab corollary organize these steps into a readable argument. The source links above identify the actual semigroup, slab, compression, spectrum and field-detection constructions. The exposition here expands their estimates and logical dependencies; the manuscript’s reconstruction is useful corroborating exposition, not an independent verification of the construction. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/part2/H-section.tex" target="_blank" rel="noopener">Armstrong draft, source labels H1.1–H1.3 and phase-slab corollary ↗</a></p>
+
   <figure class="proof-technical-figure"><img src="assets/proof-phases.svg" width="600" height="650" loading="lazy" alt="An extracted mixed Euclidean hierarchy decomposes over a character space into clustering components, each with its own reconstructed vacuum theory."><figcaption>Phase decomposition supplies a unique vacuum within each component. It does not select a unique component or identify theories obtained from different infinite-volume extractions.</figcaption></figure>
 
-  <h3 id="phase-boundary">3. Analytic continuation requires boundary estimates</h3>
-  <p>Positive-energy heat evolution supplies holomorphic time-ordered functions \(F_\xi\) when the imaginary times are strictly ordered. At purely imaginary times these recover the Euclidean correlations. For each fixed field list, the implementation establishes constants \(C,m\), uniform in the character, such that</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniform polynomial control near the real-time boundary" tabindex="0">\[|F_\xi(\boldsymbol t+i\boldsymbol y,\boldsymbol x)|\leq C\kappa^{-m},
-  \qquad 0&lt;\kappa\leq1,\quad y_{j+1}-y_j\geq\kappa.\]</div>
-  <p>The constants depend on the fixed labels and arity. This polynomial boundary control is the analytic input needed to obtain tempered distributions, not merely a formal substitution \(\tau=it\). For ordered \(y\), the boundary prescription is</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Wightman distributions as tested complex-time boundary values" tabindex="0">\[W_\xi(\boldsymbol v;f)=\lim_{\epsilon\downarrow0}
-  \int F_\xi(\boldsymbol t+i\epsilon\boldsymbol y,\boldsymbol x)\,
-  f(\boldsymbol t,\boldsymbol x)\,d^nt\,d^{3n}x,
-  \qquad f\in\mathcal S(\mathbb R^{4n}).\]</div>
-  <p>The proof uses a Taylor representation with a common integrable remainder bound to control the boundary passage. It proves continuity in \(\xi\) and permits integration over \(X\), so \(W_{\mathrm{mix}}(f)=\int W_\xi(f)d\nu\). The tests here are unrestricted joint Schwartz functions, not only products of single-insertion tests. Existence of these Minkowski boundary distributions does not automatically settle every coincident-point Euclidean comparison. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Pages.lean" target="_blank" rel="noopener">Polynomial bounds and continuation ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Barycenter.lean" target="_blank" rel="noopener">Joint-test boundary passage ↗</a></p>
-  <p>Wightman positivity then defines the field-word Hilbert space. With \(\mathcal P\) the finite linear combinations of smeared words,</p>
+
+  <h3 id="phase-boundary">3. From Euclidean correlations to real-time distributions</h3>
+  <p>Fix a character \(\xi\), an arity \(n\), and a list of labels \(a_1,\ldots,a_n\) in the retained local-field space \(\mathcal L\). The inputs are the component's reflection-positive Euclidean hierarchy, its spacetime covariance, and the slab-operator bounds established above. Smooth Euclidean correlations alone would not justify taking a distributional real-time boundary. The additional estimates below control that boundary uniformly in \(\xi\), with constants depending on the fixed labels and arity.</p>
+
+  <h4 id="phase-detail-holomorphic-heat">Positive heat evolution supplies the holomorphic function</h4>
+  <p>Write \(\mathcal K_\xi\) for the Euclidean OS Hilbert space, \(H_\xi^{\rm OS}\geq0\) for its heat generator, and \(U_{\boldsymbol r}^\xi\) for spatial translations. Inserting \(a\) at the midpoint of a slab of width \(2\epsilon\) gives a bounded operator \(B_{\xi,\epsilon}(a)\), with \(\|B_{\xi,\epsilon}(a)\|\leq C_a\epsilon^{-q_a}\) for \(0&lt;\epsilon&lt;1\). The constants work in every character. For a complex time increment \(z\), define</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Heat evolution and slab insertions define complex-time correlations" tabindex="0">\[\begin{aligned}
+  G_{\xi,\epsilon}(z,\boldsymbol r)
+  &amp;=e^{-(\operatorname{Im}z-2\epsilon)H_\xi^{\rm OS}}
+       e^{i\operatorname{Re}zH_\xi^{\rm OS}}U_{\boldsymbol r}^\xi,
+       \qquad \operatorname{Im}z&gt;2\epsilon,\\
+  F_n^\xi(a;z,\boldsymbol x)
+  &amp;=\left\langle\Omega_\xi^{\rm OS},
+  B_{\xi,\epsilon}(a_1)
+  \prod_{j=2}^n\!\left[
+  G_{\xi,\epsilon}(z_j-z_{j-1},\boldsymbol x_j-\boldsymbol x_{j-1})
+  B_{\xi,\epsilon}(a_j)\right]\Omega_\xi^{\rm OS}\right\rangle .
+  \end{aligned}\]</div>
+  <p>Choose \(4\epsilon&lt;\operatorname{Im}(z_{j+1}-z_j)\) for every adjacent pair. On the imaginary-time slice, the insertion rule identifies this expression with the original Euclidean correlation, independently of \(\epsilon\). Holomorphic uniqueness extends that independence throughout the ordered-time domain. Taking \(\epsilon=\delta/8\), and using the contraction and unitary factors between insertions, gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A common polynomial bound at the real-time boundary" tabindex="0">\[
+  |F_n^\xi(a;t+iy,\boldsymbol x)|\leq C\delta^{-m},
+  \qquad 0&lt;\delta\leq1,\quad y_{j+1}-y_j\geq\delta .
+  \]</div>
+  <p>The bound holds for all real positions and all \(\xi\); it is not uniform over arbitrary field lists. The empty correlation is \(1\); with one insertion there is no adjacent-gap constraint. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C03.lean" target="_blank" rel="noopener">Constructing the strict-time continuation ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Pages.lean" target="_blank" rel="noopener">The uniform-in-character power bound ↗</a></p>
+
+  <h4 id="phase-detail-taylor">Why the boundary exists for every joint Schwartz test</h4>
+  <p>For \(f\in\mathcal S(\mathbb R^{4n})\), integrate the strict-time function against \(f\), denoting the result by \(\psi_\xi(y;f)\). This is a joint test in all insertion coordinates; it need not factor into individual tests. Let \(\rho_j=j\) and \(\mathcal A=-i\sum_j\rho_j\partial_{t_j}\). Holomorphy and integration by parts give \(\partial_s\psi_\xi(y+s\rho;f)=\psi_\xi(y+s\rho;\mathcal A f)\). Repeatedly integrating this identity yields the exact formula</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Taylor subtraction produces the joint Schwartz boundary value" tabindex="0">\[\begin{aligned}
+  \psi_\xi(y;f)
+  &amp;=\sum_{k=0}^{m}\frac{(-1)^k}{k!}
+       \psi_\xi(y+\rho;\mathcal A^k f)\\
+  &amp;\quad-\int_0^1\frac{(-s)^m}{m!}
+       \psi_\xi(y+s\rho;\mathcal A^{m+1}f)\,ds .
+  \end{aligned}\]</div>
+  <p>If \(y\) is weakly ordered, every adjacent gap of \(y+s\rho\) is at least \(s\). The factor \(s^m\) therefore cancels the possible \(s^{-m}\) growth. The remainder is bounded by \(C\|\mathcal A^{m+1}f\|_{L^1}/m!\), uniformly in \(y\) and \(\xi\). Setting \(y=0\) on the right defines \(W_n^\xi(a;f)\). Dominated convergence then proves convergence along <em>every</em> strictly ordered height vector approaching zero, with no fixed ratios between its gaps. It also bounds \(W_n^\xi\) by one continuous Schwartz seminorm, proving temperedness. This stronger limit is needed later when the two vectors in a Gram pairing approach the boundary independently. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Shift/Breath.lean" target="_blank" rel="noopener">Taylor identity and integrable remainder ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Shift/Osc.lean" target="_blank" rel="noopener">Continuous distributions and unrestricted ordered boundary limits ↗</a></p>
+  <p>Continuity in the character requires one more step. A common strip bound makes the strict-time functions a normal family; a subsequential limit agrees with the desired function on an imaginary-time segment by Euclidean phase continuity, so holomorphic uniqueness identifies it everywhere. The common remainder bound then passes continuity and the phase average through the boundary integral:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Boundary distributions retain continuity and the phase average" tabindex="0">\[
+  \xi\longmapsto W_n^\xi(a;f)\ \text{is continuous},
+  \qquad W_n^{\rm mix}(a;f)=\int_X W_n^\xi(a;f)\,d\nu(\xi).
+  \]</div>
+  <p>This constructs Minkowski distributions on all joint Schwartz tests. It does not by itself supply every desired coincident-point extension of the Euclidean hierarchy. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Barycenter.lean" target="_blank" rel="noopener">Boundary continuity and barycenter identities ↗</a></p>
+
+  <h4 id="phase-detail-tube">Frequency support, the forward tube, and locality</h4>
+  <p>Use the draft's positive Fourier convention, \(\widehat b_+(x)=\int e^{ip\cdot x}b(p)\,dp\), where \(p\cdot x\) is the ordinary coordinate pairing and time is the fourth coordinate. Put \(\widetilde W(b)=W(\widehat b_+(-\,\cdot))\). For <em>compactly supported smooth frequency tests</em>, differentiating the height and its compensating exponential gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The compact-frequency identity and the resulting ordered momentum cone" tabindex="0">\[\begin{aligned}
+  \widetilde W_n^\xi(b)
+  &amp;=\psi_\xi\!\left(y;\widehat{e^{\sum_j y_jp_j^4}b}_+(-\,\cdot)\right),\\
+  \operatorname{supp}\widetilde W_n^\xi
+  &amp;\subseteq\mathcal V_n
+  =\left\{p:\ \sum_jp_j=0,\quad
+  q_j:=\sum_{k=j}^{n}p_k\in\overline V_+\ (j\geq2)\right\}.
+  \end{aligned}\]</div>
+  <p>The positive exponent in the first line compensates the damping from the imaginary-time displacement. Compact frequency support makes this multiplier legitimate; it is not an unrestricted multiplier of Schwartz space. Sending ordered heights to infinity eliminates negative time-tail frequencies. Translation invariance imposes total momentum zero, and Lorentz covariance promotes these tail inequalities to forward-cone support. Covariance itself is obtained by continuing the Euclidean infinitesimal identities: rotations in a time-space plane give boost label generators \(-iL(K_{4i})\), and the resulting distributional identity integrates along real boosts. The preceding <a href="#symmetry-components">symmetry argument</a> supplies the required Euclidean identities in every component. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C05.lean" target="_blank" rel="noopener">Compact-frequency identity ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C09.lean" target="_blank" rel="noopener">Integrating the boost identity ↗</a></p>
+  <p>To obtain a holomorphic function in all complex spacetime coordinates, choose a smooth cutoff \(\chi\) equal to one near \(\mathcal V_n\), with bounded derivatives and support in a fixed-width neighborhood of this cone. For consecutive imaginary differences in the open forward cone,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The spectral cone gives exponential damping in the forward tube" tabindex="0">\[\begin{aligned}
+  \mathcal W_n^\xi(z)
+  &amp;=(2\pi)^{-4n}\widetilde W_n^\xi
+       \!\left(\chi(p)e^{i\sum_jp_j\cdot z_j}\right),\\
+  \sum_jp_j\cdot\operatorname{Im}z_j
+  &amp;=\sum_{j=2}^n q_j\cdot\operatorname{Im}(z_j-z_{j-1})
+    \geq c_z|p|\qquad (p\in\mathcal V_n).
+  \end{aligned}\]</div>
+  <p>The inequality survives on the cutoff's support up to a bounded subtraction. Exponential damping therefore makes the displayed argument a Schwartz function. The construction agrees with the strict-time continuation; controlled damping multipliers also give tested partial boundaries when some imaginary differences vanish. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C10.lean" target="_blank" rel="noopener">Suffix momenta and cone damping ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C12.lean" target="_blank" rel="noopener">Continuous partial boundaries ↗</a></p>
+  <p>Locality is an analytic continuation argument, not a claim that arbitrary real-time insertions commute. Tie the heights of two adjacent spacelike points, whose difference is \((\boldsymbol v,t)\) with \(|t|&lt;|\boldsymbol v|\). A small imaginary boost along \(\boldsymbol v/|\boldsymbol v|\) gives imaginary difference \(\sin b\,(t\boldsymbol v/|\boldsymbol v|,|\boldsymbol v|)\) inside the forward cone; the opposite boost treats the exchanged order. These produce two local analytic continuations. Scaling the real times to zero preserves spacelikeness. At the resulting Wick slice, Euclidean permutation symmetry identifies the continuations. Analytic uniqueness carries equality back along the path; the partial-boundary theorem then gives equality of distributions on the spacelike region. Smeared field commutators consequently vanish when every pair of points in the two test supports is spacelike. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C17.lean" target="_blank" rel="noopener">The imaginary-boost geometry ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C27.lean" target="_blank" rel="noopener">From the spacelike distribution identity to field locality ↗</a></p>
+
+  <h3 id="phase-wightman">4. Positivity, the field domain, and comparison with OS reconstruction</h3>
+  <h4 id="phase-detail-gram">Positivity comes from actual Hilbert-space vectors</h4>
+  <p>Apply the positive-height slab insertions and heat propagators to \(\Omega_\xi^{\rm OS}\), then smear, obtaining vectors \(v_{\xi,\eta}(b)\in\mathcal K_\xi\). Reflection identifies their mixed-height inner products with the analytically continued correlation of \(b^*c\). The word star reverses order, conjugates the tests, and applies the common label involution \(a^*=\mathsf s_4^{\rm refl}\bar a\). It does not reflect the real-time test coordinates a second time. Independently taking both height profiles to zero gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Independent-height Gram limits establish Wightman positivity" tabindex="0">\[\begin{aligned}
+  \langle v_{\xi,\eta}(b),v_{\xi,\eta'}(c)\rangle
+  &amp;\longrightarrow W^\xi(b^*c),\\
+  W^\xi(F^*F)
+  &amp;=\left\|\sum_b c_b\,v_\xi(b)\right\|^2\geq0,
+  \qquad F=\sum_b c_b b .
+  \end{aligned}\]</div>
+  <p>In particular, expanding \(\|v_{\xi,\eta}(b)-v_{\xi,\eta'}(b)\|^2\) into its four Gram entries shows that these vectors are Cauchy. Their limits thus exist in the same OS space; positivity is inherited from its norm. Product-test density and the common Schwartz estimates extend the Gram identity to arbitrary joint tests. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/BOUNDARY/Heights.lean" target="_blank" rel="noopener">Independent boundary profiles and mixed Gram entries ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Fields/Lo.lean" target="_blank" rel="noopener">The norm-Cauchy construction ↗</a></p>
+
+  <h4 id="phase-detail-domain">The null quotient gives one invariant field domain</h4>
+  <p>For the operator construction, take \(\mathcal P\) to be finite linear combinations of finite words of <em>individually smeared</em> fields. The empty word represents the vacuum. Define</p>
   <div id="eq-80" class="technical-equation" role="region" aria-label="The field-word quotient and Hilbert-space completion" tabindex="0">\[\begin{aligned}
   \langle u,v\rangle_\xi&amp;=W_\xi(u^*v),&amp;
   \mathcal N_\xi&amp;=\{u:\langle u,u\rangle_\xi=0\},\\
   \mathcal H_\xi&amp;=\overline{\mathcal P/\mathcal N_\xi},&amp;
-  \Phi^\xi_v(f)[w]&amp;=[(v,f)w].
+  \Phi^\xi_a(f)[w]&amp;=[(a,f)w].
   \end{aligned}\]</div>
-  <p>The empty word is \(\Omega_\xi\); quotient words give a common dense invariant domain. The construction verifies adjoints, locality, covariance, temperateness, cyclicity and faithfulness for the retained local-field dictionary.</p>
+  <p>Why does left insertion descend through the null space? If \(x\) is null, Cauchy–Schwarz gives \(\langle x,c\rangle=0\) for every word combination \(c\). For a smeared letter \(\ell=(a,f)\), the star identity gives \(\langle\ell x,c\rangle=\langle x,\ell^*c\rangle=0\). Taking \(c=\ell x\) proves that \(\ell x\) is null too. Thus every field acts on the common dense invariant domain \(\mathcal D_\xi=\mathcal P/\mathcal N_\xi\), and</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The field adjoint relation on the common invariant word domain" tabindex="0">\[
+  \Phi^\xi_{a^*}(\bar f)\subseteq\Phi^\xi_a(f)^*,
+  \qquad
+  \Phi^\xi_a(f)\mathcal D_\xi\subseteq\mathcal D_\xi .
+  \]</div>
+  <p>The adjoint inclusion is not a claim of essential self-adjointness. Continuity of the distributions gives continuity of \(f\mapsto\Phi^\xi_a(f)u\) for fixed \(a\) and \(u\in\mathcal D_\xi\). The vacuum is cyclic by construction. Arbitrary joint Schwartz tests also define continuous Hilbert-valued word extensions, but the released construction does not assert that all these extended vectors belong to the algebraic invariant domain. Keeping these two statements separate avoids applying unbounded fields to an unjustified domain. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Fields/Stems.lean" target="_blank" rel="noopener">Null-space preservation and concrete field operators ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/BOUNDARY/Core.lean" target="_blank" rel="noopener">The field domain and joint-test extensions ↗</a></p>
 
-  <h3 id="phase-vacuum">4. Why the vacuum is unique in every character</h3>
-  <p>The first uniqueness argument is only almost everywhere in \(\nu\). For positive-time word vectors \(\psi_w^\xi\), the heat limit and the barycenter identities make the following nonnegative variance have integral zero:</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Nonnegative ground-state variance used in almost-everywhere vacuum uniqueness" tabindex="0">\[\|P_0^\xi\psi_w^\xi-S_\xi(w)\Omega_\xi\|^2
-  =\|P_0^\xi\psi_w^\xi\|^2-|S_\xi(w)|^2,
-  \qquad\int_X(\cdots)\,d\nu=0.\]</div>
-  <p>Intersecting the resulting full-measure sets for one countable dense word family gives a unique heat vacuum almost everywhere. A further estimate removes exceptional characters. For a fixed finite combination of compactly smeared words, let \(\mu_\xi\) be its energy spectral measure. Locality confines a time-averaged commutator to a fixed spatial ball. Its Fourier pairing with a momentum bump of radius \(u\) costs \(O(u^3)\) in three spatial dimensions. Positive-energy support and positivity give a lower bound proportional to \(u\,\mu_\xi((u/2,u])\). Dividing by \(u\), then summing dyadic energy shells, yields \(\mu_\xi((0,u])\leq C u^2\). The support radius and word norms are bounded uniformly in the character. These are essential analytic inputs, not consequences of the abstract Gelfand representation. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Light.lean" target="_blank" rel="noopener">Locality, energy shells and their dyadic sum ↗</a></p>
-  <p>After enlarging the constant for \(u&gt;1\), integration of the spectral distribution gives</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Polynomial low-energy control implies inverse-square heat decay" tabindex="0">\[\int_{(0,\infty)}e^{-sE}\,d\mu_\xi(E)
-  =s\int_0^\infty e^{-su}\mu_\xi((0,u])\,du
-  \leq 2C s^{-2}.\]</div>
-  <p>Initially this subtracts the actual ground projection. On the almost-everywhere good set, that projection is the vacuum projection. At fixed \(s\), the vacuum-subtracted correlation is continuous in \(\xi\); a closed inequality holding almost everywhere under a full-support measure holds everywhere. Thus, for all characters,</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="A heat clustering estimate valid for every character" tabindex="0">\[0\leq\langle\psi_\xi,e^{-sH_\xi}\psi_\xi\rangle
-  -|\langle\Omega_\xi,\psi_\xi\rangle|^2
-  \leq C_\psi s^{-2},\qquad s\geq1.\]</div>
-  <p>Taking \(s\to\infty\) identifies \(P_0^\xi\psi_\xi=\langle\Omega_\xi,\psi_\xi\rangle\Omega_\xi\). Density extends this to the whole Hilbert space. This argument avoids assuming continuity of the ground projections themselves. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Phase/Unique.lean" target="_blank" rel="noopener">Almost-everywhere uniqueness ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Decay.lean" target="_blank" rel="noopener">Spectral integration ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Vacuum.lean" target="_blank" rel="noopener">Eliminating exceptional characters ↗</a></p>
-  <div id="eq-81" class="technical-equation" role="region" aria-label="The spectrum condition and component vacuum uniqueness" tabindex="0">\[\operatorname{spec}(P_\xi)\subseteq\overline V_+,\qquad
-  \{\psi:U_\xi(a)\psi=\psi\ \text{for every }a\}
-  =\mathbb C\Omega_\xi.\]</div>
-  <p>There remain three different uniqueness questions: the vacuum inside one component, the component within one mixture, and the extracted infinite-volume theory. Only the first is established here. Components are not individually proved to arise as periodic finite-volume subsequential limits. Finally, the \(u^2\) spectral estimate allows positive energies arbitrarily close to zero; the resulting \(s^{-2}\) heat decay supplies no positive mass gap. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Extension.lean" target="_blank" rel="noopener">Complete every-character result ↗</a> · <a href="references/assessment-1-2026-11-10.pdf#page=8" target="_blank" rel="noopener">Assessment §§6.1–6.2 ↗</a></p>
+  <h4 id="phase-detail-os-comparison">The comparison isometry has no missing directions</h4>
+  <p>The Gram identity defines an isometry \(J_\xi^{\rm OS}:\mathcal H_\xi\to\mathcal K_\xi\), taking each quotient word to its boundary vector. It intertwines spatial translations and heat evolution. Surjectivity requires a separate argument. For a compact smooth frequency test \(b\) and positive ordered heights \(y\), put</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Compact frequency damping identifies a positive-height OS vector with a boundary-vector image" tabindex="0">\[
+  f_y=\widehat{e^{-\sum_j y_jp_j^4}b}_+(-\,\cdot),
+  \qquad
+  v_{\xi,y}^{\rm hot}\!\left(\widehat b_+(-\,\cdot)\right)
+  =J_\xi^{\rm OS}\Psi_\xi(f_y).
+  \]</div>
+  <p>Here \(\Psi_\xi\) is the joint-test Hilbert extension for the fixed labels. The compact-frequency identity equates the two squared norms and their mixed pairing, so their difference has zero norm. Frequency-test density puts all smeared positive-height vectors in the isometry's closed range; approximate identities then recover point vectors. Finally, sort a positive Euclidean word by time and perturb tied times by a small increasing height vector. Smoothness of the Euclidean Gram kernel makes these ordered word vectors converge to the original one. All positive OS words lie in the range, and their density proves surjectivity. Thus the comparison is unitary, rather than an embedding into a possibly larger Euclidean theory. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Hot.lean" target="_blank" rel="noopener">The compact-frequency vector identity ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Surjective.lean" target="_blank" rel="noopener">Ordered words, closed range, and surjectivity ↗</a></p>
+
+  <h4 id="phase-detail-operator-spectrum">Covariance, the operator spectrum, and faithfulness</h4>
+  <p>The continued label action and transformed tests preserve the word Gram form, hence induce Poincaré unitaries. For a fixed finite word, the transformed labels stay in finite-dimensional degree spaces; expanding in finite bases reduces strong continuity to continuous coefficients and Schwartz-test continuity. The transformations preserve \(\mathcal D_\xi\). Their translation subgroup has a joint spectral measure. The comparison with OS evolution implies nonnegative energy. Lorentz covariance transforms that spectral measure by the dual action \((\Lambda^{-1})^{\mathsf T}\), appropriate to the coordinate pairing used above. Every momentum outside the closed forward cone can be moved to negative energy by a proper orthochronous Lorentz transformation. Consequently the spectral measure vanishes there. This is the operator spectrum condition, consistent with the suffix-momentum support of the distributions; it supplies no positive lower bound above zero. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C28.lean" target="_blank" rel="noopener">Strong continuity through finite label spaces ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Fields/Spectrum.lean" target="_blank" rel="noopener">From the OS comparison and Lorentz covariance to forward spectral support ↗</a></p>
+  <p>Faithfulness uses the original label quotient: a label acting as zero would have vanishing boundary correlations; the compact-frequency identity, Euclidean symmetry, and continuity then make its Euclidean correlations vanish, placing it in precisely the null class already removed. No new label quotient is introduced in reconstruction. Vacuum uniqueness is a further argument, explained next. These steps expand the results carrying source labels H2.1–H2.2 and the continuation portion of H2.4 in Armstrong's draft, while retaining the released implementation's explicit distinction between the algebraic field domain and its joint-test Hilbert extensions. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/C26.lean" target="_blank" rel="noopener">Faithfulness for the retained labels ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/part2/H-section.tex" target="_blank" rel="noopener">Armstrong draft, source labels H2.1–H2.4 and their proofs ↗</a></p>
+
+
+  <h3 id="phase-vacuum">5. Why the vacuum is unique in every character</h3>
+  <p>A character is defined by the commutative compression algebra; uniqueness of its reconstructed vacuum still needs proof. The argument has two stages. First a nonnegative variance vanishes for almost every character. Then locality produces an estimate uniform over the entire character space, allowing continuity and full support to remove the exceptional characters. Throughout, distinguish the full zero-energy projection \(Q_\xi=\mathbf1_{\{0\}}(H_\xi)\) from the vacuum-line projection \(P_{\Omega_\xi}=|\Omega_\xi\rangle\langle\Omega_\xi|\); their equality is the conclusion.</p>
+
+  <h4 id="phase-vacuum-almost">A nonnegative variance gives almost-everywhere uniqueness</h4>
+  <p>Start in the phase OS space. For a positive-time word \(w\), write \(\psi_w^\xi=[w]_\xi\) and let \(Q_\xi^{\rm OS}\) project onto the entire heat-fixed space. Strong convergence of the heat semigroup gives \(\|e^{-sH_\xi^{\rm OS}}\psi_w^\xi\|^2\to\|Q_\xi^{\rm OS}\psi_w^\xi\|^2\). These nonnegative entries are bounded by their zero-time values, continuous functions of \(\xi\) on the compact character space. Dominated convergence therefore permits the heat limit under the phase integral. The barycenter identity and the compression-algebra identity yield</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The integrated ground-state norm equals the character second moment" tabindex="0">\[
+    \int_X\|Q_\xi^{\rm OS}\psi_w^\xi\|^2\,d\nu(\xi)
+      =\|Q_{\rm mix}^{\rm OS}\psi_w^{\rm mix}\|^2
+      =\int_X|S_\xi(w)|^2\,d\nu(\xi).
+  \]</div>
+  <p>Since the normalized vacuum is fixed and \(\langle\Omega_\xi^{\rm OS},\psi_w^\xi\rangle=S_\xi(w)\), orthogonality gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The nonnegative variance whose integral vanishes" tabindex="0">\[
+    \|Q_\xi^{\rm OS}\psi_w^\xi
+          -S_\xi(w)\Omega_\xi^{\rm OS}\|^2
+      =\|Q_\xi^{\rm OS}\psi_w^\xi\|^2-|S_\xi(w)|^2\ge0.
+  \]</div>
+  <p>Its integral is zero, so it vanishes almost everywhere for this word. Choose one countable word family whose <em>linear span</em> is dense in every phase OS space, and intersect its full-measure sets. On the resulting common full-measure set, boundedness of the projections extends the identity from that span to the whole space. Thus \(Q_\xi^{\rm OS}=P_{\Omega_\xi^{\rm OS}}\) almost everywhere. An uncountable intersection over all words would not justify this conclusion.</p>
+  <p>The same family works across phases because the field degrees have finite bases, configurations admit countable dense subsets, and the word Gram entries are continuous in their positions and coefficients. Density concerns finite linear combinations of words. A single word is generally a product-type vector, so density of individual words as points of Hilbert space is neither needed nor asserted.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Phase/Unique.lean" target="_blank" rel="noopener">Unique: exp_real and lifts ↗</a>; <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/part2/H-section.tex#L310-L317" target="_blank" rel="noopener">Armstrong H1.3: the integrated variance ↗</a>.</p>
+
+  <h4 id="phase-vacuum-shell">Locality supplies the missing uniform estimate</h4>
+  <p>Reconstruction first supplies, in every character, local covariant fields with positive-energy spectral support; this intermediate result does not assume a unique vacuum. Fix a finite linear combination \(A\) of words made from fields smeared with compactly supported smooth tests. Let \(\mu_\xi,\lambda_\xi\) be the positive momentum spectral measures of \(A\Omega_\xi,A^\dagger\Omega_\xi\). Continuity of their total masses on compact \(X\) gives a common bound \(M_A\). Compact supports and locality give a radius \(R_A\), independent of \(\xi\), such that</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A commutator with uniformly bounded spatial support" tabindex="0">\[
+    a_\xi(y,t)
+      =\widehat\mu_\xi(y,t)-\widehat\lambda_\xi(-y,-t)
+      =\langle\Omega_\xi,[A^\dagger,\alpha_{(y,t)}(A)]\Omega_\xi\rangle
+      =0\quad (|y|&gt;R_A,\ |t|\le1).
+  \]</div>
+  <p>Here \(\widehat\mu(z)=\int e^{ip\cdot z}\,d\mu(p)\), and \(A^\dagger\) reverses word order and conjugates labels and tests on the common domain. Rather than differentiating a spectral integral, average its odd part in time. The crucial weight is nonnegative at <em>all</em> positive energies:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The positive spectral weight obtained by time averaging" tabindex="0">\[
+    D_\xi(y)=\int_0^1\frac{a_\xi(y,t)-a_\xi(y,-t)}{2i}\,dt,\qquad
+    w(E)=\int_0^1\sin(Et)\,dt
+        =\frac{1-\cos E}{E},\quad w(0)=0,
+    \qquad w(E)\ge\frac E\pi\quad(0\le E\le1).
+  \]</div>
+  <p>Thus \(D_\xi\) is the spatial Fourier transform of the sum of two positive measures: \(w(E)\mu_\xi\) pushed to \(\mathbf p\), and \(w(E)\lambda_\xi\) pushed to \(-\mathbf p\). Both contributions have a plus sign. Also \(|D_\xi|\le M_A\) and its support lies in \(\overline B_{R_A}\). Positivity at high energies matters because those contributions can now be discarded in a lower bound.</p>
+  <p>The lower bound on the weight follows directly from \(\sin(Et)\ge2Et/\pi\) for \(0\le E,t\le1\), followed by integration in \(t\). Its global positivity follows instead from \(1-\cos E\ge0\). These are different facts: a small-energy Taylor expansion alone would not justify discarding the contribution of the rest of the spectrum. Averaging also avoids assuming that the word vectors belong to the Hamiltonian’s domain.</p>
+  <p>Choose \(0\le b_u\le1\), equal to one on \(B_u\) and supported in \(B_{2u}\), for \(0&lt;u\le1\). With \(\widehat b_u(y)=\int e^{-iq\cdot y}b_u(q)\,dq\), one has \(|\widehat b_u(y)|\le8|B_1|u^3\). On the forward cone, \(|\mathbf p|\le E\), so \(b_u=1\) on the energy shell \(u/2&lt;E\le u\). Fourier inversion gives the two-sided estimate</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Three spatial dimensions give u cubed and the spectral weight gives u" tabindex="0">\[
+    (2\pi)^3\frac{u}{2\pi}\,
+       \mu_\xi\{u/2&lt;E\le u\}
+      \le\left|\int_{\mathbb R^3}D_\xi(y)\widehat b_u(y)\,dy\right|
+      \le8|B_1||B_{R_A}|M_Au^3.
+  \]</div>
+  <p>Dividing by \(u\) yields a shell bound \(K_Au^2\). Decompose \((0,u]\) into the shells with upper endpoints \(u2^{-j}\). Countable additivity and the geometric sum give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Summing the dyadic energy shells" tabindex="0">\[
+    F_\xi(u):=\mu_\xi\{0&lt;E\le u\}
+       \le K_Au^2\sum_{j=0}^{\infty}4^{-j}
+       \le2K_Au^2.
+  \]</div>
+  <p>The source uses this sufficient constant \(2K_A\). Every constant depends on the fixed words, labels, and tests, but is uniform in \(\xi\). This is not an operator-norm estimate uniform over arbitrary Hilbert-space vectors.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Average.lean" target="_blank" rel="noopener">Average: pulse_lower, pulse_positive, two_average ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Light.lean" target="_blank" rel="noopener">Light: annulus, dyadic, light_bound ↗</a>.</p>
+
+  <h4 id="phase-vacuum-heat">Integrating the spectral distribution gives heat decay</h4>
+  <p>Enlarge the constant to \(C_A\) so that \(F_\xi(u)\le C_Au^2\) for every \(u&gt;0\): above one, the total spectral mass already supplies the bound. For \(s&gt;0\), write \(e^{-sE}=\int_E^\infty se^{-st}\,dt\). Tonelli applies because the integrands are nonnegative. With \(\psi_\xi=A\Omega_\xi\),</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Spectral distribution integration gives inverse-square heat decay" tabindex="0">\[
+    \begin{aligned}
+    0\le\langle\psi_\xi,(e^{-sH_\xi}-Q_\xi)\psi_\xi\rangle
+      &amp;=\int_{E&gt;0}e^{-sE}\,d\mu_\xi\\
+      &amp;=s\int_0^\infty e^{-st}F_\xi(t)\,dt\\
+      &amp;\le C_As\int_0^\infty t^2e^{-st}\,dt
+       =2C_As^{-2}.
+    \end{aligned}
+  \]</div>
+  <p>The subtraction is still the full ground projection \(Q_\xi\). The estimate says nothing about its rank. In particular, the low-energy bound alone cannot remove an additional atom at zero.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Projection.lean" target="_blank" rel="noopener">Projection: residual_pair ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Decay.lean" target="_blank" rel="noopener">Decay: decay and inverse_square ↗</a>.</p>
+
+  <h4 id="phase-vacuum-support">Full support removes exceptional characters</h4>
+  <p>For fixed \(s&gt;0\), the heat pairing is continuous in \(\xi\). To see why, insert a smooth momentum cutoff \(\chi_N\), equal to one on the ball of radius \(2N\) and zero outside radius \(3N\). The cutoff integral is continuous by the continuity of the reconstructed word distributions. On the spectral cone, \(\|p\|\le2E\); outside the inner ball, \(E&gt;N\). Consequently</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniform approximation proving continuity of heat pairings" tabindex="0">\[
+    \sup_{\xi\in X}
+    \left|\int e^{-sE}\,d\mu_\xi
+       -\int\chi_N(p)e^{-sE}\,d\mu_\xi\right|
+       \le M_Ae^{-sN}\longrightarrow0.
+  \]</div>
+  <p>Subtract the continuous vacuum expectation, not the potentially discontinuous ground projection. The function</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The continuous vacuum-subtracted heat pairing" tabindex="0">\[
+    g_{A,s}(\xi)
+      =\langle\psi_\xi,e^{-sH_\xi}\psi_\xi\rangle
+         -|\langle\Omega_\xi,\psi_\xi\rangle|^2
+  \]</div>
+  <p>is continuous. On the almost-everywhere good set, the OS comparison identifies \(Q_\xi=P_{\Omega_\xi}\), so \(0\le g_{A,s}(\xi)\le2C_As^{-2}\). For fixed \(A,s\), the characters satisfying this inequality form a closed set of full measure. Its complement, if nonempty, would be open and have positive measure because \(\nu\) has full support. The inequality therefore holds for every character. This argument is applied separately for each \(A,s\); it requires no uncountable intersection of full-measure sets.</p>
+  <p>Now let \(s\to\infty\). Strong heat convergence gives \(\langle\psi_\xi,Q_\xi\psi_\xi\rangle=|\langle\Omega_\xi,\psi_\xi\rangle|^2\). Since \(Q_\xi\Omega_\xi=\Omega_\xi\), this is precisely</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The full zero-energy projection is the vacuum projection" tabindex="0">\[
+    \|Q_\xi\psi_\xi
+       -\langle\Omega_\xi,\psi_\xi\rangle\Omega_\xi\|^2=0.
+  \]</div>
+  <p>Compactly supported smooth approximations to the Schwartz tests converge in the word-vector Hilbert norm. Their word span is dense, and both projections are bounded, so \(Q_\xi=P_{\Omega_\xi}\) on the entire space. No continuity of \(\xi\mapsto Q_\xi\) was assumed.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Decay.lean" target="_blank" rel="noopener">Decay: uniform_heat ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Vacuum.lean" target="_blank" rel="noopener">Vacuum: extends_decay, cluster_zero, all_plant ↗</a>.</p>
+
+  <h4 id="phase-vacuum-endpoint">The endpoint and the scalar weak commutant</h4>
+  <p>The unitary OS comparison established above transfers the vacuum-line statement to the entire OS space. The spectral cone makes a zero-energy vector a zero-momentum vector, so the equivalent relativistic conclusion is</p>
+  <div id="eq-81" class="technical-equation" role="region" aria-label="The spectrum condition and component vacuum uniqueness" tabindex="0">\[
+    \operatorname{spec}(P_\xi)\subseteq\overline V_+,\qquad
+    \ker H_\xi=\mathbb C\Omega_\xi,\qquad
+    \{\psi:U_\xi(a)\psi=\psi\ \text{for every }a\}
+       =\mathbb C\Omega_\xi.
+  \]</div>
+  <p>Cyclicity means field-word vectors span densely; it does not assert a one-dimensional ground space. Faithfulness means a nonzero response label acts nontrivially for some test; it is distinct from faithfulness of the mixed compression-algebra state, which supplied full support.</p>
+  <p>The field-faithfulness argument uses the common quotient of raw fields by null responses. If a label acted as zero for every test, all boundary correlations containing it would vanish. The boundary-to-Euclidean identification then gives vanishing Euclidean responses; equality of the phase and mixed null spaces and injectivity of the response-label map force the label itself to be zero. Thus reconstruction does not silently discard an additional class of observable fields in an exceptional phase.</p>
+  <p>For irreducibility, let \(B\) be bounded and satisfy \(\langle\Phi^*u,Bv\rangle=\langle u,B\Phi v\rangle\) on the field-word domain. The adjoint is the actual unbounded Hilbert-space adjoint; \(B\) is not assumed to preserve the domain. Iterating this weak identity moves whole words across matrix entries. For \(u=A\Omega_\xi\), \(v=A^\dagger\Omega_\xi\), consider</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Opposite-time analytic pairings used for irreducibility" tabindex="0">\[
+    p(z)=\langle u,e^{izH_\xi}B\Omega_\xi\rangle,\qquad
+    q(z)=\langle B^*\Omega_\xi,e^{izH_\xi}v\rangle,
+    \qquad \operatorname{Im}z&gt;0.
+  \]</div>
+  <p>Positive energy makes both functions bounded and holomorphic in the upper half-plane, continuous to its boundary. Covariance and the weak word identity give \(p(t)=q(-t)\) for real \(t\). Pasting \(p(z)\) above the axis to \(q(-z)\) below it gives a bounded entire function, hence a constant by Liouville. At \(z=is\), heat convergence then shows \(B\Omega_\xi=b\Omega_\xi\). Moving words once more gives \(\langle A'\Omega_\xi,BA\Omega_\xi\rangle=b\langle A'\Omega_\xi,A\Omega_\xi\rangle\); density and boundedness imply \(B=bI\).</p>
+  <p>The endpoint is a faithful local Wightman theory in every character, with joint Schwartz boundary distributions, the same continued stress tensor, and phase averages recovering the mixed correlations. This establishes vacuum uniqueness <em>within</em> each component. It establishes neither a unique component nor uniqueness across infinite-volume extractions. The constants in the heat bound depend on the chosen word: polynomial decay permits positive spectrum arbitrarily close to zero and supplies no positive mass gap.</p>
+  <p>For a fixed such vector, the heat estimate also bounds \(\|e^{-sH_\xi}(1-P_{\Omega_\xi})\psi_\xi\|^2\) by applying the quadratic-form estimate at time \(2s\). Extending the identity of the ground projections by density is legitimate; extending this rate with one constant to the whole unit sphere is not. The latter would require a new uniform bound, absent from the word-dependent estimates.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Surjective.lean" target="_blank" rel="noopener">Surjective: onto ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Irreducible.lean" target="_blank" rel="noopener">Irreducible: the weak commutant ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/EveryPhase/Extension.lean" target="_blank" rel="noopener">Extension: Completed and all_characters ↗</a>; <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/part2/H-section.tex#L473-L520" target="_blank" rel="noopener">Armstrong H2: comparison, low energy, and irreducibility ↗</a>.</p>
+
 </section>
 
 <section class="technical-section" id="proof-symmetry" aria-labelledby="proof-symmetry-title">
@@ -1877,7 +2166,7 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
             <li id="ref-pdg"><strong><span class="source-number">[8]</span> Particle Data Group · Quantum Chromodynamics</strong><a href="https://pdg.lbl.gov/2025/reviews/rpp2025-rev-qcd.pdf" target="_blank" rel="noopener">Review of Particle Physics, QCD review (2025) ↗</a><p>Conventions for the beta function, running coupling, and the scale parameter. The notes specialize to pure gauge theory with no dynamical quarks.</p></li>
             <li id="ref-assessment"><strong><span class="source-number">[9]</span> Yang–Mills group · Validation of the OpenAI Yang–Mills construction</strong><a href="references/assessment-1-2026-11-10.pdf" target="_blank" rel="noopener">Read the November 10, 2026 assessment ↗</a> · <a href="https://github.com/yang-mills-group/YM/tree/55ba9fc36293b3f4d52c6b1f813169a0be76ee98" target="_blank" rel="noopener">Pinned review repository ↗</a><p>Part I states the construction and its limits; Part II records the formal verification, independent checks, and their scope. Revision <code>55ba9fc36293b3f4d52c6b1f813169a0be76ee98</code>. The committee describes this as an initial assessment and does not claim to fully understand the proof.</p></li>
             <li id="ref-submission"><strong><span class="source-number">[10]</span> OpenAI · October 28, 2026 Yang–Mills submission</strong><a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/tree/3456e5e75cf8d4cd558955a5c7638fba2d68f464" target="_blank" rel="noopener">Pinned original source repository ↗</a><p>The released Lean source underlying this walkthrough, revision <code>3456e5e75cf8d4cd558955a5c7638fba2d68f464</code>. The explanations here are based on the assessment and source reading.</p></li>
-            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation; the ultraviolet convergence discussion compares §14; the infinite-volume and field-calculus discussion compares §15. This is a developing, AI-assisted reconstruction from the released Lean source. Revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>; consulted 12 November 2026. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
+            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/f958ee21f4739af0f249af26a62bbeb807dbb27b/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation; the ultraviolet convergence discussion compares §14; the infinite-volume and field-calculus discussion compares §15; the phase and reconstruction discussion compares §17. This is a developing, AI-assisted reconstruction from the released Lean source. The phase comparison uses revision <code>f958ee21f4739af0f249af26a62bbeb807dbb27b</code>, consulted 12 November 2026; earlier discussions retain their links to revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
           </ol>
         </section>
         <a class="technical-endlink" href="index.html">Return to the visual field guide <span aria-hidden="true">↗</span></a>
