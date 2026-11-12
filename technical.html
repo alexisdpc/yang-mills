@@ -781,7 +781,7 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
   <p>The quotient accounts for relations such as those associated with Bianchi identities and equations of motion, formulated through correlations. The construction identifies this finite-degree field content with a corresponding gauge-invariant free-curvature polynomial space modulo its relations. This is a statement about the vector space of local fields, not equality of interacting and free correlation functions. The same correlation-null spaces occur in every component phase. The accepted reconstruction also supplies dense field words and faithfulness: a nonzero quotient label acts nontrivially for some test function. <a href="references/assessment-1-2026-11-10.pdf#page=4" target="_blank" rel="noopener">Assessment, pp. 4, 8 ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/checks/AcceptanceSpec.lean" target="_blank" rel="noopener">Accepted operator content ↗</a></p>
 </section>
 
-<section class="technical-section" id="proof-uv" aria-labelledby="proof-uv-title">
+<section class="technical-section uv-detail" id="proof-uv" aria-labelledby="proof-uv-title">
   <p class="technical-kicker">15 / THE FIXED-VOLUME ULTRAVIOLET LIMIT</p>
   <h2 id="proof-uv-title">A Cauchy theorem at fixed physical volume.</h2>
   <p>Fix a volume index \(p\), a finite list of field labels \(\boldsymbol v=(v_1,\ldots,v_n)\), and a smooth compactly supported joint test function \(f\). Its support lies strictly inside the physical box and avoids every collision \(x_i=x_j\). The test may depend jointly on all insertion points; it need not factor into one-point tests. The finite-cutoff object is a Riemann sum of renormalized lattice moments:</p>
@@ -793,10 +793,12 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
   \forall\,N,M\geq N_0,\qquad
   |C_{N,p}(\boldsymbol v;f)-C_{M,p}(\boldsymbol v;f)|&lt;\varepsilon.\]</div>
   <p>Writing this quantifier statement is not its proof. The implementation separates two tasks: compare a fine-cutoff moment with an expression at a common RG scale, then prove that expression is Cauchy as the original cutoff changes. Spatial bounds subsequently upgrade the result to smooth kernels and joint-test convergence.</p>
+  <p class="proof-revision-note"><strong>Comparison with Armstrong’s draft.</strong> The expanded argument follows §14, especially its fixed-level and stopping estimates, Lemma E2.4 on position differences, and Lemmas E3.1–E3.2 on smoothness and smearing. The discussion distinguishes elementary derivations from the construction estimates they need. Where the draft and the implementation use different presentations—such as the positive denominator and derivative identification—both are explained and linked to fixed revisions. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/E-section.tex" target="_blank" rel="noopener">Read the draft’s UV chapter ↗</a> · <a href="#ref-armstrong">Manuscript and review status [11]</a>.</p>
   <nav class="technical-note" aria-label="Steps in the ultraviolet convergence proof"><p><strong>Follow the UV argument</strong></p><ol>
     <li><a href="#uv-common-scale">Compare at a common RG scale</a></li>
     <li><a href="#uv-fixed-scale">Control the normalized coarse expression</a></li>
     <li><a href="#uv-cauchy">Close the three-term Cauchy estimate</a></li>
+    <li><a href="#uv-difference-bounds">Derive uniform position-difference bounds</a></li>
     <li><a href="#uv-spatial">Extend from nested-grid points to smooth kernels</a></li>
     <li><a href="#uv-smearing">Pass to joint Riemann sums</a></li>
   </ol></nav>
@@ -813,34 +815,121 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
   <p>Here \(B_j\) is the schedule's growing support-size parameter. Once an admissible base scale and positive source weights are fixed, \(F_0\) is finite and independent of \(j\) and \(N\). For each sufficiently large \(j\), the estimate holds for all sufficiently large \(N\); the threshold can depend on \(j\) and the fixed data. Its hypotheses include separated insertion supports at the relevant scales, exact migration of positions, bounds on both regular and forced insertion terms, and the history's tail estimates.</p>
   <p>The proof transports the marked density exactly, then estimates the omitted higher marked terms in the coarse expression. It does not replace the original Wilson measure by an unrelated limiting measure. In particular, \(\exp(-B_j/64)\) is a bound in the <em>comparison scale</em> \(j\), not an asserted convergence rate in the original cutoff \(N\). <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Peat.lean" target="_blank" rel="noopener">Exact transport and comparison, <code>echoes</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Eves.lean" target="_blank" rel="noopener">Nested-grid positions and separation ↗</a></p>
 
-  <h3 id="uv-fixed-scale">2. Why the coarse expression is Cauchy</h3>
-  <p>At fixed \(j,p\), every coarse expression lives on the same finite product of copies of the compact gauge group, with the same normalized Haar measure \(d\mu_j\). The relevant convergence is that of the transported data at this fixed scale: the coupling \(\beta_{j,N}\), the canonical path action, the activity package in its completed weighted norm, and the finite-degree coefficient and forced-insertion packages. In <code>Cement</code>, <code>Flux.trails</code> controls the canonical path data and <code>Flux.lawsT</code> turns that control into uniform Cauchy convergence of the action. It is not convergence of the divergent bare coupling \(\beta_{N,p}\), nor uniform boundedness of the terminal inverse mixing matrices.</p>
-  <p>The source's <code>Rising.grow</code>, <code>hail</code> and <code>flooded</code> connect these Cauchy data to the actual transported fields and represented densities. A useful intermediate property, called <code>Confluence</code>, consists of eventual uniform boundedness and the following uniform Cauchy assertion on coarse configurations:</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniform Cauchy control at a fixed coarse lattice" tabindex="0">\[
-  \forall\eta&gt;0\ \exists N_\eta\
-  \forall N,M\ge N_\eta:\qquad
-  \sup_U|h_{j,N}(U)-h_{j,M}(U)|\le\eta.
-  \]</div>
-  <p>The proof propagates this property through the controlled sums, products and continuous finite-dimensional operations entering the regular terms and polymer factors. Measurability and the probability normalization then give</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniform coarse-integrand control implies Cauchy integrals" tabindex="0">\[
-  \left|\int(h_{j,N}-h_{j,M})\,d\mu_j\right|
-  \le\int|h_{j,N}-h_{j,M}|\,d\mu_j
-  \le\sup_U|h_{j,N}(U)-h_{j,M}(U)|.
-  \]</div>
-  <p>Normalization requires a further argument. The vacuum scalar in the represented density need not have a finite UV limit. It is stripped from numerator and denominator, where its common exponential factor cancels. Write the resulting ratio as</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="The coarse ratio with its common vacuum scalar removed" tabindex="0">\[
-  A_{j,N}=\frac{\mathcal N_{j,N}}{Z^{\mathrm{str}}_{j,N}},
-  \qquad Z^{\mathrm{str}}_{j,N}\ge z_*(j,p)&gt;0.
-  \]</div>
-  <p>The positive lower bound is supplied by <code>lingers</code>: it integrates a controlled region of group configurations and uses the action and activity bounds. It is uniform in the fine cutoff \(N\) at fixed \(j,p\), not a volume-independent lower bound. Both the stripped denominator and numerator are Cauchy. If \(|\mathcal N_{j,M}|\le C_j\), the elementary ratio estimate makes the remaining implication explicit:</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Cauchy estimate for a ratio with denominator bounded away from zero" tabindex="0">\[\begin{aligned}
-  |A_{j,N}-A_{j,M}|
-  \le{}&amp;\frac{|\mathcal N_{j,N}-\mathcal N_{j,M}|}{z_*}\\
-       &amp;+\frac{C_j}{z_*^2}
-          |Z^{\mathrm{str}}_{j,N}-Z^{\mathrm{str}}_{j,M}|
-  \longrightarrow0.
+<div class="proof-detail" id="uv-detail-marked-transfer">
+  <h4 id="uv-detail-transfer">What is transferred exactly?</h4>
+  <p>The stopping estimate has more content than a small RG remainder. Introduce commuting markers \(\theta_1,\ldots,\theta_n\) with \(\theta_i^2=0\). This finite algebra records each selected insertion once. At the original cutoff, the marked density is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Exact marked density and its moment coefficient" tabindex="0">\[\mathcal H_{N,N}(\theta;U)=\rho_N(U)
+  \exp\!\left(\sum_{i=1}^n\theta_i I_{N,i}(U)\right),\qquad
+  [\theta_1\cdots\theta_n]\mathcal H_{N,N}
+       =\rho_N\prod_{i=1}^n I_{N,i}.\]</div>
+  <p>The exponential terminates in this algebra; this is an exact encoding, not a perturbative truncation. Each block operator \(\mathcal B_m\) is applied to the whole density, coefficient by coefficient. Its probability normalization gives, by Fubini,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Integral preservation under the actual block transfer" tabindex="0">\[\mathcal H_{m,N}=\mathcal B_m\mathcal H_{m+1,N},\qquad
+  \int\mathcal H_{m,N}\,dU_m=\int\mathcal H_{m+1,N}\,dU_{m+1},\qquad
+  P_N=\frac{\int[\theta_1\cdots\theta_n]\mathcal H_{j,N}\,dU_j}{Z_N}.\]</div>
+  <p>The engineering factors and inverse mixing maps are already in the normalized insertions \(I_{N,i}\). The exact transferred representation contains complete singleton functions \(f_{i,j}\), forced singleton functions \(k_{i,j,Y}\), and connected terms \(H_{j,X},K^{\ge2}_{j,Y}\) carrying at least two markers. The comparison expression \(A_{j,N}\) sets only these last terms to zero. It keeps the actual unmarked density, singleton functions and forced eligibility rules. The singleton part alone is therefore not an exact RG invariant. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/MergeProof/Accent.lean" target="_blank" rel="noopener">Marked representation, <code>restore</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/MergeProof/South/Window.lean" target="_blank" rel="noopener">Exact transfer, <code>gust_sum</code> ↗</a></p>
+
+  <p>With zero or one marked slot, the higher-marker sector is empty, so this particular omission introduces no error. The geometric argument is needed for several insertions, when connected components can carry two or more of their labels together.</p>
+
+  <h4 id="uv-detail-separation">Separation buys an analytic disk</h4>
+  <p>Fix a base level \(k\) above the labels' reference levels and containing the chosen physical points. Eventually their lattice separations exceed \(B_m^2\). One explicit reason is the schedule inequality</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Physical size of a marker separation neighborhood tends to zero" tabindex="0">\[a_{m+1}B_{m+1}^2\le\frac23a_mB_m^2,
+  \qquad a_mB_m^2\longrightarrow0.\]</div>
+  <p>Here the factor follows from \(B_{m+1}^2\le2B_m^2\) and a blocking ratio at least three, on the admitted tail. A fixed positive physical separation therefore contains arbitrarily many such neighborhoods. Every nonzero higher marked component has a support containing at least two of its anchors. The connected-cover bound implies</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Support weight pays the inflation of higher marked components" tabindex="0">\[c_{B_j}(X)\ge B_j/64,\qquad R_j=e^{B_j/64},\qquad
+  |\lambda|e^{(\sigma_j-2)c_{B_j}(X)}
+       \le e^{\sigma_jc_{B_j}(X)}\quad(|\lambda|\le R_j).\]</div>
+  <p>Thus multiplying <em>every higher marked component</em> by the same complex number \(\lambda\) is affordable throughout a growing disk. Both regular and forced terms are covered. The singleton functions remain unchanged, because their supports need not bridge two anchors. This is the geometric source of the exponential gain. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Eves.lean" target="_blank" rel="noopener">Separation, <code>price</code> and <code>positions</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Sever.lean" target="_blank" rel="noopener">Inflation bounds, <code>worth</code> and <code>garnish</code> ↗</a></p>
+
+  <h4 id="uv-detail-base-bound">Keep the normalization estimate at one fixed base level</h4>
+  <p>Let \(F_{j,N}(\lambda)\) be the normalized full-marker coefficient integral after this inflation. Then \(F_{j,N}(1)=P_N\) and \(F_{j,N}(0)=A_{j,N}\). Measurability, a common integrable majorant and the finite marker algebra prove holomorphy for \(|\lambda|&lt;R_j\). A bound calculated directly at level \(j\) would introduce its growing lattice volume. The proof instead transfers the modified density down to the same fixed base \(k\), preserving its integral.</p>
+  <p>Choose positive marker weights \(w_i\) once. Uniform fixed-level bounds allow them to satisfy the source allowances: if the insertion price is bounded by \(c_i\), take \(w_i=\zeta_i/(|c_i|+1)\) with \(\zeta_i&gt;0\). Eventual singleton bounds at \(k\) then supply finite \(x,y\) such that</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Fixed base singleton bounds and the stopping constant" tabindex="0">\[\begin{aligned}
+  w_i|f_{i,k}(U)|&amp;\le x,&
+  \sum_Yw_i|k_{i,k,Y}(U)|&amp;\le y,\\
+  |F_{j,N}(\lambda)|&amp;\le F_0,&
+  F_0&amp;=\frac{\exp\{V_kq_k+n(x+y+2)\}}{\prod_{i=1}^nw_i}.
   \end{aligned}\]</div>
-  <p>This is the content assembled in <code>Confluence.laven</code> and <code>Rising.latter</code>. The norm control of the activity and insertion packages is the analytic input; integration and division do not manufacture that control. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Capital.lean" target="_blank" rel="noopener">Transported coefficient convergence ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Cement.lean" target="_blank" rel="noopener">Stripped densities and activities ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Till.lean" target="_blank" rel="noopener">Positive denominator bound ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Ivy.lean" target="_blank" rel="noopener">Normalized ratio convergence ↗</a></p>
+  <p>Here \(V_k\) is the number of sites at the fixed volume and level, and \(q_k\) is the schedule's normalization majorant, called <code>Vac.treasury</code>. The two unit budgets for higher regular and forced components explain \(2n\). The scalar vacuum normalization cancels against the original partition function. Crucially, \(F_0\) depends on the base data, not on \(j,N\). Bounds required at the chosen stopping level hold on a cutoff tail whose start may depend on \(j\).</p>
+  <p>The coefficient bound can be checked directly. For a marker polynomial \(Q=\sum_SQ_S\theta_S\) with zero constant term, use the positive weighted coefficient norm</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Positive marker weights control the desired moment coefficient" tabindex="0">\[\|Q\|_w=\sum_S|Q_S|\prod_{i\in S}w_i,\qquad
+  |Q_{\{1,\ldots,n\}}|\le\frac{\|Q\|_w}{\prod_iw_i},\qquad
+  \|\exp Q\|_w\le e^{\|Q\|_w}.\]</div>
+  <p>The last inequality concerns the finite exponential used in the marker algebra. Products and sums of components are controlled before extracting the desired coefficient. These auxiliary weights do not redefine the physical fields: the division by their product restores the original coefficient. During transfer they evolve by \(w_{i,m+1}=\varphi_mw_{i,m}\), where \(\varphi_m&gt;0\) is the prescribed weight multiplier. If \(\delta_m&gt;0\) denotes the one-step factor in the marked transfer bound, the admitted schedule supplies \(1\le\delta_m\varphi_m e^{B_m/128}\); the anchor-cover estimate pays this weight change inside the support budget. Thus small source allowances and exact marker transport are compatible, rather than independent assumptions. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Marker/Truncated.lean" target="_blank" rel="noopener">Finite exponential bound ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/MergeProof/Paddle.lean" target="_blank" rel="noopener">Compatible source weights and migration ↗</a></p>
+  <p>The implementation spends two support-exponent units at the stopping level, then its retained step estimate restores the scheduled exponent below that level. This is a proved transfer property, not repeated subtraction of two units at every step. Armstrong's §14 reconstructs the same inflation-and-base-level argument; the source makes this exponent bookkeeping explicit. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Shave.lean" target="_blank" rel="noopener">Retained transfer, <code>waft</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Cloak.lean" target="_blank" rel="noopener">Holomorphic coefficient integrals ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Flight.lean" target="_blank" rel="noopener">Base estimate, <code>charges</code> and <code>refreeze</code> ↗</a></p>
+
+  <h4 id="uv-detail-stopping">Derive the stopping error, then choose the scales</h4>
+  <p>For \(R_j&gt;2\), every circle of radius \(R_j/2\) centered on \([0,1]\) lies inside the analytic disk. Cauchy's derivative estimate and integration along that segment give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Cauchy's analytic estimate gives the marked stopping error" tabindex="0">\[|F'_{j,N}(t)|\le\frac{2F_0}{R_j}\quad(0\le t\le1),\qquad
+  |P_N-A_{j,N}|\le\int_0^1|F'_{j,N}(t)|\,dt
+       \le2F_0e^{-B_j/64}.\]</div>
+  <p>This derivation is <code>Flight.touch</code> inside <code>omissions</code>; <code>Peat.echoes</code> identifies its endpoints with the original Wilson moment and the singleton comparison. It controls the total omitted higher-marker contribution without estimating each omitted term separately. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Peat.lean" target="_blank" rel="noopener">Comparison with the actual moment ↗</a></p>
+  <p>The schedule gives more decay than the final Cauchy proof needs. Since \(\widehat\beta_j=\bar\beta+c_Gs_j\), \(s_j\ge j\log3\), and \(B_j=\lceil(\log\widehat\beta_j)^2\rceil\), elementary comparison yields</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Summability of the comparison-scale error is an elementary schedule consequence" tabindex="0">\[\forall q&gt;0,\quad e^{-B_j/64}\le j^{-q}\ \text{eventually},
+  \qquad \sum_{j\ge1}e^{-B_j/64}&lt;\infty.\]</div>
+  <p>This summability is a consequence of the schedule, not an adjacent-cutoff estimate for \(|P_{N+1}-P_N|\). The actual full-sequence argument only needs the stopping error to vanish: first fix the base data, then choose \(j\) for the desired accuracy, and finally choose a common cutoff threshold using fixed-\(j\) Cauchy convergence. It compares all sufficiently large \(N,M\). No rate for that last threshold, simultaneous choice \(j(N)\), or UV subsequence follows from the stopping estimate alone. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Timber.lean" target="_blank" rel="noopener">Order of choices, <code>Rising.arrives</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/RG/History.lean" target="_blank" rel="noopener">Schedule definitions ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/E-fixed-level.tex" target="_blank" rel="noopener">Compare Armstrong's stopping proof ↗</a></p>
+  <p>After the full-sequence Cauchy conclusion has been established, let \(A_j=\lim_{N\to\infty}A_{j,N}\) and \(P=\lim_{N\to\infty}P_N\). Passing to the limit at each fixed \(j\) preserves the comparison bound:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The limiting coarse expressions approximate the continuum moment" tabindex="0">\[|P-A_j|\le2F_0e^{-B_j/64}.\]</div>
+  <p>This elementary consequence explains the role of the intermediate expressions: they approximate the same continuum moment increasingly well as the comparison scale is refined. It does not supply a computable error bound for a specified original cutoff, because it has already taken that cutoff to infinity at fixed \(j\).</p>
+</div>
+
+
+  <h3 id="uv-fixed-scale">2. Why the coarse expression is Cauchy</h3>
+  <h4 id="uv-detail-effective">The common space and the fixed-level convergence theorem</h4>
+  <p>Write \(m\) for the fixed comparison level \(j\) above. Fix the physical period \(p\), the finite labels and their reference levels, and a separated configuration on a common grid. Choose \(m\) beyond these reference levels, with its stage admitting every required degree and derivative order. Only then send \(N\to\infty\). The stage, health threshold, coarse torus, address spaces and weighted norms at \(m\) stay fixed. Thus the activity coordinate \(\mathsf A_{N,m}\) belongs to one completed Banach space \(\mathcal X_{m,p}\); it is not compared with a coordinate living on the finest lattice.</p>
+  <p>The unmarked convergence theorem has two ingredients. The normalized scalar coordinates admit a diagonal convergent subsequence because each coordinate lies in a fixed compact interval. Activity balls need not be compact. Instead, on that subsequence, stop the activity recursion at a remote fixed level \(h&gt;m\), replace its terminal activity by zero, and retain the scalar inputs. The construction's Lipschitz estimate gives, with the fixed recursion parameter \(0&lt;g_*&lt;1/8\) and contraction factor \(q=8g_*\),</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Truncating the activity recursion at a remote fixed level" tabindex="0">\[
+  \|\mathsf A_{N,m}-\mathsf A^{[h]}_{N,m}\|_{m,p}\le q^{h-m},\qquad
+  \|\mathsf A_{N,m}-\mathsf A_{N',m}\|_{m,p}
+  \le 2q^{h-m}+\|\mathsf A^{[h]}_{N,m}-\mathsf A^{[h]}_{N',m}\|_{m,p}.
+  \]</div>
+  <p>The truncated recursion converges by finite downward induction: the local maps are compatible with converging scalar inputs and prescribed paths in the common spaces. First choose \(h\) to suppress the geometric term; then enlarge both cutoffs. To remove the scalar subsequence, compare two limiting histories with the same endpoint coupling. Their finite scalar-prefix identities and one-step activity estimates imply \(D\le8g_*D\), where \(D\) is their finite supremum distance over levels. Therefore \(D=0\). Every subsequence has a further subsequence with this same limit, proving full convergence. These are construction estimates; the last implication is the elementary subsequence criterion. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/D-section.tex" target="_blank" rel="noopener">Scalar-free fixed-level lemma ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Glide/Triumph.lean" target="_blank" rel="noopener">Full-sequence producer, <code>allB</code> ↗</a></p>
+
+  <h4 id="uv-detail-marked">Why the one-mark functions converge across different cutoffs</h4>
+  <p>The transported insertion contains its polynomial coefficient and its complete regular and forced remainders. A contraction for two graphs over the same unmarked input does not directly compare histories with different ultraviolet cutoffs. Normalize their graph distance using the stage columns and the forced remainder allowance \(\kappa_i=(\epsilon_i^{\mathrm{for}})^{1/2}\). Admitted graphs have distance at most two. At fixed level \(i\), comparison through the limiting unmarked input produces an additional discrepancy \(\delta_i(N,N')\to0\). The marked-step contraction then gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The graph comparison includes the change of unmarked coordinates" tabindex="0">\[\begin{aligned}
+  d_i(N,N')&amp;\le\tfrac12d_{i+1}(N,N')+\delta_i(N,N'),\\
+  d_m(N,N')&amp;\le2^{1-(h-m)}+
+       \sum_{i=m}^{h-1}2^{-(i-m)}\delta_i(N,N').
+  \end{aligned}\]</div>
+  <p>The second line follows by iterating the first and using \(d_h\le2\). Choose \(h-m\) large before taking \(N,N'\) large enough for this finite set of discrepancies. No summability of \(\delta_i\) over infinitely many levels, and no rate in \(N\), is required. Continuity of a fixed local integral is justified by its common integrable majorant; discarded connected collections have the common summable weighted majorant. For path arrays, a strict exponential reserve controls the tail: a bound \(C\) at weight \(w'&gt;w\) makes the contribution of paths of length at least \(L\) at most \(Ce^{-(w'-w)L}\). Finite coefficient convergence plus this tail bound supplies convergence in the path norm.</p>
+  <p>Reference normalization also remains finite-dimensional. Let \(B_N\) be the finite product of coefficient maps from level \(m\) to the fixed reference level, so the transported coefficient is \(c_{N,m}=B_N^{-1}c\). The proved inverse bounds give \(\|B_N^{-1}\|\le C_{m,p}\) on the relevant tail. The elementary resolvent identity yields</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Fixed-reference normalization preserves Cauchy convergence" tabindex="0">\[
+  B_N^{-1}-B_{N'}^{-1}=B_N^{-1}(B_{N'}-B_N)B_{N'}^{-1},\qquad
+  \|c_{N,m}-c_{N',m}\|\le C_{m,p}^{2}\|B_N-B_{N'}\|\,\|c\|.
+  \]</div>
+  <p>This uses only finitely many maps after \(m\) is fixed. It asserts no uniform bound on the inverse normalization extending all the way to the terminal cutoff. The implementation realizes the graph argument by geometrically accurate truncated ladders, then reconstructs coefficients from the reference level. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/E-fixed-level.tex" target="_blank" rel="noopener">Fixed-level marked comparison ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Mark/Sages.lean" target="_blank" rel="noopener">Truncated ladders and inverse normalization ↗</a></p>
+
+  <h4 id="uv-detail-density">From weighted coordinates to scalar-free integrands</h4>
+  <p>Write the represented density as \(\rho_N(U)=e^{s_N}\widetilde\rho_N(U)\), with \(s_N=v_{N,m}|\Lambda_{m,p}|\). The scalar-free density is \(\widetilde\rho_N=e^{-S_N-E_N}\mathcal F_N\), where \(\mathcal F_N\) retains the forced-polymer sum and its actual eligibility tests. At fixed \(m,p\), group the countable activities by their finitely many supports and inventories. Weighted convergence controls each grouped sum uniformly. The health indicators are the same functions of \(U\) for all cutoffs; they need not be continuous, and none is differentiated.</p>
+  <p>Let \(\widetilde H_N\) be the scalar-free, full-source coefficient with higher marked modes omitted and complete singleton functions retained. It is a finite polynomial in these grouped functions and their exponentials. For \(r\ge1\) factors bounded in absolute value by \(M\ge1\), ordinary product and exponential estimates make this operation uniformly continuous; for example,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Elementary estimates used to pass from coordinates to integrands" tabindex="0">\[
+  \left\|\prod_{a=1}^{r}u_a-\prod_{a=1}^{r}v_a\right\|_\infty
+  \le M^{r-1}\sum_{a=1}^{r}\|u_a-v_a\|_\infty,\qquad
+  |e^z-e^w|\le e^M|z-w|\quad(|z|,|w|\le M).
+  \]</div>
+  <p>Consequently both \(\widetilde H_N\) and \(\widetilde\rho_N\) are uniformly Cauchy and eventually bounded. Haar probability integration preserves their Cauchy estimates. The common scalar cancels exactly, before taking any limit:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Exact cancellation of the cutoff-dependent vacuum scalar" tabindex="0">\[
+  A_{m,N}=\frac{e^{s_N}\int\widetilde H_N\,d\mu_m}
+                      {e^{s_N}\int\widetilde\rho_N\,d\mu_m}
+          =\frac{\mathcal N_N}{Z_N^{\mathrm{str}}}.
+  \]</div>
+  <p>No convergence of \(s_N\) is needed. The source proves this cancellation for the original represented Wilson density, rather than introducing a new probability law. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Cement.lean" target="_blank" rel="noopener">Grouped scalar-free density ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Ivy.lean" target="_blank" rel="noopener">Marked coefficient and exact cancellation ↗</a></p>
+
+  <h4 id="uv-detail-denominator">An explicit positive denominator and the ratio estimate</h4>
+  <p>Set \(V=|\Lambda_{m,p}|\), let \(\tau_m&gt;0\) be the fixed health threshold, and let \(\nu=\dim_{\mathbb R}G.\mathrm{Mat}\) be the ambient matrix-space dimension. Restrict every positively oriented link to chord distance at most \(\tau_m/4\) from the identity. Four-link plaquette products then have chord at most \(\tau_m\), so there are no flags and the forced sum equals one. The product Haar measure of this region is at least \((\tau_m/16)^{4V\nu}\). The path and regular-activity bounds, with \(\beta_{N,m}\le2\widehat\beta_m\), bound its scalar-free action above by a finite \(\mathscr K_{m,p}\), independent of \(N\). Since the complete represented density is nonnegative, restriction gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A positive lower bound from the small-link region" tabindex="0">\[
+  Z_N^{\mathrm{str}}\ge
+  e^{-\mathscr K_{m,p}}\left(\frac{\tau_m}{16}\right)^{4V\nu}
+  =z_*(m,p)&gt;0.
+  \]</div>
+  <p>This is the all-link estimate actually used by <code>Till.lingers</code>; the manuscript gives a related axial-tree presentation. Its deterioration with volume is allowed. Global positivity follows from the exact positive blocking kernels, even though individual polymer activities can have either sign. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Vac/Shelter.lean" target="_blank" rel="noopener">Small-link measure, action and positivity proofs ↗</a></p>
+  <p>Finally put \(\eta_H=\|\widetilde H_N-\widetilde H_{N'}\|_\infty\), \(\eta_\rho=\|\widetilde\rho_N-\widetilde\rho_{N'}\|_\infty\), and choose an eventual bound \(|\mathcal N_{N'}|\le M_{m,p}\). Subtracting the fractions gives the explicit elementary deduction</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The quantitative deduction of normalized Cauchy convergence" tabindex="0">\[
+  |A_{m,N}-A_{m,N'}|\le
+  z_*^{-1}\eta_H+M_{m,p}z_*^{-2}\eta_\rho.
+  \]</div>
+  <p>For a target \(\varepsilon\), make these errors smaller than \(\varepsilon z_*/2\) and \(\varepsilon z_*^2/[2(1+M_{m,p})]\). Their thresholds may depend on the fixed period, comparison level and labels. This closes the coarse Cauchy argument without a volume-uniform denominator or an asserted cutoff rate.</p>
+
 
   <h3 id="uv-cauchy">3. Close the three-term estimate</h3>
   <p>Given \(\varepsilon&gt;0\), first choose \(j\) so large that \(2F_0e^{-B_j/64}&lt;\varepsilon/4\). Keep this \(j\) fixed. Then choose \(N_0\) so that both comparison estimates hold and \(|A_{j,N}-A_{j,M}|&lt;\varepsilon/4\) whenever \(N,M\ge N_0\). The triangle inequality gives</p>
@@ -855,46 +944,156 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
   \end{aligned}\]</div>
   <p>This is the order of choices in <code>Rising.arrives</code>. It compares arbitrary sufficiently large cutoffs \(N,M\), so no UV subsequence is extracted. Choosing an uncontrolled simultaneous path \(j=j(N)\) would not prove the same assertion. The subsequent <code>cinema</code> and <code>sees</code> identify these marked expressions with the actual Wilson moments at the nested-grid points. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Timber.lean" target="_blank" rel="noopener">Three-term Cauchy proof ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Filled.lean" target="_blank" rel="noopener">Full-sequence point convergence ↗</a></p>
 
-  <h3 id="uv-spatial">4. From dense point data to smooth kernels</h3>
-  <p>Pointwise convergence on a dense set alone would be insufficient. The construction also proves bounds for any fixed finite list of field labels and normalized position differences. With \(\alpha\) abbreviating a finite sequence of difference directions, the source's <code>FixedBounds</code> has the quantifier structure</p>
+  <h3 id="uv-difference-bounds">4. Why position differences stay bounded</h3>
+  <div class="uv-detail">
+  <p>The spatial argument below needs bounds on every fixed order of normalized lattice differences. This is a substantial analytic input: applying a difference of order \(h\) naively costs \(a_N^{-h}\). Bounded undifferentiated correlations do not remove that divergence. Armstrong’s Lemma E2.4 explains how matching, exact equation identities and a finite family of Maxwell tests control it before taking a continuum limit. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/E-section.tex#L561" target="_blank" rel="noopener">Draft §14, difference estimate ↗</a></p>
+
+  <h4 id="uv-detail-root-cost">Match the differentiated insertion in a higher degree</h4>
+  <p>The useful size of a local insertion is a reflection-positive replication root. If a tiling \(T\) has \(J_T\) cells and \(\Theta_C F\) denotes the translated/reflected copy, with complex conjugation for odd reflections, write</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Replication root used to bound local insertions" tabindex="0">\[
+  \|F\|_{\mathrm{root},T}
+   =\left|\mathbb E_{N,p}\prod_{C\in T}\Theta_C F\right|^{1/J_T}.
+  \]</div>
+  <p>This is a size derived from the actual Wilson law, not a supremum over link configurations. Reflection positivity supplies its triangle and product estimates on the prescribed interior supports. A bound can depend on the fixed physical cell size, while remaining uniform in the fine cutoff and the volume. This is the distinction recorded by <code>Affords</code> and <code>Funded</code>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Cells/Tiling.lean#L221" target="_blank" rel="noopener">Actual reflected copies and root ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Rent.lean#L19" target="_blank" rel="noopener">Uniform root-cost definitions ↗</a></p>
+  <p>For a degree-\(d\) insertion \(F\) and a fixed difference list \(\alpha\) of length \(h\), local matching produces a coefficient \(c^\alpha_{N,p}\) in degree \(e=d+h\). On each permitted fixed cell,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Higher-degree matching and the equation projection" tabindex="0">\[\begin{aligned}
+  O^{(e)}_{N,p}(c^\alpha_{N,p})-\delta_{a_N}^{\alpha}F
+      &amp;=\mathcal R_{N,p},
+      &amp;\sup_p\|\mathcal R_{N,p}\|_{\mathrm{root},T}&amp;\longrightarrow0,\\
+  c^{\mathrm{pr}}_{N,p}&amp;=\Pi_{e,N,p}c^\alpha_{N,p},
+      &amp;\Pi_{e,N,p}^{2}&amp;=\Pi_{e,N,p}.
+  \end{aligned}\]</div>
+  <p>The projection separates coefficient directions detected by physical tests from equation directions. An auxiliary equation insertion has an exact vanishing Wilson correlation when the spectators lie outside its equation support, by Haar integration by parts. Applying this to its other reflected copies makes its root zero once the cell is large enough in lattice units. Comparing that auxiliary insertion with the canonical one leaves a vanishing root error. One must retain this comparison error; the canonical equation insertion is not simply declared to vanish at every cutoff.</p>
+  <p>Matching initially gives an admissible coefficient family; it does not yet bound \(c^{\mathrm{pr}}\). With \(\mathsf Z_{N,p,e}\) the terminal normalization map for degree \(e\), admissibility means subpower growth in its bare coordinates:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Admissibility allows subpower coefficient growth uniformly in the volume" tabindex="0">\[
+  \forall\varepsilon&gt;0\ \exists N_0\ \forall N\ge N_0\ \forall p:
+  \|\mathsf Z_{N,p,e}^{-1}c_{N,p}\|_\infty\le a_N^{-\varepsilon}.
+  \]</div>
+  <p>The source’s <code>Literal.financed</code> supplies the matching data and calls the coefficient estimate described next. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Literal.lean#L24" target="_blank" rel="noopener">Matching and funding actual differences ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Lit.lean#L17" target="_blank" rel="noopener">Equation directions retain a vanishing root bound ↗</a></p>
+
+  <h4 id="uv-detail-averaging">Average before paying for an inverse spacing</h4>
+  <p>Use separated correlation tests, linear in one variable insertion. Choose a physical averaging radius \(\rho&gt;0\) small enough that all shifted test configurations keep a fixed separation margin. Put \(Q_N=\lceil\rho/a_N\rceil\). The following identity is exact:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Averaging turns a microscopic difference into a physical boundary difference" tabindex="0">\[\begin{aligned}
+  \frac1{Q_N}\sum_{j=0}^{Q_N-1}
+      \delta_{a_N,e}f(x+ja_Ne)
+    &amp;=\frac{f(x+Q_Na_Ne)-f(x)}{Q_Na_N},\\
+  Q_Na_N\ge\rho\quad&amp;\Longrightarrow\quad
+  \left|\frac1{Q_N}\sum_{j=0}^{Q_N-1}
+      \delta_{a_N,e}f(x+ja_Ne)\right|
+    \le\frac{2}{\rho}\sup|f|.
+  \end{aligned}\]</div>
+  <p>Repeated averaging in the directions of \(\alpha\) costs at most \((2/\rho)^h\). The radius is fixed before taking \(N\) large, so the cost no longer grows as \(a_N^{-h}\). The undifferentiated tests are bounded by the earlier root estimates. Matching errors tend to zero in these tests by the chessboard inequality with separated supports. Thus the vector \(\mathcal P_{N,p}c^\alpha_{N,p}\) of averaged tests is bounded by a constant \(C_{\mathrm{test}}\), uniformly in \(p\) on a cutoff tail. No positional derivative bound has been used to obtain this estimate. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Skein.lean#L40" target="_blank" rel="noopener">Exact averaging identity, <code>same_delta</code> ↗</a></p>
+
+  <h4 id="uv-detail-detection">A finite matrix detects the remaining coefficients</h4>
+  <p>The chosen free Maxwell tests separate the finite-dimensional free field space at degree \(e\). Their interacting counterparts are close to those tests at a sufficiently short, fixed comparison scale. The equation projection has range dimension at most the free dimension. The projected trial lifts remain linearly independent and therefore span that range. Small spatial averaging preserves this lower bound by an undifferentiated continuity estimate, with its scale and support margins fixed first.</p>
+  <p>The elementary matrix argument in Armstrong’s presentation can be written explicitly. Choose an invertible square minor \(H_0\) of the free test matrix, and let \(H=H_0+E\) be the corresponding interacting matrix. If</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Stability of the finite detecting matrix" tabindex="0">\[\begin{aligned}
+  \|H_0^{-1}E\|&amp;\le\tfrac12,
+  &amp;H^{-1}&amp;=\sum_{k=0}^{\infty}(-H_0^{-1}E)^kH_0^{-1},\\
+  \|H^{-1}\|&amp;\le2\|H_0^{-1}\|,
+  &amp;\|c^{\mathrm{pr}}\|&amp;\le C_{\mathrm{det}}
+                       \|\mathcal P_{N,p}c^{\mathrm{pr}}\|.
+  \end{aligned}\]</div>
+  <p>The last inequality also uses the bounded trial lifts to convert matrix coordinates to the coefficient norm. The source proves the corresponding finite-dimensional lower bound through <code>firm</code>, <code>rank_upper</code> and <code>trained</code>; it does not assume a rank identity for already constructed continuum fields. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Stand.lean#L20" target="_blank" rel="noopener">Finite-dimensional lower bounds ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Lit.lean#L51" target="_blank" rel="noopener">Detection before taking a cutoff limit ↗</a></p>
+  <p>There is still a possible large equation component. Normalize it before applying its small-error estimate:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Absorbing the equation component without assuming a coefficient bound" tabindex="0">\[\begin{aligned}
+  z_{N,p}&amp;=\frac{c^\alpha_{N,p}-c^{\mathrm{pr}}_{N,p}}
+                      {1+\|c^{\mathrm{pr}}_{N,p}\|},
+  &amp;C_{\mathrm{det}}\|\mathcal P_{N,p}z_{N,p}\|&amp;\le\tfrac12,\\
+  \|c^{\mathrm{pr}}_{N,p}\|
+    &amp;\le C_{\mathrm{det}}C_{\mathrm{test}}
+                   +\tfrac12(1+\|c^{\mathrm{pr}}_{N,p}\|),\\
+  \|c^{\mathrm{pr}}_{N,p}\|
+    &amp;\le2C_{\mathrm{det}}C_{\mathrm{test}}+1.
+  \end{aligned}\]</div>
+  <p>The normalized equation family is admissible even before the projected coefficients are bounded. The reciprocal normalization factor has modulus at most one, and the normalized projected family has norm at most one. Bounded coefficients are admissible because the inverse terminal normalization obeys \(\|\mathsf Z_{N,p,e}^{-1}\|\le C_e\prod_{i=r(e)}^{N-1}C_{J_{i+1}}=a_N^{-o(1)}\), uniformly in \(p\). Here \(r(e)\) is the fixed reference level and the stage costs \(C_{J_{i+1}}\) grow slowly enough under the chosen schedule. Subtracting this bounded admissible family from the scaled matched family proves admissibility of \(z_{N,p}\). Its tests therefore tend to zero uniformly in \(p\), giving the first inequality on a sufficiently late tail. This avoids assuming the conclusion in order to control the equation component. The final absorption is exactly the mechanism of <code>Moneys.cap</code>; <code>improved</code> returns a uniform root bound for the actual differentiated insertion. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Moneys.lean#L23" target="_blank" rel="noopener">Coefficient absorption and differentiated root bounds ↗</a></p>
+  <p>Finally, distribute a position-difference list among its insertion slots. Each difference acts only on the indicated insertion. Put those differentiated insertions in distinct reflection cells with fixed interior margins; the unused cells contain the unit. The chessboard inequality bounds the moment by the product of their root bounds. This yields the all-volume <code>FixedBounds</code> estimate below for each fixed list of labels, difference directions and positive separation. Constants and cutoff thresholds may depend on those choices. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Cohort.lean#L39" target="_blank" rel="noopener">Separated root-to-moment estimate ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Literal.lean#L62" target="_blank" rel="noopener">The actual full-mesh bound, <code>genuine</code> ↗</a></p>
+  </div>
+
+
+  <h3 id="uv-spatial">5. From dense point data to smooth kernels</h3>
+  <p>The preceding analytic argument supplies the following bound. The field labels, finite difference list and positive separation are fixed before its constant and cutoff threshold; the bound then holds for every volume.</p>
   <div id="eq-73" class="technical-equation" role="region" aria-label="Uniform bounds for fixed labels and finite position differences" tabindex="0">\[\forall\,\boldsymbol v,\alpha,\quad\forall\,r&gt;0,\quad\exists\,B,N_0:\quad
   \sup_{\substack{N\geq N_0,\ p\\x\ \mathrm{periodically}\ r\text{-separated}}}
   |\delta_{a_N}^{\alpha}G_{N,p}(\boldsymbol v;x)|\leq B.\]</div>
-  <p>The labels, derivative order and positive separation are fixed before choosing \(B,N_0\). These are not universal constants independent of the observable. At fixed \(p\), take a compact configuration set \(K\) inside the periodic noncollision domain. A small compact thickening of \(K\) remains in that domain. Bounds on one more difference control short grid paths there, producing a local Lipschitz estimate on grid values. If \(q_Nx\) is the physical grid point chosen near \(x\), then \(\|q_Nx-x\|\le c_n a_N\). Thus the rounded kernels \(\widehat G_N(x)=G_{N,p}(q_Nx)\) have an eventual oscillation bound of the form</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Eventual equicontinuity of the rounded lattice kernels" tabindex="0">\[
-  |\widehat G_N(x)-\widehat G_N(y)|
-  \le L_K\bigl(\|x-y\|+2c_n a_N\bigr)
-  \quad(x,y\in K\text{ sufficiently close}).
-  \]</div>
-  <p>To prove Cauchy convergence at any \(x\), choose a nearby point \(z\) in the dense nested-grid set and split the difference into \(x\to z\), the cutoff comparison at \(z\), and \(z\to x\). The two outer terms are uniformly small by this oscillation bound; the middle term is Cauchy by the preceding argument. A finite covering of a compact set gives local uniform convergence. This is the mechanism of <code>Extraction.growFrom</code>, not a new UV extraction.</p>
-  <p>Higher differences are handled with the same argument and a discrete Taylor estimate. On the protected neighborhood, the source proves an eventual bound</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniform discrete Taylor remainder identifying continuum derivatives" tabindex="0">\[
-  \left|G_N(y)-G_N(x)
-       -\sum_\alpha\delta_\alpha G_N(x)(y-x)_\alpha\right|
-  \le C_K\|y-x\|^2
-  \]</div>
-  <p>for physical grid points \(x,y\), with the coordinate index \(\alpha\) running over the \(4n\) insertion coordinates. Applying it to each fixed difference order identifies the limiting differences as derivatives of the limiting kernel. Iteration gives smoothness away from periodic collisions, with separate thresholds for each requested order. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Discrete.lean" target="_blank" rel="noopener">Fixed difference bounds ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Region.lean" target="_blank" rel="noopener">Lipschitz and Taylor estimates ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Tame.lean" target="_blank" rel="noopener">Dense-set extension ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Tuned.lean" target="_blank" rel="noopener">Derivative convergence ↗</a></p>
 
-  <h3 id="uv-smearing">5. Pass to the joint Riemann sum</h3>
-  <p>The source writes the Riemann sum exactly as the integral of a cellwise constant function on a fundamental domain \(\mathcal F_p\). Each joint cell has volume \(a_N^{4n}\):</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Exact cellwise integral representation of the joint Riemann sum" tabindex="0">\[
-  C_{N,p}(\boldsymbol v;f)
-  =\int_{\mathcal F_p}
-      f(q_Nx)\,\widehat G_N(x)\,d^{4n}x.
+  <h4 id="uv-detail-dense-extension">Dense probes determine a locally uniform limit</h4>
+  <p>Fix the period \(p\), the field labels and a compact configuration set \(K\) in the periodic noncollision domain \(U_p\). Enlarge \(K\) slightly inside \(U_p\), leaving room for short coordinate paths. Write \(G_N(z)\) for the correlation at physical grid points \(z\in a_N\mathbb Z^{4n}\). The bounds above apply to every fixed difference order on this enlarged set. In particular, summing first differences along a coordinate path gives a local Lipschitz estimate. For componentwise ceiling \(q_Nx=a_N\lceil x/a_N\rceil\), this implies</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="From lattice differences to a common local modulus of continuity" tabindex="0">\[
+  \begin{aligned}
+  |G_N(z)-G_N(z')|&amp;\le L_K\|z-z'\|,\\
+  |\widehat G_N(x)-\widehat G_N(y)|
+  &amp;\le L_K\bigl(\|x-y\|+2c_n a_N\bigr),
+  \qquad \widehat G_N(x)=G_N(q_Nx).
+  \end{aligned}
   \]</div>
-  <p>Choose a compact neighborhood \(K'\) of \(\operatorname{supp}f\) still separated from collisions and inside the box. For large \(N\), both the original and rounded test supports lie in \(K'\). Local uniform convergence gives \(\eta_N=\sup_{K'}|\widehat G_N-S_p|\to0\). If \(|S_p|\le M\) on \(K'\), and \(\omega_f\) is a modulus of continuity of the fixed test, subtraction under the integral yields</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Separating the kernel error from the lattice-sampling error" tabindex="0">\[
-  \left|C_{N,p}(\boldsymbol v;f)
-       -\int f(x)S_p(\boldsymbol v;x)\,d^{4n}x\right|
-  \le |K'|
-     \left(\|f\|_\infty\eta_N+
-       M\,\omega_f(c_n a_N)\right)
-  \longrightarrow0.
+  <p>The constants absorb the conversion between coordinate-path length and Euclidean distance; the estimates are local and eventual in \(N\). Given a tolerance, cover \(K\) by finitely many small neighborhoods of dense probes. Comparing two cutoffs at an arbitrary point through a nearby probe gives two small spatial errors and one pointwise Cauchy error. Finitely many probes share one cutoff threshold. Completeness then gives a continuous limit \(S_p\), uniformly on \(K\), along the same sequence.</p>
+  <p>Both Armstrong’s Lemma E3.1 and the concrete implementation begin with nested-grid probes. The source’s <code>Filled.purchased</code> extends their dense-set Cauchy convergence to the full noncollision domain, then packages pointwise convergence in the generic <code>Purchased</code> interface. That interface only asks for configurations with no coordinate-projection ties modulo the period, called <code>Cyclic</code>; this dense, full-measure set is not the nested-grid set. The later spatial theorem reuses this interface. Only zeroth-order correlations need the independent Cauchy input: the following argument produces the derivative limits. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Fields/Filled.lean" target="_blank" rel="noopener">From exact-migration probes to the spatial interface ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Tuned.lean" target="_blank" rel="noopener">Generic local extension ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Tame.lean" target="_blank" rel="noopener">The dense-set extension theorem ↗</a></p>
+
+  <h4 id="uv-detail-derivative-cauchy">Why the next difference converges</h4>
+  <p>Suppose a fixed iterated difference \(H_N=\delta_{a_N,\ell}G_N\) already converges locally uniformly to \(g\). Define \(\delta_{a,e}H(z)=[H(z+ae)-H(z)]/a\). Directly dividing the convergence error by \(a_N\) would require an unavailable rate. Instead fix a small <em>physical</em> length \(h&gt;0\), choose \(Q_N=\lceil h/a_N\rceil\), and put \(h_N=Q_Na_N\to h\). The exact telescope is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A macroscopic difference quotient is an average of microscopic differences" tabindex="0">\[
+  \frac{H_N(z+h_Ne)-H_N(z)}{h_N}
+   =\frac1{Q_N}\sum_{j=0}^{Q_N-1}
+        \delta_{a_N,e}H_N(z+j a_Ne).
   \]</div>
-  <p>This elementary estimate displays separately the kernel-comparison error and the test-sampling error. The source's <code>stored</code> proves the exact cell identity and <code>pudding</code> passes to the limit by dominated convergence. Neither route needs \(f\) to factor. The final statement is</p>
+  <p>A bound \(B\) for the second difference of \(H_N\) bounds the variation of these first differences by \(Bj a_N\). All intermediate points remain in the enlarged noncollision neighborhood. Consequently,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Second differences bound the discrepancy between microscopic and macroscopic slopes" tabindex="0">\[
+  \left|
+  \frac{H_N(z+h_Ne)-H_N(z)}{h_N}
+       -\delta_{a_N,e}H_N(z)\right|
+  \le \frac{B a_N}{Q_N}\sum_{j=0}^{Q_N-1}j
+  =\frac B2(h_N-a_N)\le\frac B2h_N.
+  \]</div>
+  <p>At fixed \(h\), the left quotient at \(z=q_Nx\) converges uniformly on \(K\) to \([g(x+he)-g(x)]/h\): the endpoints converge uniformly, their rounding errors vanish, and the denominator tends to a positive number. Thus the limsup of the distance between two microscopic slopes is at most \(Bh\). Choose \(h\) small first, then the cutoffs large. The slopes are uniformly Cauchy and have a continuous limit \(g_e\). This is the mechanism of <code>from_previous</code>; its general estimate comes from <code>Region.taylor</code>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Region.lean" target="_blank" rel="noopener">Path estimates and discrete Taylor remainder ↗</a></p>
+
+  <h4 id="uv-detail-identifying-derivatives">The limiting slopes are actual derivatives</h4>
+  <p>Existence of the slope limit still needs an identification argument. Armstrong passes the exact segment telescope to a Riemann integral. The implementation instead passes the multidirectional quadratic Taylor remainder to the limit. These give, respectively,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Identifying limiting lattice slopes with the continuum differential" tabindex="0">\[
+  \begin{aligned}
+  g(x+te)-g(x)&amp;=\int_0^t g_e(x+ue)\,du,\\
+  \left|g(y)-g(x)-\sum_{\mu=1}^{4n}
+       g_\mu(x)(y_\mu-x_\mu)\right|
+       &amp;\le C_K\|y-x\|^2.
+  \end{aligned}
+  \]</div>
+  <p>The first identity gives the coordinate derivative; dividing the second remainder by \(\|y-x\|\) gives the Fréchet derivative. Repeating for every fixed difference list proves \(S_p\in C^\infty(U_p)\). Each induction step uses further finite-difference bounds at this same period, with constants and thresholds allowed to depend on the order. Equal individual coordinates are permitted: \(U_p\) excludes coincidence of entire insertion points modulo the period. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Wish.lean" target="_blank" rel="noopener">Derivative identification and smoothness ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/E-section.tex#L633-L655" target="_blank" rel="noopener">Armstrong §14, Lemma E3.1 ↗</a></p>
+
+  <h4 id="uv-detail-stencils-interpolation">Fixed stencils and moving observation points</h4>
+  <p>Backward and centered differences have the same limit when their integer reaches remain fixed. With \(r=r_-+r_+&gt;0\), the source uses the full interval length in the denominator:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Correct normalization of a fixed backward or centered difference stencil" tabindex="0">\[
+  \frac{H_N(z+r_+a_Ne)-H_N(z-r_-a_Ne)}{r a_N}
+   =\frac1r\sum_{j=0}^{r-1}
+       \delta_{a_N,e}H_N(z-r_-a_Ne+j a_Ne).
+  \]</div>
+  <p>Every displaced point approaches the same continuum point. Finite averages, iterated over the stencil list, therefore preserve the derivative limit. No uniformity over growing stencil widths is asserted. Multilinear interpolation is then applied <strong>after taking the lattice differences</strong>. Its nonnegative vertex weights sum to one, so the interpolation error is bounded by the largest vertex error. All vertices lie within \(O(a_N)\) of the observation point; local uniform convergence and continuity give convergence even for moving points \(x_N\to x\). Working on the periodic lift handles crossings of representative boundaries. Smoothness belongs to the limiting kernel; differentiating the piecewise multilinear interpolant is not this proof. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Strings.lean" target="_blank" rel="noopener">Fixed-stencil averages and moving-point convergence ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Panes.lean" target="_blank" rel="noopener">Multilinear interpolation ↗</a></p>
+
+
+  <h3 id="uv-smearing">6. Pass to the joint Riemann sum</h3>
+
+  <h4 id="uv-detail-joint-cell-integral">Joint smearing has an exact cell identity</h4>
+  <p>Let \(t\) be a smooth joint test on \(\mathbb R^{4n}\), compactly supported away from collisions and strictly inside the chosen period box. It may correlate all insertion positions; factorization is unnecessary. For \(H_N=\delta_{a_N,\ell}G_N\), right-closed mesh cells have volume \(a_N^{4n}\). Their partition of the fundamental box \(\mathcal F_p\) gives the exact identity</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The joint lattice sum as an exact integral of a step function" tabindex="0">\[
+  I_N:=a_N^{4n}\!\sum_{z\ {\rm in\ the\ fundamental\ grid}}
+       t(z)H_N(z)
+   =\int_{\mathcal F_p} t(q_Nx)H_N(q_Nx)\,d^{4n}x.
+  \]</div>
+  <p>Choose a compact neighborhood \(K'\Subset U_p\) containing both the test support and, eventually, all cells that sample it. Put \(g=\partial_\ell S_p\), let \(\eta_N\) bound \(|H_N(z)-g(z)|\) on grid points in \(K'\), and let \(\omega_t,\omega_g\) be moduli of continuity there. Subtracting \(t(x)g(x)\) gives the explicit estimate</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Controlling the kernel, kernel-sampling and test-sampling errors separately" tabindex="0">\[
+  \left|I_N-\int t(x)g(x)\,dx\right|
+  \le |K'|\left[
+    \|t\|_\infty\bigl(\eta_N+\omega_g(c_n a_N)\bigr)
+    +\|g\|_{\infty,K'}\,\omega_t(c_n a_N)\right]\longrightarrow0.
+  \]</div>
+  <p>The source’s <code>stored</code> proves the cell identity. Its <code>pudding</code> uses dominated convergence: whenever the sampled test is nonzero, its grid point lies in the compact test support, where <code>usable</code> supplies an eventual uniform bound \(D\). The integrable function \(\mathbf1_{\mathcal F_p}\|t\|_\infty D\) dominates the integrands. Rounding converges to the identity, giving almost-everywhere convergence of the integrands; the product vanishes outside the box. This avoids requiring any kernel bound at collisions outside the test support. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Round.lean" target="_blank" rel="noopener">Cells, their volumes and rounding ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Smears.lean" target="_blank" rel="noopener">Exact sums and dominated convergence ↗</a></p>
+
+  <h4 id="uv-detail-position-theorem">The quantifiers and the collision boundary</h4>
+  <p><code>Profiles.positioned</code> assembles smoothness, moving-point convergence, interpolation and smearing for every fixed period, finite field list and finite stencil list. Applying it with the full-sequence Cauchy input established above preserves the entire chosen cutoff sequence; this spatial argument selects no further subsequence. Thresholds may depend on the compact set, test and derivative order. Tests reaching collision diagonals require separate contact-extension estimates: smooth convergence on every separated compact does not control the singularity as separation vanishes. See <a href="#proof-ope">§20</a>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Profiles.lean" target="_blank" rel="noopener">The positional UV statement ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/E-section.tex#L657-L674" target="_blank" rel="noopener">Armstrong §14, Lemma E3.2 ↗</a></p>
+
+  <p>In particular, with no position differences, the original smeared moment has the limit</p>
   <div id="eq-74" class="technical-equation" role="region" aria-label="The fixed-volume continuum correlation and its smooth separated-point kernel" tabindex="0">\[S_p(\boldsymbol v;f)=\lim_{N\to\infty}C_{N,p}(\boldsymbol v;f)
   =\int f(x)\,S_p(\boldsymbol v;x)\,d^{4n}x.\]</div>
-  <p>The limit uses the <strong>entire chosen spacing sequence</strong> \(a_N\). Its kernel is smooth away from coincidences modulo \(L_p\mathbb Z^4\), and fixed finite position differences converge to the corresponding derivatives. This is not regulator universality, a cutoff-independent convergence rate, or convergence on tests meeting collision diagonals. Those are different assertions; contact extensions are discussed in <a href="#proof-ope">§20</a>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Smears.lean" target="_blank" rel="noopener">Cell sums and smearing proof ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Profiles.lean" target="_blank" rel="noopener">The positional UV theorem ↗</a> · <a href="references/assessment-1-2026-11-10.pdf#page=6" target="_blank" rel="noopener">Assessment, Theorem 4.1 ↗</a></p>
+  <p>The entire chosen spacing sequence converges at each fixed physical volume. This is not regulator universality, an explicit rate in the original cutoff, or permission to interchange the ultraviolet and infinite-volume limits. <a href="references/assessment-1-2026-11-10.pdf#page=6" target="_blank" rel="noopener">Assessment, Theorem 4.1 ↗</a>.</p>
 </section>
 
 <section class="technical-section" id="proof-ir" aria-labelledby="proof-ir-title">
@@ -1404,7 +1603,7 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
             <li id="ref-pdg"><strong><span class="source-number">[8]</span> Particle Data Group · Quantum Chromodynamics</strong><a href="https://pdg.lbl.gov/2025/reviews/rpp2025-rev-qcd.pdf" target="_blank" rel="noopener">Review of Particle Physics, QCD review (2025) ↗</a><p>Conventions for the beta function, running coupling, and the scale parameter. The notes specialize to pure gauge theory with no dynamical quarks.</p></li>
             <li id="ref-assessment"><strong><span class="source-number">[9]</span> Yang–Mills group · Validation of the OpenAI Yang–Mills construction</strong><a href="references/assessment-1-2026-11-10.pdf" target="_blank" rel="noopener">Read the November 10, 2026 assessment ↗</a> · <a href="https://github.com/yang-mills-group/YM/tree/55ba9fc36293b3f4d52c6b1f813169a0be76ee98" target="_blank" rel="noopener">Pinned review repository ↗</a><p>Part I states the construction and its limits; Part II records the formal verification, independent checks, and their scope. Revision <code>55ba9fc36293b3f4d52c6b1f813169a0be76ee98</code>. The committee describes this as an initial assessment and does not claim to fully understand the proof.</p></li>
             <li id="ref-submission"><strong><span class="source-number">[10]</span> OpenAI · October 28, 2026 Yang–Mills submission</strong><a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/tree/3456e5e75cf8d4cd558955a5c7638fba2d68f464" target="_blank" rel="noopener">Pinned original source repository ↗</a><p>The released Lean source underlying this walkthrough, revision <code>3456e5e75cf8d4cd558955a5c7638fba2d68f464</code>. The explanations here are based on the assessment and source reading.</p></li>
-            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation. This is a developing, AI-assisted reconstruction from the released Lean source. Revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>; consulted 12 November 2026. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
+            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation; the ultraviolet convergence discussion compares §14. This is a developing, AI-assisted reconstruction from the released Lean source. Revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>; consulted 12 November 2026. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
           </ol>
         </section>
         <a class="technical-endlink" href="index.html">Return to the visual field guide <span aria-hidden="true">↗</span></a>
