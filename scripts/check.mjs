@@ -37,6 +37,11 @@ const mathScripts = [
   'assets/math.js',
 ];
 for (const page of pages) {
+  // A literal < followed by a letter can start an HTML tag before KaTeX sees it.
+  // Compiling the source equation alone cannot detect that loss in the browser.
+  for (const equation of extractEquations(page.html)) {
+    assert(!/<[A-Za-z!/]/.test(equation), `${page.name}: escape mathematical less-than signs as &lt; to prevent HTML parsing them as tags`);
+  }
   const scriptTags = [...page.html.matchAll(/<script\b[^>]*>/gi)].map(match => new Map(
     [...match[0].matchAll(/\s([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g)]
       .map(attribute => [attribute[1].toLowerCase(), attribute[2] ?? attribute[3] ?? attribute[4] ?? '']),

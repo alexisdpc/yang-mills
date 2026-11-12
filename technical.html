@@ -41,7 +41,7 @@
       <p class="eyebrow"><span class="tiny-line"></span> THE TECHNICAL COMPANION</p>
       <h1 id="technical-title">The mathematics<br>behind <em>Yang–Mills.</em></h1>
       <p class="technical-lead">The released existence construction, from Wilson lattice correlations to local quantum fields—and the infrared questions it leaves open.</p>
-      <div class="technical-meta"><span><strong>Level</strong> Graduate &amp; research</span><span><strong>Prerequisites</strong> QFT, Lie groups, basic functional analysis</span><span><strong>Edition</strong> 11 November 2026</span></div>
+      <div class="technical-meta"><span><strong>Level</strong> Graduate &amp; research</span><span><strong>Prerequisites</strong> QFT, Lie groups, basic functional analysis</span><span><strong>Edition</strong> 12 November 2026</span></div>
       <p class="technical-scope">Part I develops the foundations. Part II is a first technical reading of the October 28 submission and the committee’s November 10 assessment, with links to pinned sources. It explains the reported existence result; a mass gap and uniqueness of the infinite-volume limit remain open.</p>
       <div class="technical-hero-actions"><a class="button button-dark" href="#proof-theorem">Read the proof walkthrough <span aria-hidden="true">↓</span></a><a href="#formulation">Start with the foundations</a></div>
       <ol class="technical-roadmap" aria-label="The logical route through the construction">
@@ -381,6 +381,7 @@
     <li><a href="#rg-exact">Exact density and small-/large-field decomposition</a></li>
     <li><a href="#rg-norms">The activity bounds and absolute convergence</a></li>
     <li><a href="#rg-step">The one-step estimates and their closure</a></li>
+    <li><a href="#rg-local-integration">Local integration: detailed derivations and the draft comparison</a></li>
     <li><a href="#rg-shooting">Selecting a trajectory through the coupling bands</a></li>
     <li><a href="#rg-running">Telescoping the drift into asymptotic freedom</a></li>
   </ol></nav>
@@ -473,7 +474,252 @@
   \end{aligned}\]</div>
   <p>where the schedule supplies a suitable positive \(\gamma\). The intermediate strong forced bound is retained for later calls, not weakened immediately to \(\omega(x)\). The source's <code>recloses</code> proves these implications from the paid numerical gates; <code>reload</code> applies them to the actual returned activities and preserves the certified history. Canonical path bounds, locality and continuity along trial-coupling intervals are additional induction data. The same-stage transitions must work repeatedly without silently spending derivative order at every step. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/SCHEDULE/Calling.lean" target="_blank" rel="noopener">Numerical closure ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Progress/DIRECTED_RECIPE/Selected.lean" target="_blank" rel="noopener">Closure on represented descendants ↗</a></p>
 
-  <h3 id="rg-shooting">4. Select a trajectory through the bands</h3>
+  <h3 id="rg-local-integration">4. Inside one local RG integration</h3>
+  <div class="rg-local-detail">
+  <p>The numerical prices above compress a substantial analytic argument. This section opens that argument: how the Gaussian is chosen, how rough factors are held fixed under differentiation, how overlapping contributions are summed, and which cancellations make the regular remainder small enough to iterate.</p>
+  <p><strong>Comparison with Armstrong’s draft.</strong> Scott Armstrong’s informalization project organizes the local integration in §11 and the activity estimates in §13. We use that organization to explain the construction, while linking the estimates to the released source at a fixed revision. The manuscript is a developing reconstruction from the code, not the original OpenAI prose submission. Its explanatory power counting and the exact implementation estimates are distinguished below. <a href="#ref-armstrong">Manuscript, revision and status [11]</a>.</p>
+  <ul class="rg-local-nav" aria-label="Local integration reading route">
+    <li><a href="#rg-local-stationary">Stationary field, covariance and exact normalization</a></li>
+    <li><a href="#rg-local-differentiation">Held-link derivatives and joint Gaussian moments</a></li>
+    <li><a href="#rg-local-connected">Connected sums and large-field suppression</a></li>
+    <li><a href="#rg-local-power">Parity, matching and the final local remainder</a></li>
+  </ul>
+<h4 id="rg-local-stationary">The stationary field: remove gauge zero modes before inverting</h4>
+<p>Fix one RG step, its stage and blocking ratio \(L\). A gauge-invariant action has flat directions, so its unrestricted Hessian is not the matrix to invert. On a block tree, fix the tree links and use the remaining link logarithms \(z\) as coordinates. Let \(v\) describe the prescribed coarse field, and let \(S(v,z)\) be the fine leading action plus the blocking penalty. The stationary interpolation solves \(D_zS(v,z(v))=0\) near the flat configuration.</p>
+<p>The coercivity argument has geometric content. Interchanging two consecutive steps of a lattice route contributes one signed plaquette curl. Comparing a free edge with its tree route and the averaged coarse connector therefore controls that edge by nearby curls and the block average \(\mathcal B a\). Squaring, summing and counting how many fixed-size patches meet each plaquette gives constants independent of the period. Combined with positivity of the curvature quadratic form and the block penalty, this yields</p>
+<div class="equation-scroll symmetry-equation" role="region" aria-label="Axial coercivity and the derivative of the stationary interpolation" tabindex="0">\[\begin{aligned}
+\|a\|_2^2&amp;\le A_{j,L}\|d_1a\|_2^2+B_{j,L}\|\mathcal B a\|_2^2,\\
+\mathsf Q_0=D_z^2S(0,0)&amp;\ge\nu_{j,L}I,\qquad \nu_{j,L}>0,\\
+D z(0)&amp;=-\mathsf Q_0^{-1}D_vD_zS(0,0).
+\end{aligned}\]</div>
+<p>The last equality follows by differentiating the stationary equation. Analyticity and the positive vertical Hessian give a local analytic branch by the implicit-function theorem. A volume-independent coercivity constant does not by itself give a volume-independent implicit-function neighborhood. The manuscript explicitly separates these claims. The formal construction records the branch and gap separately as <code>Critical</code> and <code>PriceGap</code>; subsequent estimates supply the locality needed for iteration. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/B-section.tex#L290" target="_blank" rel="noopener">Informal derivation: stationary interpolation ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PCalc/Chart.lean#L79" target="_blank" rel="noopener">Actual action, branch and gap definitions ↗</a></p>
+
+<h4 id="rg-local-covariance">The sector Gaussian uses a local approximation to the inverse</h4>
+<p>The integral with large-field sectors needs another, precisely specified quadratic form. Hold the sector, forest, tags and frozen links \(Y\) fixed. Linearize the retained fine and mismatch square rows, with their actual stencils and masks, about the copied coarse field. Their affine map is \(a\mapsto\mathsf D a+s_Y\). Set \(Q_Y(a)=\tfrac12\|\mathsf D a+s_Y\|^2\), \(\mathsf A=\mathsf D^T\mathsf D\), and \(\mathsf b_Y=\mathsf D^Ts_Y\). This retained-row Gram is distinct from the full stationary Hessian \(\mathsf Q(v)\).</p>
+<p>For each active coordinate \(i\), use a prescribed window \(\Omega_i\) around its projected edge endpoints. The sector windows contain a coarse ball of radius \(B/60\); they are chosen geometrically, including every dependency, rather than by testing which coefficients happen to vanish. Invert each principal compression and extend its selected column by zero:</p>
+<div class="equation-scroll symmetry-equation" role="region" aria-label="The actual window covariance and its exponentially small inverse error" tabindex="0">\[\begin{aligned}
+P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
+&amp;\Gamma&amp;=\tfrac12(P+P^T),&amp;m_Y&amp;=-P^T\mathsf b_Y,\\
+\mathsf A&amp;\ge\eta I,&amp;\Gamma&amp;>0,
+&amp;\|\Gamma-\mathsf A^{-1}\|_{\mathrm{Schur}}
+&amp;\le E e^{-bB/60}.
+\end{aligned}\]</div>
+<p>The Schur norm is the maximum of absolute row and column sums. The constants are uniform in the period at fixed stage and ratio, once the coupling threshold and geometric conditions hold and the stored coarse flags match the field. <code>Gap.not_flat</code> derives the positive Gram bound from the tree and predictor estimates; it does not assume an inverse estimate. Exponential row bounds then survive a small exponential conjugation of the matrix, giving decay of the inverse. A compressed inverse column solves the matrix equation inside its window. Its residual crosses the window boundary, gaining the exponential factor in \(B\). For sufficiently large \(B\), the small error also preserves positivity of \(\Gamma\).</p>
+<p>Thus the Gaussian has finite range by construction while approximating the full inverse. Derivative estimates keep the chosen masks and windows fixed and retain the small factor in the inverse, stationarity and precision errors. These are estimates for one RG scale, not a physical mass gap. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/SectorNext/GAUSSIAN_SECTOR_CHANGE/Chosen.lean#L69" target="_blank" rel="noopener">Selected covariance and <code>opaqueCost</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/AnalyticBridge/NONFLAT_COVARIANCE_LOCALITY/Epoch.lean" target="_blank" rel="noopener">Errors with derivatives ↗</a></p>
+
+<h4 id="rg-local-gaussian-change">An exact Gaussian change, with its correction terms retained</h4>
+<p>Put \(g=\beta^{-1/2}\), using the actual coupling of the input density. Substitute \(a=m_Y+gz\), with \(z\) distributed according to the centered probability Gaussian \(\gamma_\Gamma\). Because \(\Gamma\) and \(m_Y\) are local approximations, completing the square leaves both a linear and a quadratic correction. For \(n_a\) real active coordinates and an integrable multiplier \(W\), the conditional identity is</p>
+<div class="equation-scroll symmetry-equation" role="region" aria-label="Exact affine Gaussian substitution including normalization and residuals" tabindex="0">\[\begin{aligned}
+\mathcal A_Y(z)={}&amp;-\frac{Q_Y(m_Y)}{g^2}
+-g^{-1}(\mathsf A m_Y+\mathsf b_Y)^Tz
++\tfrac12z^T(\Gamma^{-1}-\mathsf A)z,\\
+\int W(a)e^{-Q_Y(a)/g^2}\,da
+={}&amp;(2\pi g^2)^{n_a/2}\sqrt{\det\Gamma}\,
+\int W(m_Y+gz)e^{\mathcal A_Y(z)}\,d\gamma_\Gamma(z).
+\end{aligned}\]</div>
+<p>Expanding \(Q_Y(m_Y+gz)\) verifies every sign and factor: the Gaussian density cancels the added \(\tfrac12z^T\Gamma^{-1}z\). In the actual sector identity, \(W\) retains the chart density, allocation indicators, tag likelihoods, inherited interactions and nonlinear residual. Frozen links still carry product Haar measure. The normalization also retains the Haar-chart scale and original blocking prefactor. Only active coordinates contribute to \(n_a\); artificial identity completions used in matrix estimates do not add integration variables. Integrability and the exact guarded identity are part of <code>authorized_change</code>. Removing guards before proving estimates would change the assertion. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/SectorNext/GAUSSIAN_SECTOR_CHANGE/Remainder.lean#L118" target="_blank" rel="noopener">Square-completion identity ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/SectorNext/GAUSSIAN_SECTOR_CHANGE/Change.lean#L127" target="_blank" rel="noopener">Exact sector integration ↗</a></p>
+
+<h4 id="rg-local-determinants">Why the determinant and Haar Jacobian must be paired</h4>
+<p>At the stationary configuration \(U_v\), the Gaussian factor has a different role: it identifies the quadratic correction to the coarse action. Let \(J_{\mathrm{ax}}\) be the normalized Haar density in axial coordinates and \(\mathcal L\) the inherited loop action. Its negative logarithm is \(\mathcal T(v)=\mathcal L(U_v)+\tfrac12\log\det\mathsf Q(v)-\log J_{\mathrm{ax}}(v)\).</p>
+<p>Changing from axial increments to left increments at \(U_v\) gives a derivative matrix \(D s\). Stationarity removes the extra first-derivative term in the Hessian chain rule. Haar invariance supplies the matching Jacobian. If \(\mathcal I\) embeds the axial slice, \(\mathsf J\) is the joint left Hessian, and \(\mathcal R\) inserts gauge variations, the identities used are</p>
+<div class="equation-scroll symmetry-equation" role="region" aria-label="Cancellation of coordinate Jacobians in the gauge-completed determinant" tabindex="0">\[\begin{aligned}
+\mathsf Q&amp;=(D s)^T(\mathcal I^T\mathsf J\mathcal I)D s,
+&amp;J_{\mathrm{ax}}&amp;=|\det D s|,\\
+\det(\mathcal R,\mathcal I)^2&amp;=1,
+&amp;\det\mathsf C_\mu&amp;=(\det\mathsf G_\mu)^2
+\det(\mathcal I^T\mathsf J\mathcal I),\\
+\mathcal T(v)&amp;=\mathcal L(U_v)
++\tfrac12\log\det\mathsf C_\mu(v)-\log\det\mathsf G_\mu(v).
+\end{aligned}\]</div>
+<p>Here \(\mathsf C_\mu=\mathsf J+F_\mu^TF_\mu\) is the completed Hessian and \(\mathsf G_\mu=F_\mu\mathcal R\) its gauge block. The tree-ordered change of basis has diagonal entries \(\pm1\), explaining its unit squared determinant. Positivity near the flat field licenses the logarithms. This is a proved local determinant identity, not an omission of the gauge directions. Separately, averaging the eligible frame and predictor choices preserves the lattice symmetries of the blocking law. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/STATIONARY/Joint/HaarJac.lean" target="_blank" rel="noopener">Jacobian and determinant proof, <code>treasury</code> and <code>tribute</code> ↗</a> · <a href="#symmetry-gauge">Discrete-symmetry averaging</a></p>
+<p>Local determinant estimates require further care. If a positive Gram and all its principal compressions have spectrum in \([\eta,K]\), diagonalizing a compression writes each diagonal entry of its matrix logarithm as a convex combination of logarithms of eigenvalues. Therefore</p>
+<div class="equation-scroll symmetry-equation" role="region" aria-label="Local logarithm bound without dropping the determinant remainder" tabindex="0">\[\begin{aligned}
+|[\log\mathsf A_\Omega]_{ii}|&amp;\le|\log\eta|+|\log K|,\\
+-\tfrac12\bigl(\log\det\mathsf A-\log\det\mathsf A_{\mathrm{flat}}\bigr)
+&amp;=\sum_i\ell_i+\mathcal R_{\det}.
+\end{aligned}\]</div>
+<p>The local charges \(\ell_i\) use the same window compressions and sum the color components at each free edge. The source keeps \(\mathcal R_{\det}\) explicitly; local diagonal bounds do not turn a global determinant into an exact local sum. Its flat scalar and assigned quadratic coupling correction are separated before the remaining variation enters the activity estimates. Consequently this calculation supplies ingredients for the regular-remainder bound, rather than proving the full cubic price by Gaussian normalization alone. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/AnalyticBridge/ANNULUS_GAUSSIAN_INTERFACE/LocalLog.lean" target="_blank" rel="noopener">Local logarithm estimates and explicit residual ↗</a></p>
+
+
+  <h4 id="rg-local-differentiation">Differentiate the common integral while holding rough fields fixed</h4>
+  <p>An old forced activity can be merely measurable. Differentiating it as though it were a smooth function of the coarse field would invalidate the derivative estimate. The local calculus instead changes coordinates so that every physical link read by that activity is held fixed. In the source, <code>Notice.stalls</code> proves the held-link identity inside the protected chart; <code>Shutter</code> retains the cutoffs needed to use it. The whole selected product uses one local Gaussian marginal. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/AnalyticBridge/LOCAL_GAUSSIAN_MULTIPLIER/Shutter.lean" target="_blank" rel="noopener">Held physical links and protected derivatives ↗</a></p>
+  <p>Here is the finite-dimensional calculation behind that method. Fix the sector, auxiliary tags and frozen links \(Y\), the coupling \(g>0\), and a base coarse field \(V_0\). Suppress the fixed \(Y\) in \(m(V,Y)\). Write a protected fine link as \(U(V,z)=\exp(m(V)+gz)R(V)\), where \(R(V)\) is its coarse-field replica. Define \(z_V\) locally by \(U(V,z_V)=U(V_0,z)\). Restrict \(V\) to a neighborhood of \(V_0\) where the protected coordinate change has an invertible Jacobian. On the logarithm chart,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The coordinate change that keeps a physical link fixed" tabindex="0">\[z_V=g^{-1}\!\left[
+  \log\!\left(\exp(m(V_0)+gz)R(V_0)R(V)^{-1}\right)-m(V)
+  \right].\]</div>
+  <p>For a rough factor \(K\) whose complete set of link arguments is held this way, \(K(U(V,z_V))=K(U(V_0,z))\). Its derivative is therefore never requested. The parameter dependence moves into the smooth factors, the Gaussian density and the coordinate Jacobian. This is a local identity with retained chart protectors, not a global smoothness claim about branch or flag indicators.</p>
+  <p>Let \(q_V\) be the centered Gaussian density with covariance \(\Gamma(V)&gt;0\) on the union of active coordinates read by the product, and \(J_V=D_z z_V\). Relative to the base law, the density multiplier is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The common Gaussian likelihood and coordinate Jacobian" tabindex="0">\[\mathcal R_V(z)=|\det J_V|\,
+     \frac{(\det\Gamma(V))^{-1/2}
+        e^{-z_V^{T}\Gamma(V)^{-1}z_V/2}}
+      {(\det\Gamma(V_0))^{-1/2}
+        e^{-z^{T}\Gamma(V_0)^{-1}z/2}}.\]</div>
+  <p>This ratio compares Gaussian coordinate laws. The original Haar-coordinate density remains among the smooth factors; the source’s held-Haar formulation retains the reciprocal chart Jacobian explicitly. For one parameter direction, a dot denotes differentiation at fixed base coordinate \(z\). Using \(\partial\Gamma^{-1}=-\Gamma^{-1}(\partial\Gamma)\Gamma^{-1}\) and \(\partial\log\det\Gamma=\operatorname{tr}(\Gamma^{-1}\partial\Gamma)\),</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The logarithmic derivative of the transported Gaussian density" tabindex="0">\[\begin{aligned}
+  \partial\log\mathcal R_V={}&amp;\operatorname{tr}(J_V^{-1}\dot J_V)
+      -\tfrac12\operatorname{tr}(\Gamma^{-1}\dot\Gamma)\\
+      &amp;+\tfrac12 z_V^T\Gamma^{-1}\dot\Gamma\Gamma^{-1}z_V
+      -z_V^T\Gamma^{-1}\dot z_V.
+  \end{aligned}\]</div>
+  <p>Thus changing the covariance contributes genuine terms even when the old activity is fixed. Repeated differentiation produces polynomial Gaussian factors and derivatives of the protected coordinate map. Moving those derivatives under the integral still requires an integrable majorant. Armstrong's simultaneous local integration lemma organizes precisely this issue; it does not multiply separate expectations of overlapping factors. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/B-section.tex#L880" target="_blank" rel="noopener">Draft §11, simultaneous local integration ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/AnalyticBridge/LOCAL_GAUSSIAN_MULTIPLIER/Lens.lean" target="_blank" rel="noopener">One marginal for all selected reads ↗</a></p>
+
+  <h4 id="rg-local-moments">Pay for overlapping factors with one Gaussian moment bound</h4>
+  <p>The required exponential integrability can be understood by an exact square completion. Let \(z\sim N(0,\Gamma)\), let \(K\) be symmetric, and put \(L=\Gamma^{1/2}K\Gamma^{1/2}\), \(u=\Gamma^{1/2}\ell\). If \(I-L&gt;0\), changing to a standard Gaussian and completing the square gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Exact exponential moment of a Gaussian linear and quadratic perturbation" tabindex="0">\[\begin{aligned}
+  \mathbb E\,e^{\ell^Tz+z^TKz/2}
+   &amp;=\det(I-L)^{-1/2}
+       e^{\frac12u^T(I-L)^{-1}u},\\
+  0\le L\le\tfrac12 I
+   &amp;\quad\Longrightarrow\quad
+   \log\mathbb E\,e^{\ell^Tz+z^TKz/2}
+      \le\operatorname{tr}L+\|u\|^2.
+  \end{aligned}\]</div>
+  <p>The inequality follows eigenvalue by eigenvalue from \(-\log(1-\lambda)\le2\lambda\), and from \((I-L)^{-1}\le2I\). For several factors, use \(\ell=\sum_i\ell_i\) and \(K=\sum_iK_i\) <em>before</em> applying this identity. The cross terms \(\ell_i^T\Gamma\ell_j\) are part of the same expectation. Individual integrability would not by itself control their product.</p>
+  <p>Locality controls the accumulated cost. For nonnegative weights \(w_{ia}\) satisfying \(\sup_a\sum_iw_{ia}\le C_w\), with \(\ell_i(a)=0\) whenever \(w_{ia}=0\), weighted Cauchy–Schwarz gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Local row weights control all cross terms in the Gaussian mean" tabindex="0">\[\left\|\Gamma^{1/2}\sum_i\ell_i\right\|^2
+    \le\|\Gamma\|\sum_a\left(\sum_iw_{ia}\right)
+               \left(\sum_i\frac{|\ell_i(a)|^2}{w_{ia}}\right)
+    \le\|\Gamma\|C_w\sum_{i,a}\frac{|\ell_i(a)|^2}{w_{ia}}.\]</div>
+  <p>Zero-over-zero terms are defined as zero. The draft obtains such weights from decaying path coefficients and bounded address multiplicity. The quadratic terms require a bound on the <em>sum</em> of their weighted operators as well as a local allocation of \(\operatorname{tr}L\); a small operator norm alone would still allow a trace growing with the total volume. Gaussian polynomial moments then control each fixed derivative order, with the number of coordinate reads accounted for in the support bound.</p>
+  <p>Finally, let \(E_M\) be the simultaneous warning event for \(r\) distinct warning addresses in a selected product. If its probability is bounded by \(\varepsilon_w^{2r}\), then</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Retaining warning suppression after integrating the entire product" tabindex="0">\[\int |G_M|\mathbf1_{E_M}\,d\gamma_\Gamma
+    \le\left(\int |G_M|^2\,d\gamma_\Gamma\right)^{1/2}
+       \Pr(E_M)^{1/2}
+    \le\|G_M\|_{L^2(\gamma_\Gamma)}\varepsilon_w^r.\]</div>
+  <p>This explains why the warning estimate is proved jointly, with coordinate multiplicities included: warning events may share Gaussian variables. The calculation above proves the integration implications; the construction-specific covariance, chart, path and simultaneous-warning estimates are the analytic inputs needed to apply them uniformly. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/B-section.tex#L905" target="_blank" rel="noopener">Draft's common-majorant and warning argument ↗</a></p>
+
+
+<div id="rg-local-polymers">
+  <h4 id="rg-local-molecules">From a local integral to connected activities</h4>
+  <p>The activity bounds above require two different arguments: integration of products of local factors, followed by summation over their possible arrangements. Fix one stage, block ratio and derivative order, an admissible input representation, and a compatible allocation sector. The sector fixes the selected large-field tests, tree gauge and auxiliary tags. Constants may depend on these fixed stage parameters, but the estimates must be uniform in the physical period and over the permitted coupling interval. Armstrong’s draft separates these tasks in §§11 and 13. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/B-section.tex#L905" target="_blank" rel="noopener">Draft §11, simultaneous local integration ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/D-section.tex#L53" target="_blank" rel="noopener">Draft §13, local expansion ↗</a></p>
+  <p>After extracting the stationary quadratic contribution, write each remaining normalized smooth factor as \(1+W_a\). These factors include action remainders, Jacobian and determinant corrections, and inherited activities; an old forced activity enters directly as \(K_a\). Join factors whose <em>complete read supports</em> overlap. These supports include the Gaussian covariance windows, inspected flags and path data, not just the links visible in the final coefficient. A connected collection is a molecule \(M\). Its weight and differentiated majorant have the form</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Integrated molecular weight and its joint derivative majorant" tabindex="0">\[\begin{aligned}
+  z_M(V)&amp;=\int\prod_{a\in M}W_a(V,Y,z)\,d\nu(Y,z),\\
+  \int g_M\,d\nu&amp;\leq P_j(x)(1+s_M)^d\prod_{a\in M}f_a.
+  \end{aligned}\]</div>
+  <p>Here \(\nu\) is the common sector Gaussian/Haar law, \(g_M\) dominates the required derivatives of the transported product, \(s_M\) counts support blocks and retained path lengths, and \(P_j(x)=x^{o(1)}\) after the ratio is fixed. This is a simultaneous product estimate. Separate moment bounds cannot be multiplied when factors share Gaussian coordinates. Likewise, warning events are controlled jointly, followed by Cauchy–Schwarz; their probabilities are not assumed independent. Exact factorization is used only for disjoint complete read supports under the prescribed local covariance construction. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Daisy/Charm.lean#L58" target="_blank" rel="noopener">Integrated product and derivative majorants ↗</a></p>
+
+  <h4 id="rg-local-connected">Why the logarithm contains connected graphs</h4>
+  <p>First consider the ordinary gas, away from the selected output flags. Its compatible selections have disjoint molecular supports. Expansion of finite products, followed by the established absolute bounds, gives the hard-core gas and its logarithm:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Hard-core molecular gas and connected logarithm" tabindex="0">\[\begin{aligned}
+  \Xi(z)&amp;=\sum_{\mathcal C\ {\rm compatible}}\prod_{M\in\mathcal C}z_M,\\
+  \log\Xi(z)&amp;=\sum_{n\geq1}\frac1{n!}
+       \sum_{M_1,\ldots,M_n}\phi^T(M_1,\ldots,M_n)\prod_{i=1}^nz_{M_i},\\
+  \phi^T&amp;=\sum_{\Gamma\ {\rm connected}}
+       \prod_{\{i,k\}\in E(\Gamma)}
+       \bigl[-\mathbf1_{Z_{M_i}\cap Z_{M_k}\ne\varnothing}\bigr].
+  \end{aligned}\]</div>
+  <p>The graph vertices are <em>occurrences</em>: tuples may repeat an address, and an address conflicts with itself. The one-vertex coefficient is one. Connectedness is what makes the logarithm local: its coefficient depends on the union of a connected family of supports. But the displayed identity still needs convergence and a nonvanishing gas. The source proves the finite identity and then passes to countable alphabets under quantitative smallness; for real weights it also proves \(\Xi&gt;0\), justifying the real logarithm. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Push/ABSOLUTE_SUMS/Log.lean#L114" target="_blank" rel="noopener">The actual logarithm identity and positivity ↗</a></p>
+  <p>The essential combinatorial saving comes before taking absolute values. Group connected graphs by a breadth-first spanning tree; alternating contributions within each group cancel. The resulting estimate is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Tree bound retaining cancellations in the Ursell coefficient" tabindex="0">\[|\phi^T(M_1,\ldots,M_n)|
+  \leq\sum_{T\ {\rm spanning\ tree}}
+     \prod_{\{i,k\}\in E(T)}
+       \mathbf1_{Z_{M_i}\cap Z_{M_k}\ne\varnothing}.\]</div>
+  <p>Taking the absolute value of every graph separately would erase this cancellation and introduce far too much combinatorial growth. This tree bound is implemented by <code>Graph.pay</code>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Push/ABSOLUTE_SUMS/Graph.lean#L113" target="_blank" rel="noopener">The alternating-graph cancellation ↗</a></p>
+
+  <h4 id="rg-local-attachment">Paying for every possible attachment</h4>
+  <p>Let \(c_B(Z)\) be the connected cover number already used in the activity norm, and let \(w_M\geq|z_M|\) include the required derivative costs. Reserve an extra support exponent \(\delta&gt;0\), above the desired exponent \(a\geq0\). One sufficient condition used in the source is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A sufficient weighted smallness condition for the cluster expansion" tabindex="0">\[\sup_x\sum_{M:x\in Z_M}
+       w_M e^{(a+\delta)c_B(Z_M)}\leq\gamma,\qquad
+  0&lt;\frac{4(2B+1)^4\gamma}{\delta}\leq q&lt;1.\]</div>
+  <p>A parent support covered by \(n\) radius-\(B\) balls has at most \(n(2B+1)^4\) sites where a child can attach. The site budget bounds the sum over children; the reserved exponential absorbs the dependence on the parent’s size and degree. The factorials account for ordered occurrences. Iterating this estimate along the spanning tree gives a geometric tail, uniformly in the torus size:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A site-rooted bound for the connected cluster tail" tabindex="0">\[\sum_{n\geq r+1}\frac1{n!}
+   \sum_{\substack{M_1,\ldots,M_n\\x\in\cup_i Z_{M_i}}}
+   |\phi^T|\prod_iw_{M_i}\,
+   e^{a c_B(\cup_i Z_{M_i})}
+   \leq\frac{\gamma q^r}{1-q}.\]</div>
+  <p>This proves a local weighted bound, not merely convergence at one finite volume. Fixed polynomials such as \((1+s_M)^d\) are absorbed by an additional, explicitly reserved support exponential. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Push/ABSOLUTE_SUMS/Forest.lean#L31" target="_blank" rel="noopener">Smallness and rooted tree bounds ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Push/ABSOLUTE_SUMS/Clusters.lean" target="_blank" rel="noopener">Cluster and support-weight tails ↗</a></p>
+
+  <h4 id="rg-local-forced">Keeping the large-field penalty after summation</h4>
+  <p>A forced component contains selected fine plaquettes, block mismatches or coarse flags. Its seed set \(A\) is nonempty. The local energy theorem must control signed correction rows as well as positive squares; counting only visibly positive terms is insufficient. With the ratio, mismatch threshold and stage bounds fixed before the coupling entrance, the energy and packet estimates give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Energy per seed survives local normalization and entropy costs" tabindex="0">\[\begin{aligned}
+  \mathcal E_A&amp;\geq\kappa t^2|A|,\\
+  |{\rm packet}_A|&amp;\leq
+       e^{-[\kappa\beta t^2-r_{\rm loss}(x)]|A|}
+       \leq e^{-\kappa'\beta t^2|A|},
+       \qquad 0&lt;\kappa'&lt;\kappa .
+  \end{aligned}\]</div>
+  <p>The loss \(r_{\rm loss}=o(\beta t^2)\) collects the proved normalization, annular-error and local counting costs; it is not set to zero. With \(y=\widehat\beta_{m+1}\), \(t=y^{-1/2}P(y)\), \(P(y)=e^{(\log\log y)^2}\), and actual \(\beta\) in its prescribed band, \(\beta t^2\) is comparable to \(P(y)^2\). That dominates every fixed power of \(\log y\). The source’s packet estimate explicitly keeps the positive costs in the exponent before absorbing them. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/AnalyticNext/CONNECTED_ACTIVITY_JETS_E6/Revenue.lean#L99" target="_blank" rel="noopener">Packet energy after its local costs ↗</a></p>
+  <p>Ordinary clusters meeting a forced component must then be absorbed into that component’s coefficient. The restoration estimate marks every forced occurrence and proves that a positive part of its suppression survives the second connected sum. It bounds an upper majorant; the exact exclusion and inventory identities are supplied separately by the assembly. Consequently the strong output estimate remains of the form</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The strong forced bound retained beyond the connected expansion" tabindex="0">\[\sup_x\sum_{i:x\in Y_i}e^{\sigma c_B(Y_i)}
+       \sup_V|K_i^{\rm out}(V)|
+       \leq C e^{-c\beta t^2}
+       \leq C e^{-c'P(y)^2}.\]</div>
+  <p>The constants are chosen compatibly with the later actual-coupling estimate \(H e^{-\eta(t/g)^2}\), where \(g=\beta^{-1/2}\). Weakening immediately to the final allowance \(e^{-P(x)^{1/5}}\) would discard reserve needed by subsequent operations. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Push/ABSOLUTE_SUMS/Omissions.lean#L48" target="_blank" rel="noopener">Forced suppression through restoration ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Rent.lean#L36" target="_blank" rel="noopener">Conversion to the retained strong quote ↗</a></p>
+  <p><strong>What this stage has not yet earned.</strong> Armstrong’s preliminary regular bound is only \(\widehat\beta^{-7/16}\), whereas the final allowance is \(\widehat\beta^{-11/10}\). Cluster convergence alone therefore does not close the RG induction. The additional inherited-term contraction, finite-period localization and flat-value/affine-Hessian subtractions are indispensable. In particular, a raw stationary remainder of size \(\beta g^3=g\) must not be identified with the final \(g^3\) remainder after those cancellations and normalizations.</p>
+</div>
+
+
+<div id="rg-local-remainders">
+  <p><strong>Inside the local nonlinear estimate.</strong> The previous inequalities require estimates on actual integrals and their derivatives. The following argument isolates the centered local logarithm that remains after stationary integration and the canonical terms have been removed. Fix a stage transition and a derivative order \(q\ge5\); constants may depend on these choices. Write \(\mathfrak b=\widehat\beta_{m+1}\), \(\beta\asymp\mathfrak b\) for the actual coupling, and \(g=\beta^{-1/2}\).</p>
+  <p>Throughout, a derivative bound means the operator norm of an actual iterated Fréchet derivative. The source packages bounds of the form \(\|D^kf(x)\|\le A\lambda^k\), including \(k=0\). Choosing \(\lambda=u^{-1}\) is equivalent to controlling \(u^k\|D^kf\|\) on a chart of radius \(u\). This scaling matters: a small function value alone would not control the differentiated activities required by the next RG step.</p>
+
+  <p>Armstrong’s §13 explains the improvement using a cumulant expansion and extraction of low-order local terms. The implementation route followed here instead exposes exact parity of a normalized integral, Taylor bounds, and the matched classical and loop actions. These give a direct quantitative estimate without treating a truncated cumulant series as an equality. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/D-section.tex#L264" target="_blank" rel="noopener">Compare the draft’s finite-period localization argument ↗</a></p>
+  <h4 id="rg-local-power">The raw cubic term costs \(g\), not \(g^3\)</h4>
+  <p>Let \(\phi(x,y)\) be the classical action in a gauge-fixed local chart, with background \(x\) and stationary fluctuation coordinate \(y=\rho(x)\). Stationarity means \(D_y\phi(x,\rho(x))=0\). For the fluctuation \(y=\rho(x)+gz\), Taylor's formula gives the exact identity</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Exact stationary Taylor integral" tabindex="0">\[\begin{aligned}
+  \beta\,[\phi(x,\rho(x)+gz)-\phi(x,\rho(x))]
+  &=\int_0^1(1-s)\,
+       D_y^2\phi(x,\rho(x)+sgz)[z,z]\,ds\\
+  &=\frac12\langle z,M(x)z\rangle+\mathcal V(g,x,z),
+  \qquad M(x)=D_y^2\phi(x,\rho(x)).
+  \end{aligned}\]</div>
+  <p>A third-derivative bound \(\|D_y^3\phi\|\le C\) on the segment therefore yields \(|\mathcal V|\le Cg\|z\|^3/6\). The factor is \(\beta g^3=g\). Thus a raw cubic interaction cannot simply be identified with the final \(g^3\) term in a regular-error estimate. The proof must retain the quadratic normalization and exploit cancellations before claiming a smaller remainder. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Lantern/Vast.lean" target="_blank" rel="noopener">Stationary integral identity, <code>funds</code> ↗</a></p>
+
+  <h4 id="rg-local-parity">Gaussian parity improves the normalized logarithm</h4>
+  <p>The source retains a finite fluctuation ball \(\|z\|\le D\), includes the determinant correction, and expresses the integral against a fixed centered Gaussian. Denote it by \(Z_D(g,x)\). Its exponent is built from the exact Taylor integral above and the other smooth local action terms. Changing \((g,z)\) to \((-g,-z)\) leaves those expressions unchanged. The ball and Gaussian are also unchanged, so</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Parity cancellation in the Gaussian logarithm" tabindex="0">\[\begin{aligned}
+  Z_D(-g,x)&=Z_D(g,x),\qquad
+  \partial_g\log Z_D(0,x)=0,\\
+  D_x^k[\log Z_D(g,x)-\log Z_D(0,x)]
+  &=\int_0^g(g-s)\,
+       \partial_s^2D_x^k\log Z_D(s,x)\,ds.
+  \end{aligned}\]</div>
+  <p>Bounds through order \(q+2\) consequently give order \(g^2\) through every requested background derivative \(k\le q\). Positivity is essential before differentiating the logarithm: the construction proves \(e^{-1}/2\le Z_D\le e\). At \(g=0\), the determinant identity gives the probability of the same ball under the Gaussian with covariance \(M(x)^{-1}\). It is close to one, rather than exactly one.</p>
+  <p>Taking \(D\) proportional to the growing monitor and controlling the Gaussian tails makes this truncation error, including its requested derivatives, smaller than any prescribed inverse power. With all stage and support factors included, the result used below is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Derivative bound on the normalized local logarithm" tabindex="0">\[
+  \max_{0\le k\le q}\|D_x^k\log Z_D(g,x)\|
+  \le B_q(\mathfrak b)g^2+\mathfrak b^{-2},
+  \qquad B_q(\mathfrak b)=\mathfrak b^{o(1)}.
+  \]</div>
+  <p>The proof compares the actual pushed density with this integral and separately bounds their logarithmic difference. These estimates hold on a protected chart neighborhood; uniform positivity, covariance bounds and domination of differentiated integrands are among their hypotheses. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Lantern/Port.lean" target="_blank" rel="noopener">Exact parity and determinant identities ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Lantern/Lens.lean" target="_blank" rel="noopener">Logarithmic derivative estimate ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Token/Purple.lean" target="_blank" rel="noopener">Comparison with the actual density ↗</a></p>
+
+  <h4 id="rg-local-subtractions">Subtract the matched classical and quadratic terms</h4>
+  <p>The source organizes the remaining local logarithm by an exact identity. In shorter notation, let \(L=\log Z_D\), let \(R\) be the log-comparison error, let \(F\) be the discrepancy between the coarse classical action and the stationary fine action, and let \(W\) be the remaining loop/determinant discrepancy. Then</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Exact local logarithm after canonical extraction" tabindex="0">\[
+  \mathscr H(x)=\log\Omega+L(x)+R(x)+\beta F(x)+W(x).
+  \]</div>
+  <p>Here \(\mathscr H\) is the logarithm of the pushed pure density plus the prescribed coarse classical, quadratic-reset and loop actions. The constant \(\log\Omega\) disappears on subtracting \(\mathscr H(0)\). Classical matching gives \(D^kF(0)=0\) for \(0\le k\le4\). Discrete symmetry gives \(D\mathscr H(0)=0\), hence \(\|DW(0)\|\le\|DL(0)\|+\|DR(0)\|\). The quadratic loop matching controls \(D^2W(0)\) by an exponentially small finite-period error, rather than setting it to zero without a remainder.</p>
+  <p>The elementary estimate behind these statements is worth making explicit. For \(0&lt;u\le1\) and integers \(1\le k\le q\), suppose derivatives of \(f\) from order \(k\) through \(q\) are bounded by \(C\) on the radius-\(u\) ball, and \(u^i\|D^if(0)\|\le b\) for \(i&lt;k\). Repeatedly integrating derivatives along a segment gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Derivative version of Taylor remainder control" tabindex="0">\[
+  \max_{0\le i\le q}u^i\|D^if(x)\|
+     \le Cu^k+kb\qquad(\|x\|&lt;u).
+  \]</div>
+  <p>Indeed, \(\|D^if(x)-D^if(0)\|\le u\sup\|D^{i+1}f\|\) on the segment. Multiply by \(u^i\) and descend from order \(k\); each descent adds at most \(b\). Above order \(k\), use \(u^i\le u^k\). With \(k=5,b=0\), this bounds the classical discrepancy by \(C_Fu^5\). With \(k=3\), it bounds the centered quantum discrepancy using its controlled first and second derivatives. This is an estimate on all requested derivatives, not only on the value of the function. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Shellac/Proof.lean" target="_blank" rel="noopener">Exact decomposition and quartic matching ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Shellac/Pine.lean" target="_blank" rel="noopener">Taylor estimate, <code>pools</code> ↗</a></p>
+  <p>The two low-order facts have different origins. The zero gradient is proved for the complete local expression using signed lattice transformations and translations. The Hessian comparison comes from the separately constructed quadratic loop action on the same stationary background. In a finite auxiliary period it has an exponentially decaying mismatch. Keeping this mismatch avoids silently replacing a finite-volume identity by its infinite-volume limit. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Token/Tune.lean" target="_blank" rel="noopener">Gradient cancellation ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Shellac/Turmeric.lean" target="_blank" rel="noopener">Finite-period Hessian estimate ↗</a></p>
+
+  <h4 id="rg-local-price">The local estimate fits below the regular allowance</h4>
+  <p>Write \(a\) for a derivative bound on \(L\), \(r\) for one on \(R\), and \(A_0\) for the finite-period Hessian error. Combining the preceding estimates gives the source's explicit bound</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Combined nonlinear local remainder bound" tabindex="0">\[\begin{aligned}
+  \max_{0\le k\le q}u^k
+     \|D^k[\mathscr H(x)-\mathscr H(0)]\|
+  \le{}&au+2r+\beta C_Fu^5+C_Wu^3\\
+       &+3\bigl[(r+a)u+A_0u^2\bigr].
+  \end{aligned}\]</div>
+  <p>The auxiliary chart radius is \(u=\mathfrak b^{-7/16}\). At fixed stage, \(a=\mathfrak b^{-1+o(1)}\), \(r\le\mathfrak b^{-2}\), \(C_F,C_W=\mathfrak b^{o(1)}\), and the admitted auxiliary period makes \(A_0\le\mathfrak b^{-1+o(1)}\). In particular,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Power counting after all local subtractions" tabindex="0">\[
+  \beta u^5=\mathfrak b^{-19/16+o(1)},\qquad
+  u^3=\mathfrak b^{-21/16},\qquad
+  g^2u=\mathfrak b^{-23/16+o(1)}.
+  \]</div>
+  <p>All terms therefore fit below \(\mathfrak b^{-23/20}\) after sufficiently late entry; the weakest displayed power leaves reserve \(19/16-23/20=3/80\) for subpower factors. The source proves this bound before converting chart derivatives to ordered link derivatives and localizing the auxiliary-period result. Those conversions retain explicit derivative and support costs. Finally, \(\mathfrak b^{-23/20}/\mathfrak b^{-11/10}=\mathfrak b^{-1/20}\to0\), leaving room beneath the regular allowance. This establishes the smallness needed for the pure local contribution, subject to the stated conversion and localization costs. Inherited activities and forced components still require their separate connected and support estimates. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Shellac/Smug.lean" target="_blank" rel="noopener">Combined remainder estimate, <code>auster</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Shellac/Sables.lean" target="_blank" rel="noopener">Actual local bound, <code>erudite</code> ↗</a></p>
+  <p>This auxiliary \(\mathfrak b^{-23/20}\) estimate is sufficient for its allocated local allowance; it is not an identification with, or by itself a derivation of, the \(g^3\) term in the earlier numerical price. The latter belongs to the assembled output estimates and their additional extraction and support bounds.</p>
+  <p>For example, the chart-to-link conversion costs at most \(q!3^q\) times the chart bound under its stated chart-radius and direction-size conditions. Spatially growing directions and localization incur further support factors whose forms and exponents are fixed before the eventual coupling threshold is chosen. The final assembly retains the same local functions while proving their weighted budgets. It does not justify those budgets by discarding a large-field region or differentiating a sharp health indicator. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Boulevard/Oro.lean" target="_blank" rel="noopener">Ordered link derivatives ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/PhysicalNext/RG_NEXT_COMPLETE_REPEATABLE_NONLINEAR_STEP/Rain/Glazing.lean" target="_blank" rel="noopener">Assembly into the regular activity bound ↗</a></p>
+</div>
+
+  </div>
+
+  <h3 id="rg-shooting">5. Select a trajectory through the bands</h3>
   <p>The histories here are finite. More precisely, \(\beta_m\) abbreviates \(\beta_{N,p,m}\), with \(0\le m\le N\). Even at fixed \(m\), the selected value may depend on the terminal cutoff \(N\) and volume \(p\); consistency of one infinite trajectory across all cutoffs is not being assumed.</p>
   <p>A valid output representation need not automatically have its coupling in the next admissible band. The construction varies the bare coupling along continuous families and restricts to surviving intervals. With \(s_m=\sum_{j&lt;m}\log L_j\), the inner barriers are \(\bar\beta+\tfrac12c_Gs_m\) and \(\bar\beta+2c_Gs_m\). They lie inside the allowed band \([\widehat\beta_m/2,2\widehat\beta_m]\).</p>
   <p>The exact transfer records</p>
@@ -488,7 +734,7 @@
   \end{aligned}\]</div>
   <p>Continuity and the intermediate value theorem select a closed subinterval covering the full next barrier interval and staying between its endpoints. Restricting to this subinterval preserves the certificates at all already-constructed scales. Induction down from the cutoff therefore produces a trajectory reaching \(\beta_0=\bar\beta\), with every intermediate representation valid and banded. This is the shooting argument; it does not assert uniqueness of the selected bare coupling. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Shoot/Reach.lean" target="_blank" rel="noopener">Barrier and interval-selection proof ↗</a></p>
 
-  <h3 id="rg-running">5. The accumulated drift is subleading</h3>
+  <h3 id="rg-running">6. The accumulated drift is subleading</h3>
   <p>The stage index \(J_m\) increases slowly but tends to infinity. Its budget condition includes</p>
   <div id="eq-65" class="technical-equation" role="region" aria-label="A scale-schedule bound making the accumulated drift subleading" tabindex="0">\[\frac{d_{m+1}}{\log L_m}\le \frac1{J_{m+1}^{\,2}},
   \qquad J_m\longrightarrow\infty.\]</div>
@@ -1011,9 +1257,9 @@
   <div class="equation-scroll symmetry-equation" role="region" aria-label="The positive Laplace representation and monotonicity of the trace correlation" tabindex="0">\[\begin{aligned}
   C(r)&amp;=\int_{[0,\infty)}e^{-rE}\,d\mu_\Theta(E),
        \qquad r>0,\\
-  0<s\le r&amp;\quad\Longrightarrow\quad C(r)\le C(s).
+  0&lt;s\le r&amp;\quad\Longrightarrow\quad C(r)\le C(s).
   \end{aligned}\]</div>
-  <p>The exponentially damped integral is finite at every positive separation; finite total mass of the undamped measure is not required. Monotonicity follows pointwise from \(e^{-rE}\le e^{-sE}\) and positivity. Choose comparison separations \(s_-<1<s_+\), close to one, with rounded \(s_i^\pm\to s_\pm\). Eventually \(r_i s_i^-<r_i<r_i s_i^+\), so positivity of \(r_i^8\ell(r_i)^2\) gives</p>
+  <p>The exponentially damped integral is finite at every positive separation; finite total mass of the undamped measure is not required. Monotonicity follows pointwise from \(e^{-rE}\le e^{-sE}\) and positivity. Choose comparison separations \(s_-&lt;1&lt;s_+\), close to one, with rounded \(s_i^\pm\to s_\pm\). Eventually \(r_i s_i^-&lt;r_i&lt;r_i s_i^+\), so positivity of \(r_i^8\ell(r_i)^2\) gives</p>
   <div class="equation-scroll symmetry-equation" role="region" aria-label="Squeezing the correlation at the exact separation between controlled configurations" tabindex="0">\[\begin{aligned}
   \frac{A_G}{s_+^8}
   &amp;\le\liminf_i r_i^8\ell(r_i)^2C(r_i)\\
@@ -1158,6 +1404,7 @@
             <li id="ref-pdg"><strong><span class="source-number">[8]</span> Particle Data Group · Quantum Chromodynamics</strong><a href="https://pdg.lbl.gov/2025/reviews/rpp2025-rev-qcd.pdf" target="_blank" rel="noopener">Review of Particle Physics, QCD review (2025) ↗</a><p>Conventions for the beta function, running coupling, and the scale parameter. The notes specialize to pure gauge theory with no dynamical quarks.</p></li>
             <li id="ref-assessment"><strong><span class="source-number">[9]</span> Yang–Mills group · Validation of the OpenAI Yang–Mills construction</strong><a href="references/assessment-1-2026-11-10.pdf" target="_blank" rel="noopener">Read the November 10, 2026 assessment ↗</a> · <a href="https://github.com/yang-mills-group/YM/tree/55ba9fc36293b3f4d52c6b1f813169a0be76ee98" target="_blank" rel="noopener">Pinned review repository ↗</a><p>Part I states the construction and its limits; Part II records the formal verification, independent checks, and their scope. Revision <code>55ba9fc36293b3f4d52c6b1f813169a0be76ee98</code>. The committee describes this as an initial assessment and does not claim to fully understand the proof.</p></li>
             <li id="ref-submission"><strong><span class="source-number">[10]</span> OpenAI · October 28, 2026 Yang–Mills submission</strong><a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/tree/3456e5e75cf8d4cd558955a5c7638fba2d68f464" target="_blank" rel="noopener">Pinned original source repository ↗</a><p>The released Lean source underlying this walkthrough, revision <code>3456e5e75cf8d4cd558955a5c7638fba2d68f464</code>. The explanations here are based on the assessment and source reading.</p></li>
+            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation. This is a developing, AI-assisted reconstruction from the released Lean source. Revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>; consulted 12 November 2026. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
           </ol>
         </section>
         <a class="technical-endlink" href="index.html">Return to the visual field guide <span aria-hidden="true">↗</span></a>
