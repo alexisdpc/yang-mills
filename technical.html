@@ -1096,60 +1096,334 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
   <p>The entire chosen spacing sequence converges at each fixed physical volume. This is not regulator universality, an explicit rate in the original cutoff, or permission to interchange the ultraviolet and infinite-volume limits. <a href="references/assessment-1-2026-11-10.pdf#page=6" target="_blank" rel="noopener">Assessment, Theorem 4.1 ↗</a>.</p>
 </section>
 
-<section class="technical-section" id="proof-ir" aria-labelledby="proof-ir-title">
+<section class="technical-section ir-detail" id="proof-ir" aria-labelledby="proof-ir-title">
   <p class="technical-kicker">16 / THE INFINITE-VOLUME EXTRACTION</p>
   <h2 id="proof-ir-title">Compactness gives existence, not uniqueness.</h2>
   <p>After the UV limit at each fixed physical volume, let the torus size \(L_p\) tend to infinity. A bound depending arbitrarily on \(p\) would be useless here: the correlations could diverge as the box expands. The required input is control of every fixed local experiment, uniform over all sufficiently large boxes. The observable labels, number of insertions, derivative order and distance from collisions are fixed before choosing the bound.</p>
 
-  <h3 id="ir-uniform">1. The estimate must be uniform in physical volume</h3>
-  <p>Write \(G_{N,p}(\boldsymbol v;x)\) for a lattice correlation and \(\delta_{a_N,\ell}\) for a finite list of normalized coordinate differences acting on specified insertion slots. The implementation’s <code>FixedBounds</code> quantifiers have the following form:</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Finite difference bounds uniform in physical volume" tabindex="0">\[\begin{aligned}
-  &amp;\forall\,\boldsymbol v,\ell,\quad\forall r&gt;0,\quad\exists B\geq0,\ N_0,\quad
-  \forall N\geq N_0,\ \forall p,\\
-  &amp;\hspace{1em}\text{separated configuration at scale }r
-  \quad\Longrightarrow\quad
-  |\delta_{a_N,\ell}G_{N,p}(\boldsymbol v;x)|\leq B.
-  \end{aligned}\]</div>
-  <p>“Separated” refers to the source’s periodic separation condition; eventually, a fixed compact configuration in \(\mathbb R^{4n}\) fits inside a sufficiently large torus. The constant may depend on the fixed data but not on \(p\). The empty difference list gives a correlation bound. Longer lists control the jets needed for smoothness. Crucially, the bound also covers configurations with equal individual coordinates, provided the insertion points themselves remain separated.</p>
-  <p>This estimate is connected to the RG construction rather than assumed anew. In <code>FullVolume/Literal</code>, <code>funding</code> inducts on the difference list: the exact identity <code>actuate</code> moves a correlation difference into the corresponding field insertion, and the previously financed field estimates bound the resulting word. The theorem <code>genuine</code> supplies <code>FixedBounds</code> for the actual run. This is where the finite-volume estimate is made independent of the box. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Discrete.lean" target="_blank" rel="noopener">Difference identities and exact quantifiers ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Literal.lean" target="_blank" rel="noopener">The estimate for the constructed family ↗</a></p>
+  <p class="proof-revision-note"><strong>Comparison with Armstrong’s draft.</strong> This expansion follows §15, “Infinite volume and field calculus”: Lemma F1 for the common volume subsequence, F2 for corrected field coefficients, and F3 for positivity and power bounds. It gives the mathematical compactness argument and distinguishes it from the released source’s initial generic-point extraction and later smooth-field assembly. Each passage to the limit is tied to the estimates it consumes. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/F-infinite-volume.tex" target="_blank" rel="noopener">Read the draft’s infinite-volume chapter ↗</a> · <a href="#ref-armstrong">Manuscript and review status [11]</a>.</p>
+  <ol class="rg-local-nav" aria-label="Infinite-volume derivation">
+    <li><a href="#ir-uniform">Uniform bounds and the geometry of a growing torus</a></li>
+    <li><a href="#ir-modulus">Bounds on derivatives and a common modulus of continuity</a></li>
+    <li><a href="#ir-diagonal">One subsequence for all fields, derivatives and tests</a></li>
+    <li><a href="#ir-field-calculus">Corrected coefficients and the physical field quotient</a></li>
+    <li><a href="#ir-inherited">Symmetries, reflection positivity and power bounds</a></li>
+    <li><a href="#ir-scope">The precise order of limits and what remains open</a></li>
+  </ol>
 
-  <h3 id="ir-modulus">2. From transfer estimates to a common modulus</h3>
-  <p>A useful concrete view of the compactness mechanism appears in <code>Extraction/Equicontinuity</code>. On a patch where insertions have a cyclic ordering separated in every coordinate, the cyclic transfer representation, reflection-positive estimates and Cauchy control yield a one-coordinate displacement bound. With \(n\) insertions, a common field budget \(A\), separation margin \(r\), and sufficiently small admissible displacement \(h\), its schematic form is</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Single-coordinate displacement estimate and its coordinate telescope" tabindex="0">\[\begin{aligned}
-  |G(x+h e_{j\mu})-G(x)|&amp;\leq \frac{A^n}{r}|h|,\\
-  |G(y)-G(x)|&amp;\leq\sum_{j=1}^{n}\sum_{\mu=1}^{4}
-  \frac{A^n}{r}|y_j^\mu-x_j^\mu|
-  \leq\frac{4nA^n}{r}\,\|x-y\|_\infty.
+  <h3 id="ir-uniform">1. Bounds that survive an expanding box</h3>
+  <p>The compactness argument starts with the <em>same</em> fixed-volume continuum kernels constructed in §15. Write them as \(S_p(\boldsymbol v;x)\), smooth whenever distinct insertions do not coincide modulo the period \(L_p\). The required input is an estimate uniform in the physical volume, proved before any volume subsequence is chosen. Let \(G_{N,p}(\boldsymbol v;y)\) be the normalized lattice correlation, with \(y\) in lattice-site coordinates and physical positions \(a_Ny\). Fix the arity, labels \(\boldsymbol v\), finite list of coordinate differences \(\ell\), and positive separation \(r\). The actual <code>FixedBounds</code> assertion is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Uniform lattice derivative bounds with the order of quantifiers explicit" tabindex="0">\[\exists B=B(\boldsymbol v,\ell,r)\ge0,\ N_0:\quad
+  \forall N\ge N_0\ \forall p\ \forall y,\qquad
+  \operatorname{sep}_{p,N}(y)\ge r
+  \Longrightarrow |\delta_{a_N,\ell}G_{N,p}(\boldsymbol v;y)|\le B.\]</div>
+  <p>Both \(B\) and this bound's cutoff threshold are independent of \(p\). They need not be uniform when the labels, arity or derivative order grow, or when \(r\) approaches zero. This is stronger than assigning an unrelated bound to each finite box. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Discrete.lean" target="_blank" rel="noopener">Exact <code>FixedBounds</code> quantifiers ↗</a></p>
+
+  <h4 id="ir-detail-producer">Where the uniform estimate comes from</h4>
+  <p>Differences act on specified insertion slots. At finite cutoff, linearity of the same Wilson expectation gives the exact identity</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A positional difference is a differentiated insertion in the same measure" tabindex="0">\[\delta_{a_N,i\mu}G_{N,p}(y)
+    =\left\langle
+      \frac{I_i(y_i+e_\mu)-I_i(y_i)}{a_N}
+      \prod_{h\ne i}I_h(y_h)
+      \right\rangle_{N,p}.\]</div>
+  <p>Repeating this identity distributes the prescribed finite differences among the slots. The theorem <code>Run.financed</code> supplies bounds for these differentiated insertions, using the construction's field estimates and common coefficient detector. The induction <code>funding</code> then applies those bounds to the exact correlation differences; <code>genuine</code> supplies the result for the constructed family. These are analytic inputs to compactness, rather than consequences of Arzelà–Ascoli.</p>
+  <p>The finite-volume estimate has a useful geometric explanation. Choose a fixed physical cell side \(a_l&lt;r\), then a finer support scale \(a_k\) with \(6na_k&lt;a_l\). A translation of the cell tiling places every anchor at least \(3a_k\) from its cell boundary. Since the anchors are \(r\)-separated, they occupy distinct cells. The chessboard estimate and interior-root bounds give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Only the finitely many occupied cells enter the correlation bound" tabindex="0">\[\left|\left\langle\prod_{i=1}^nF_i(y_i)\right\rangle_{N,p}\right|
+       \le\prod_{i=1}^n\|F_i\|_{\mathrm{root},k}
+       \le\prod_{i=1}^n A_i.\]</div>
+  <p>Unused cells carry the constant one. Hence increasing the number of cells does not introduce a growing volume factor. The source's <code>Cohort.cohort</code> proves this placement-and-root estimate; its hypotheses require the financed local fields and their translation and interior properties. It does not assert such a bound for arbitrary observables. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Literal.lean" target="_blank" rel="noopener">Actual producer, <code>financed</code>, <code>funding</code>, <code>genuine</code> ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Cohort.lean" target="_blank" rel="noopener">Distinct cells and root estimates ↗</a></p>
+
+  <h4 id="ir-detail-geometry">Put one compact experiment inside every large torus</h4>
+  <p>Let \(K\Subset\operatorname{Conf}_n(\mathbb R^4)\), where \(\operatorname{Conf}_n\) excludes equality of entire insertion points. For nonempty \(K\) and \(n\ge2\), compactness supplies a minimum separation \(d&gt;0\). In the max norm choose a closed thickening \(K_\rho\) with \(0&lt;\rho&lt;d/8\), and a bound \(R\) on all its coordinates. Then</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Compact thickening retains a uniform separation from collisions" tabindex="0">\[d=\min_{x\in K}\min_{i\ne j}\|x_i-x_j\|_\infty&gt;0,
+  \qquad
+  \min_{x\in K_\rho}\min_{i\ne j}\|x_i-x_j\|_\infty
+     \ge d-2\rho&gt;3d/4.\]</div>
+  <p>Take \(p_0\) so that \(L_p&gt;4R\) for \(p\ge p_0\). Every coordinate difference on \(K_\rho\) then has magnitude below \(L_p/2\); its closest periodic image is the unshifted one. Thus</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="For a sufficiently large period, torus separation equals ordinary separation on the compact set" tabindex="0">\[\operatorname{sep}_{L_p}(x)
+     :=\min_{i\ne j}\min_{z\in\mathbb Z^4}
+          \|x_i-x_j+L_pz\|_\infty
+     =\min_{i\ne j}\|x_i-x_j\|_\infty
+     \ge2r,\qquad r=d/4.\]</div>
+  <p>The spare separation accommodates nearby grid points when taking the UV limit. This elementary geometry makes explicit the role of <code>room</code>, <code>no_wrap_hit</code> and <code>Gaps.someGrows</code>. The empty and one-point cases have no pairwise collision condition. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Patch.lean" target="_blank" rel="noopener">Period geometry and compact room ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Gaps.lean" target="_blank" rel="noopener">Uniform separation in expanding periods ↗</a></p>
+
+  <h3 id="ir-modulus">2. From uniform lattice bounds to compact continuum jets</h3>
+  <p>For each fixed \(p\ge p_0\), §15 identifies limits of the normalized lattice differences with derivatives of \(S_p\), including moving lattice points. Apply the bound above to points approaching any \(x\in K_\rho\), then take \(N\to\infty\) at this fixed \(p\). The same constant survives:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Volume-uniform derivative bounds pass through the fixed-volume ultraviolet limit" tabindex="0">\[\sup_{p\ge p_0}\sup_{x\in K_\rho}
+      |\partial^\alpha S_p(\boldsymbol v;x)|
+      \le M_\alpha:=B(\boldsymbol v,\alpha,r).\]</div>
+  <p>The threshold needed for UV <em>convergence</em> may depend on \(p\). That causes no problem: each limit is taken separately against a bound already uniform in \(p\). No uniform convergence in volume and no interchange of limits is used. The all-orders identification is supplied by <code>Profiles.positioned</code>, from <code>FixedBounds</code> and the established UV Cauchy property. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Profiles.lean" target="_blank" rel="noopener">Smooth profiles and convergence of every fixed difference list ↗</a></p>
+
+  <h4 id="ir-detail-modulus">One extra derivative supplies the common modulus</h4>
+  <p>For \(n\ge1\), set \(q_{p,\alpha}=\partial^\alpha S_p\) and \(M_{\alpha,1}=\max_{b=1,\ldots,4n}M_{\alpha+e_b}\). If \(x,y\in K\) and \(\|x-y\|_\infty\le\rho\), their connecting segment stays inside \(K_\rho\). The fundamental theorem of calculus gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A segment integral converts a derivative bound into a uniform modulus" tabindex="0">\[\begin{aligned}
+  q_{p,\alpha}(y)-q_{p,\alpha}(x)
+    &amp;=\int_0^1\sum_{b=1}^{4n}(y_b-x_b)
+         \partial_bq_{p,\alpha}(x+t(y-x))\,dt,\\
+  |q_{p,\alpha}(y)-q_{p,\alpha}(x)|
+    &amp;\le4nM_{\alpha,1}\|x-y\|_\infty.
   \end{aligned}\]</div>
-  <p>The second inequality is a finite coordinate-by-coordinate telescope through a slightly enlarged separated patch; its geometry keeps every intermediate configuration admissible. This particular argument requires separation in each coordinate. It should not be silently extended across coordinate ties. The all-orders <code>FixedBounds</code> input above, and its passage to smooth continuum profiles, provide the stronger control through those ties. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Equicontinuity.lean" target="_blank" rel="noopener">The displacement estimate and telescope ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Profiles.lean" target="_blank" rel="noopener">Smooth profiles through coordinate ties ↗</a></p>
-  <p>Pass \(N\to\infty\) at fixed \(p\). Uniform finite-difference estimates pass to derivatives of the fixed-volume profiles. On any compact set \(K\) away from collisions, choose a slightly larger separated neighborhood; its first-derivative bound gives a common local modulus. A finite cover of \(K\), together with the zeroth-order bound for more distant pairs, gives</p>
+  <p>For more distant pairs, use \(|q_{p,\alpha}(y)-q_{p,\alpha}(x)|\le2M_\alpha\). Consequently one valid Lipschitz constant on all of \(K\) is \(L_{K,\alpha}=\max(4nM_{\alpha,1},2M_\alpha/\rho)\). In particular, at order zero we recover</p>
   <div id="eq-75" class="technical-equation" role="region" aria-label="Local boundedness and equicontinuity uniform in sufficiently large physical volumes" tabindex="0">\[\begin{aligned}
-  \sup_{p\geq p_0(K)}\sup_{x\in K}|S_p(\boldsymbol v;x)|&amp;\leq M_K,\\
-  |S_p(\boldsymbol v;x)-S_p(\boldsymbol v;y)|&amp;\leq\omega_K(|x-y|),
-  \quad\omega_K(r)\longrightarrow0\quad(r\downarrow0).
+  \sup_{p\ge p_0(K)}\sup_{x\in K}|S_p(\boldsymbol v;x)|&amp;\le M_K,\\
+  |S_p(\boldsymbol v;x)-S_p(\boldsymbol v;y)|&amp;\le\omega_K(\|x-y\|_\infty),
+  \qquad\omega_K(t)=L_{K,0}t\longrightarrow0.
   \end{aligned}\]</div>
-  <p>The same reasoning applies to any fixed derivative order using one further derivative. None of these constants is asserted to be uniform in arity or derivative order, or as \(K\) approaches a collision.</p>
+  <p>For a fixed jet order \(q\), there are finitely many components \(\partial^\alpha S_p\), \(|\alpha|\le q\). Bounds through order \(q+1\) make all these components bounded and equicontinuous on \(K\). Arzelà–Ascoli therefore makes their restrictions precompact in the uniform norm. This is the precise input to the simultaneous extraction below, not a bound uniform in every derivative order at once. The zero-point correlation is identically one and needs no compactness estimate.</p>
+
+  <h4 id="ir-detail-domain">Coordinate ties are not collisions</h4>
+  <p>The source distinguishes <code>NoHit</code>, which requires at least one unequal coordinate modulo \(L_p\) for each pair, from <code>Cyclic</code>, which requires this in every coordinate. Its direct transfer proof <code>Equicontinuity.completed</code> uses the latter condition: a protected cyclic gap controls a one-coordinate displacement, followed by a coordinate telescope. Likewise <code>Lipschitz.first_surface</code> initially extracts limits on the generic domain with no coordinate ties. Those statements alone do not cover, for example, two points separated only along one axis.</p>
+  <p>The stronger route used above combines the actual all-orders <code>FixedBounds</code> with the smooth <code>NoHit</code> UV profiles. It therefore controls those aligned configurations as well. Armstrong's §15, Lemma F1, uses this route to extract on all of \(\operatorname{Conf}_n\), while retaining the generic restrictions needed by earlier interfaces. The explicit geometry and segment estimates here spell out that analytic implication; they should not be attributed to the narrower cyclic transfer lemma alone. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Equicontinuity.lean" target="_blank" rel="noopener">Cyclic transfer estimate and its hypotheses ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Lipschitz.lean" target="_blank" rel="noopener">Initial generic extraction ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/F-infinite-volume.tex" target="_blank" rel="noopener">Compare Armstrong's volume-kernel argument ↗</a></p>
+
 
   <h3 id="ir-diagonal">3. One subsequence for the whole hierarchy</h3>
-  <p>Arzelà–Ascoli makes a bounded equicontinuous family precompact on each \(K\). The simultaneous part matters: choosing separate subsequences for separate fields would not define a consistent theory. Enumerate the arities, finite-dimensional degree sectors of field labels, derivative orders and a compact exhaustion of the distinct-point domain. Within each sector a finite basis suffices; multilinearity then recovers arbitrary labels. For intuition, an exhaustion can be organized by bounded positions and a lower bound on pairwise separation.</p>
-  <p>A diagonal extraction preserves all these convergence requirements at once. The source’s general <code>simultaneous</code> lemma uses compactness of a countable product, discarding finite initial portions where a bound has not yet become valid. Derivative compatibility follows by passing the fundamental theorem of calculus to the locally uniform limits. Thus the resulting kernels are smooth away from collisions. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Simultaneous.lean" target="_blank" rel="noopener">Simultaneous compactness ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Lipschitz.lean" target="_blank" rel="noopener">Transferring lattice bounds to limiting kernels ↗</a></p>
-  <div id="eq-76" class="technical-equation" role="region" aria-label="A simultaneous infrared subsequence for all finite label lists and allowed tests" tabindex="0">\[\begin{aligned}
-  &amp;\forall\,p:\mathbb N\nearrow\mathbb N,\quad\exists\,q:\mathbb N\nearrow\mathbb N,
-  \quad\exists\,S_{\mathrm{mix}},\\
+  <p>The analytic input is now available: for every fixed field list, derivative order and compact set away from collisions, the fixed-volume UV kernels have a bound independent of all sufficiently large periods. One additional derivative gives local equicontinuity. Compactness uses these estimates; it does not produce them. The task is to choose <em>one</em> increasing volume subsequence that works for every finite experiment.</p>
+
+  <h4 id="ir-detail-countable-data">Why uncountably many field labels require only countably many choices</h4>
+  <p>At degree \(d\), the construction uses a fixed finite-dimensional reference coefficient space \(V_d\), with basis \(\{b_{d,j}:j\in I_d\}\). Although its complex coefficients range over an uncountable set, the basis index set \(I_d\) is finite. For a fixed arity \(n\), a degree list \(\boldsymbol d\in\mathbb N^n\) and basis indices \(\boldsymbol j\in\prod_i I_{d_i}\) specify one scalar component of the multilinear correlation table.</p>
+  <p>Space also has a countable compact exhaustion. For \(m\ge1\), one convenient choice is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A compact exhaustion of the configuration space away from collisions" tabindex="0">\[
+  K_{n,m}=\left\{x:
+    \max_i\|x_i\|\le m,\quad
+    \|x_i-x_j\|\ge m^{-1}\ \text{for every }i\ne j\right\}.
+  \]</div>
+  <p>These are compact subsets of \(\operatorname{Conf}_n\), and every compact separated set lies in the interior of a sufficiently large member. For the empty configuration take the singleton configuration space (the empty maximum is zero); one-point configurations have no pair-separation condition. Once the torus is sufficiently large, a fixed \(K_{n,m}\) lies inside its periodic noncollision domain. Bounds on a slightly larger separated neighborhood control derivatives and short displacement paths there.</p>
+  <p>Enumerate arities, degree lists, basis lists, finite coordinate-derivative lists and exhaustion indices. This is a countable collection. In the implementation, <code>Stencil.Indices</code> explicitly indexes arity, degrees and basis entries; <code>fitted</code> assembles the resulting components into a multilinear table. There is no diagonal extraction over all complex coefficient values. If \(v_i=\sum_{j\in I_{d_i}}c_{i,j}b_{d_i,j}\), then</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Finite multilinear expansion recovers every field label from basis components" tabindex="0">\[
+  S_p(\boldsymbol v;x)=
+  \sum_{\boldsymbol j\in\prod_i I_{d_i}}
+       \left(\prod_{i=1}^{n}c_{i,j_i}\right)
+       S_p(b_{d_1,j_1},\ldots,b_{d_n,j_n};x).
+  \]</div>
+  <p>The sum is finite for each fixed list, so locally uniform convergence of the basis components gives the same convergence for arbitrary labels and their positional derivatives. This is the role of <code>components</code>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Labels/Reference.lean#L18-L21" target="_blank" rel="noopener">Finite coefficient coordinates ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Stencil.lean#L47-L73" target="_blank" rel="noopener">Countable indices and multilinear assembly ↗</a></p>
+  <p>These are <strong>reference coefficient spaces</strong>. The physical field space \(F_d=V_d/\mathcal N_d(S)\) is formed later by quotienting out coefficients that vanish in every separated correlation of the chosen table \(S\). Its null space depends on that table. Countability therefore uses the fixed reference bases, without assuming that physical quotients or their inclusion maps have already been constructed. Armstrong treats those additional coefficient corrections in Lemma F2.</p>
+
+  <h4 id="ir-detail-single-diagonal">Selecting the subsequence once</h4>
+  <p>Start with any prescribed strictly increasing sequence of period indices \(\mathsf p\). For the first enumerated demand, Arzelà–Ascoli gives a subsequence converging uniformly on its compact set. Refine it for the second demand, then the third, and so on. Choose an increasing diagonal whose tail is contained in every previously chosen subsequence. Each fixed demand then converges along that one diagonal. Agreement on overlapping compact sets follows because their values are limits of the same functions.</p>
+  <p>The released <code>simultaneous</code> lemma expresses the numerical core as compactness of a countable product. A component may satisfy its bound only eventually: the proof replaces its finitely many outlying values by one admissible value before using compactness. The replacement disappears on that component’s tail. <code>localAscoli</code> first selects simultaneous limits on countable dense sets and then uses a common modulus of continuity to obtain uniform convergence on compact sets. This explains why different components may have different initial cutoff thresholds. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Simultaneous.lean#L20-L34" target="_blank" rel="noopener">Eventual bounds and simultaneous selection ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Tame.lean#L99-L116" target="_blank" rel="noopener">Dense-point selection and local uniform limits ↗</a></p>
+
+  <h4 id="ir-detail-compatible-jets">Why the derivative limits belong to the same smooth function</h4>
+  <p>Compactness initially produces continuous limits \(h_\alpha\) for the derivative components \(\partial^\alpha S_{\mathsf p(\mathsf q(k))}\). It remains to show that these are derivatives of \(h_0\), rather than unrelated functions. Take a smooth test \(\phi\) with compact support in a separated neighborhood. For large \(k\), that neighborhood lies in the torus noncollision domain. Integration by parts and uniform convergence give</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Integration by parts identifies the limits of successive derivatives" tabindex="0">\[
+  \begin{aligned}
+  \int h_{\alpha+e_\mu}(x)\phi(x)\,dx
+    &amp;=\lim_{k\to\infty}
+       \int \partial^{\alpha+e_\mu}S_{\mathsf p(\mathsf q(k))}(x)
+                    \phi(x)\,dx\\
+    &amp;=-\lim_{k\to\infty}
+       \int \partial^\alpha S_{\mathsf p(\mathsf q(k))}(x)
+                    \partial_\mu\phi(x)\,dx\\
+    &amp;=-\int h_\alpha(x)\partial_\mu\phi(x)\,dx.
+  \end{aligned}
+  \]</div>
+  <p>There are no boundary terms because the test is compactly supported inside the neighborhood. Thus \(h_{\alpha+e_\mu}\) is the weak derivative of \(h_\alpha\). Both are continuous. To see the classical derivative directly, mollify this identity in a small ball: the mollified functions obey the fundamental theorem of calculus. Their locally uniform limits give, for segments contained in that ball,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Continuous weak derivatives yield classical derivatives along short segments" tabindex="0">\[
+  h_\alpha(x+t e_\mu)-h_\alpha(x)
+     =\int_0^t h_{\alpha+e_\mu}(x+s e_\mu)\,ds.
+  \]</div>
+  <p>Dividing by \(t\) and taking \(t\to0\) identifies the derivative. Induction over \(\alpha\) gives \(h_\alpha=\partial^\alpha S_{\mathrm{mix}}\) and smoothness on all of \(\operatorname{Conf}_n\), including individual coordinate ties. This is the derivative-compatibility step in Armstrong’s Lemma F1. Its precise convergence statement is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The quantifiers of simultaneous smooth convergence in the infinite-volume limit" tabindex="0">\[
+  \begin{gathered}
+  \forall\,\mathsf p:\mathbb N\nearrow\mathbb N,\quad
+  \exists\,\mathsf q:\mathbb N\nearrow\mathbb N,\ S_{\mathrm{mix}},\\
+  \forall n,\boldsymbol v,\alpha,\ K\Subset\operatorname{Conf}_n,\
+  \forall\varepsilon&gt;0,\quad
+  \exists k_0\quad\forall k\ge k_0:\\
+  \sup_{x\in K}
+   \left|\partial^\alpha S_{\mathsf p(\mathsf q(k))}(\boldsymbol v;x)
+       -\partial^\alpha S_{\mathrm{mix}}(\boldsymbol v;x)\right|
+       &lt;\varepsilon.
+  \end{gathered}
+  \]</div>
+  <p>The subsequence is chosen before the labels, derivative order, compact set and tolerance in the convergence assertion; the threshold \(k_0\) may depend on all of them. This is \(C^\infty_{\mathrm{loc}}\) convergence, with no uniform estimate as the derivative order grows or the compact set approaches a collision. <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/F-infinite-volume.tex#L11-L44" target="_blank" rel="noopener">Armstrong F1: all-orders volume extraction ↗</a></p>
+
+  <h4 id="ir-detail-tested-convergence">Every separated test follows from the same subsequence</h4>
+  <p>No extra diagonal over test functions is needed. For any fixed smooth joint test \(f\) supported on a compact \(K\Subset\operatorname{Conf}_n\), the UV theorem identifies the fixed-volume smeared correlation with the integral of \(S_p\). The support eventually fits inside the chosen period box. Uniform convergence on \(K\) then gives the retained statement</p>
+  <div id="eq-76" class="technical-equation" role="region" aria-label="A simultaneous infrared subsequence for all finite label lists and allowed tests" tabindex="0">\[
+  \begin{aligned}
+  &amp;\forall\,p:\mathbb N\nearrow\mathbb N,\quad
+    \exists\,q:\mathbb N\nearrow\mathbb N,\quad\exists\,S_{\mathrm{mix}},\\
   &amp;\forall\,\boldsymbol v,f,\qquad
-  S_{p(q(k))}(\boldsymbol v;f)\longrightarrow
-  \int f(x)S_{\mathrm{mix}}(\boldsymbol v;x)\,d^{4n}x.
-  \end{aligned}\]</div>
-  <p>The arrows mean strictly increasing index maps. Here \(f\) is smooth and compactly supported away from collisions. Once \(K=\operatorname{supp}f\) is fixed, the passage from locally uniform convergence to tested convergence is explicit:</p>
-  <div class="equation-scroll symmetry-equation" role="region" aria-label="Local uniform convergence implies convergence against compact tests" tabindex="0">\[\left|\int f(x)\bigl(S_{p(q(k))}(x)-S_{\mathrm{mix}}(x)\bigr)\,dx\right|
-  \leq\|f\|_{L^1}\sup_{x\in K}|S_{p(q(k))}(x)-S_{\mathrm{mix}}(x)|\longrightarrow0.\]</div>
-  <p>This last inequality is an elementary explanation of the tested limit; it does not establish a Euclidean distributional extension across coincident insertions.</p>
+    S_{p(q(k))}(\boldsymbol v;f)\longrightarrow
+      \int f(x)S_{\mathrm{mix}}(\boldsymbol v;x)\,d^{4n}x.
+  \end{aligned}
+  \]</div>
+  <p>The arrows mean strictly increasing index maps. The estimate making the passage explicit is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Local uniform convergence implies convergence against every fixed compact test" tabindex="0">\[
+  \left|\int f(x)\bigl(S_{p(q(k))}(\boldsymbol v;x)
+                     -S_{\mathrm{mix}}(\boldsymbol v;x)\bigr)\,dx\right|
+    \le \|f\|_{L^1}
+       \sup_{x\in K}|S_{p(q(k))}(\boldsymbol v;x)
+                          -S_{\mathrm{mix}}(\boldsymbol v;x)|
+    \longrightarrow0.
+  \]</div>
+  <p>The same inequality applies to every fixed derivative. The test may depend jointly on all insertion positions; no product decomposition is required. Further increasing refinements preserve these limits and the table, allowing later coefficient-map extractions to use the same correlations. Neither this estimate nor local smoothness supplies an extension across collision diagonals.</p>
+
+  <h4 id="ir-detail-released-assembly">How the released extraction and the full UV theorem fit together</h4>
+  <p>The source separates several stages. <code>Lipschitz.first_surface</code> constructs continuous limits on generic configurations, where all coordinate projections are distinct, and ordered limits for all separated tests. It explicitly requires the earlier bounds and spatial modulus. <code>Held.crops</code> connects those inputs to the finite-cutoff chessboard and transfer estimates. The stronger smooth compactness derivation above uses the all-orders bounds and the full fixed-volume profiles; it is not the statement of <code>first_surface</code> alone. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Lipschitz.lean#L151-L185" target="_blank" rel="noopener">The generic extraction stage ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Held.lean#L133-L137" target="_blank" rel="noopener">Producing its analytic inputs ↗</a></p>
+  <p>Finally, <code>Final.from_spec</code> combines the already selected hierarchy with <code>PositionsUV</code> along the full mesh. At each fixed period, the older mesh-subsequence limit and the full UV limit of each separated smeared correlation agree by uniqueness of a complex-number limit. Replacing the former by the latter therefore leaves the outer period subsequence and its table unchanged. The final ordered reading has the full inner UV limit followed by the chosen volume limit; this does not assert full-mesh convergence of every auxiliary coefficient datum. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/FullVolume/Finale/Program.lean#L115-L129" target="_blank" rel="noopener">Preserving the hierarchy while restoring the full inner limit ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Integrate.lean#L140-L160" target="_blank" rel="noopener">Ordered convergence for separated tests ↗</a></p>
   <figure class="proof-technical-figure"><img src="assets/proof-limits.svg" width="600" height="650" loading="lazy" alt="Two successive cutoff removals: the full chosen lattice-spacing sequence at fixed physical volume, followed by a subsequence of increasing physical volumes."><figcaption>The two arrows have different strengths. The UV limit uses every term of the chosen spacing sequence. The IR limit uses a selected volume subsequence; its uniqueness remains unresolved.</figcaption></figure>
 
-  <h3 id="ir-scope">4. What compactness leaves open</h3>
+
+  <h3 id="ir-field-calculus">4. Retain fields, not only numerical correlations</h3>
+  <p>A smooth table of correlations is not yet a compatible calculus of local fields. Raising the degree of a polynomial changes its reference normalization; differentiating an insertion introduces an inverse lattice spacing. Thus neither the raw polynomial inclusion nor an unbounded sequence of difference coefficients can simply be passed to the limit. Armstrong’s Lemma F2 supplies corrected coefficient representatives. The following argument explains why those representatives can be chosen once for every spectator correlation.</p>
+
+  <h4 id="ir-detail-null-fields">Identify exactly which coefficients are null</h4>
+  <p>Let \(V_d\) be the finite-dimensional coefficient space at degree \(d\). Fix the limiting table \(S=S_{\mathrm{mix}}\), and let \(L\) range over all one-slot correlation functionals obtained by fixing the other fields and a smooth separated test. Define</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Null coefficient space and physical field quotient" tabindex="0">\[\mathcal N_d(S)=\bigcap_L\ker L,\qquad
+  \mathcal F_d=V_d/\mathcal N_d(S).
+  \]</div>
+  <p>The cutoff equation projectors \(\Pi_{d,N,p}\) are uniformly bounded idempotent matrices in each fixed coefficient space. Their kernels encode the equation directions. A further common extraction retains these matrices and the comparison coefficients used by the finite Maxwell tests. Auxiliary matrices may require one common spacing subsequence \(N_j\), valid at every fixed period; the already established full UV limits of the correlations remain unchanged. In operator norm,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Two-stage retention of coefficient projectors" tabindex="0">\[\Pi_{d,N_j,p}\longrightarrow\Pi_d^{(p)},\qquad
+  \Pi_d^{(P(k))}\longrightarrow\Pi_d,\qquad \Pi_d^2=\Pi_d.
+  \]</div>
+  <p>The last identity follows by continuity of matrix multiplication. The small-error estimate for equation insertions implies \(L((1-\Pi_d)c)=0\) for every fixed \(c\) and every spectator test. This proves \(\ker\Pi_d\subseteq\mathcal N_d(S)\), but equality needs the rank comparison. Let \(q_d\) be the dimension of the corresponding free Maxwell field space. The cutoff equation count passes to \(\operatorname{rank}\Pi_d\leq q_d\): norm-close idempotents have the same rank. Indeed, \(\|P-Q\|&lt;1\) makes \(P\) injective on \(\operatorname{ran}Q\) and conversely, since \(Px=0\), \(Qx=x\) would imply \(\|x\|\leq\|Q-P\|\|x\|\). For the reverse bound, first pass to the coefficient and kernel limits at each fixed comparison trial. The resulting interacting test matrices approach a free matrix with a nonzero \(q_d\)-minor as the trial scale varies. Each of these continuum matrices factors through \(\mathcal F_d\), so its rank is at most \(\dim\mathcal F_d\). A nonzero minor remains nonzero under sufficiently small perturbations. Consequently,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Rank comparison identifies the null space exactly" tabindex="0">\[q_d\leq\dim\mathcal F_d
+  \leq\dim(V_d/\ker\Pi_d)
+  =\operatorname{rank}\Pi_d\leq q_d
+  \quad\Longrightarrow\quad
+  \mathcal N_d(S)=\ker\Pi_d.
+  \]</div>
+  <p>This uses the earlier equation and Maxwell-comparison estimates, not compactness alone. The source retains the projectors in <code>include_projections</code>; <code>Beam.carries</code> identifies the null space and the quotient dimension. The application in <code>MergeProof/Powder.rated</code> supplies the comparison data before assembling the common continuum family. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/EXTRACTION/Relay.lean#L86-L93" target="_blank" rel="noopener">Retain the projection matrices ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Next/RANK/Beam.lean#L54-L70" target="_blank" rel="noopener">Null space and rank identification ↗</a> · <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/MergeProof/Powder.lean#L45-L71" target="_blank" rel="noopener">Construction inputs and assembly ↗</a></p>
+
+  <h4 id="ir-detail-corrected-derivative">Identify the target of a corrected difference</h4>
+  <p>For a lattice correlation written in physical grid coordinates \(x\in a_N\mathbb Z^{4n}\), periodic summation by parts is exact. Writing \(e\) for the chosen slot and axis, and \(\delta^+_{a,e}G(x)=[G(x+ae)-G(x)]/a\),</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Summation by parts determines the derivative response" tabindex="0">\[\begin{aligned}
+  a_N^{4n}\sum_x f(x)\delta^+_{a_N,e}G_{N,p}(x)
+  &amp;=a_N^{4n}\sum_x\frac{f(x-a_Ne)-f(x)}{a_N}G_{N,p}(x),\\
+  \left\|\frac{f(\cdot-a_Ne)-f}{a_N}+\partial_e f\right\|_\infty
+  &amp;\leq\frac{a_N}{2}\|\partial_e^2f\|_\infty.
+  \end{aligned}\]</div>
+  <p>Periodize the compact test inside a sufficiently large torus. Its support and the shifted support lie in one separated compact neighborhood for small \(a_N\). The zeroth-order bound controls the residual sum, since its weighted number of sites is bounded. Therefore the ordered limit of this expression is \(-\int(\partial_e f)S\). The corrected coefficient family has that same limit because its comparison error vanishes against each fixed spectator test. This identifies the desired derivative response without assuming its coefficient vector converges.</p>
+
+  <h4 id="ir-detail-normalized-representative">A bounded pair replaces a possibly unbounded coefficient</h4>
+  <p>Use \(u=(k,j)\) for the retained cutoffs \((N_j,P(k))\), and write \(\Pi_u\), \(w_u\), \(L_u\) in the fixed target degree. The target is \(t_L=\lim L_u(w_u)\). It is the original correlation for a corrected inclusion and the derivative response above for a corrected difference. The limits use ordered tails</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Ordered cutoff tails allow a volume-dependent ultraviolet threshold" tabindex="0">\[\{(k,j):k\geq k_0,\ j\geq j_0(k)\}.
+  \]</div>
+  <p>The ultraviolet threshold may depend on the volume. Choose one ultrafilter containing these tails: this is a compactness device for bounded coefficient data, not an exchange of the two physical limits. Finite dimensionality turns convergence of each basis response into operator-norm convergence \(L_u\to L\). The equation-error estimate also gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Normalized equation remainder vanishes against every spectator" tabindex="0">\[L_u(w_u)\longrightarrow t_L,\qquad
+  L_u\!\left(\frac{w_u-\Pi_u w_u}{1+\|\Pi_u w_u\|}\right)\longrightarrow0.
+  \]</div>
+  <p>The normalized remainder belongs to the cutoff equation kernel. Its admissibility uses the subpower inverse-normalization bounds and the corrected-insertion estimates from the UV argument. Boundedness of the projectors by itself would not prove this vanishing statement. Now normalize the part that survives the projector:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Compact normalization of the retained coefficient" tabindex="0">\[b_u=\frac1{1+\|\Pi_u w_u\|},\qquad
+  z_u=b_u\Pi_u w_u,\qquad
+  b_u+\|z_u\|=1,\qquad
+  (b_u,z_u)\longrightarrow(\lambda,z).
+  \]</div>
+  <p>The pairs lie in \([0,1]\) times the closed unit ball of \(V_e\), a compact set. Pass to their limit along that one ultrafilter. Projector convergence and the spectator identities imply</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="A nonzero normalization gives one representative for all tests" tabindex="0">\[\begin{aligned}
+  \Pi_ez&amp;=z,\qquad \lambda+\|z\|=1,\\
+  L(z)&amp;=\lim_u\left[b_uL_u(w_u)-L_u\bigl(b_u(w_u-\Pi_u w_u)\bigr)\right]
+  =\lambda t_L.
+  \end{aligned}\]</div>
+  <p>If \(\lambda=0\), then every \(L(z)=0\), so \(z\in\mathcal N_e(S)=\ker\Pi_e\). But \(\Pi_ez=z\), hence \(z=0\), contradicting \(\lambda+\|z\|=1\). Thus \(\lambda&gt;0\), and the fixed vector \(z/\lambda\) represents the target for <em>all</em> spectators. There is no extraction indexed by an uncountable family of tests: their previously established limits hold on any finer filter, so the same vector works for every one. This compact normalization argument appears explicitly as <code>Dash.brace</code>. <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Dash/Limits.lean#L63-L112" target="_blank" rel="noopener">The representative argument ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/F-infinite-volume.tex#L84-L154" target="_blank" rel="noopener">Compare Armstrong’s Lemma F2 ↗</a></p>
+  <p>Choose representatives on a finite basis and extend linearly. They give corrected maps \(\kappa_{d,e}:V_d\to V_e\) and \(\tau_{d,a}:V_d\to V_{d+1}\) satisfying</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Compatible inclusions and derivatives of local fields" tabindex="0">\[S(\kappa_{d,e}c,\ldots)=S(c,\ldots),\qquad
+  S(\tau_{d,a}c,x;\ldots)=\partial_{x^a}S(c,x;\ldots).
+  \]</div>
+  <p>These identities hold against every separated test and hence pointwise by smoothness. Null coefficients map to null coefficients, so the maps descend to the physical field quotients. Equality of all correlation responses then gives compatible inclusions and commuting derivatives on the resulting fields. This supplies the field calculus needed by the later stress-tensor and reconstruction arguments; it does not choose a unique infinite-volume state.</p>
+
+
+  <h3 id="ir-inherited">5. Which properties survive the two limits?</h3>
+  <p>The extracted object is a single <em>mixed</em> hierarchy, with one common volume subsequence for all of its fields. Its algebraic identities and positivity can be passed through the limits. Its global separation bounds require additional construction estimates. Continuous rotation invariance requires the later stress-tensor argument. Keeping these three mechanisms separate identifies precisely what the infinite-volume step has established.</p>
+
+  <h4 id="ir-inherited-symmetries">Algebraic identities, lattice rotations, and real translations</h4>
+  <p>For fixed arity and field labels, the permutation, unit, conjugation, and signed-permutation identities are finite identities at every regulator. The common subsequence lets both sides converge to the same limiting table. Write \(H_4\) for the finite group of signed coordinate permutations, with its prescribed action on field labels. On separated configurations the resulting identities include</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Algebraic identities of the extracted hierarchy" tabindex="0">\[
+    \begin{aligned}
+    S_n(v\circ\pi;x\circ\pi)&amp;=S_n(v;x),\\
+    S_n(hv;hx)&amp;=S_n(v;x),\qquad h\in H_4,\\
+    S_n(\overline v;x)&amp;=\overline{S_n(v;x)},\qquad S_0=1.
+    \end{aligned}
+  \]</div>
+  <p>Insertion of the unit deletes that insertion; multilinearity is retained in each field slot. These statements refer to the tensor action on the labels as well as the action on positions. They would generally be false if a tensor component were rotated spatially while its label were held fixed.</p>
+  <p>Translations require one more argument because a finite mesh only admits lattice translations. Approximate a fixed \(b\in\mathbb R^4\) by \(b_N\in a_N\mathbb Z^4\), and compare probes \(x_N\to x\) and \(x_N+b_N\to x+b\). Exact finite-lattice translation covariance supplies the middle equality; the established spatial comparison estimates supply the limiting passages. A sufficiently large torus contains the probes without a periodic identification. In schematic form,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Recovery of arbitrary real translations" tabindex="0">\[
+    S_n(v;x+b)
+      =\lim_k\lim_N C_{N,P(k)}(v;x_N+b_N)
+      =\lim_k\lim_N C_{N,P(k)}(v;x_N)
+      =S_n(v;x).
+  \]</div>
+  <p>The source implements this first on compatible grid probes and then extends the equality to every separated configuration by continuity and density. The UV limits are taken at each suitable fixed volume, followed by the selected infinite-volume limit; this display does not assert an unrestricted joint limit. By contrast, \(H_4\) has only finitely many rotations and cannot approximate arbitrary rotations. The source explicitly defines the hierarchy at this stage as the properties “before continuous rotation”; the missing \(O(4)\) covariance is supplied in <a href="#proof-symmetry">§18</a>.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Inherited.lean" target="_blank" rel="noreferrer">Inherited: homogeneous, spin, limits_basic ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Euclid/Words.lean" target="_blank" rel="noreferrer">the pre-rotation hierarchy ↗</a>.</p>
+
+  <h4 id="ir-inherited-rp">Reflection positivity is a closed matrix inequality</h4>
+  <p>Fix finitely many words smeared with smooth joint tests \(F_i\), each supported on separated configurations strictly inside the positive side of one coordinate plane. The words may have different arities, and their tests need not factor into one-point tests. At sufficiently large volume and then sufficiently fine mesh, the actual lattice stencils lie inside the appropriate half torus. Let \(\Theta\) include spatial reflection, conjugation, and the corresponding action on the field labels. Wilson reflection positivity gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Passing a reflection-positive Gram matrix to the limit" tabindex="0">\[
+    Q^{N,p}_{ij}=\langle\Theta F_i\,F_j\rangle_{N,p},
+    \qquad
+    \sum_{i,j}\overline{c_i}c_jQ^{N,p}_{ij}\ge0,
+    \qquad
+    Q_{ij}=\lim_k\lim_N Q^{N,P(k)}_{ij}.
+  \]</div>
+  <p>The paired tests have compact support away from every collision: within each word by hypothesis, and between the two words because they lie on opposite sides of the plane. Their limiting integrals are therefore well defined. Convergence of each matrix entry, followed by continuity of this finite quadratic form, gives</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Positivity of the continuum reflection form" tabindex="0">\[
+    \sum_{i,j}\overline{c_i}c_jQ_{ij}
+      =\lim_k\lim_N\sum_{i,j}\overline{c_i}c_jQ^{N,P(k)}_{ij}
+      \ge0.
+  \]</div>
+  <p>This is the elementary closedness of the cone of positive semidefinite matrices; the substantial input is convergence of the <em>actual</em> lattice Gram entries. Finally choose normalized smooth bumps shrinking around finitely many positive-side point words. Smoothness of the separated kernels makes their smeared Gram entries converge to the point-word entries, and the same closedness argument proves pointwise reflection positivity. Real translation invariance transports the statement to parallel coordinate planes.</p>
+  <p>There is a useful presentation distinction here. Armstrong’s F3 uses a bond reflection \(x^a\mapsto a_N-x^a\), whose plane moves to zero, and controls the resulting change of test function. The original source’s <code>Banks</code>/<code>Pairs</code> route uses a vertex reflection through zero and handles the periodic-coordinate seam exactly; strict interior support makes the seam terms vanish. Both routes explain the same limiting positivity mechanism, but the moving-plane estimate should not be attributed to that source implementation. Reflection positivity about arbitrary tilted planes comes after continuous rotation covariance.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Pairs.lean" target="_blank" rel="noreferrer">Pairs: at_cut ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Extraction/Harvest.lean" target="_blank" rel="noreferrer">Harvest: realPositive ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Euclid/RPPeak.lean" target="_blank" rel="noreferrer">RPPeak: from joint tests to point words ↗</a>; <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/part2/F-infinite-volume.tex" target="_blank" rel="noreferrer">Armstrong F3 ↗</a>.</p>
+
+  <h4 id="ir-inherited-power">From centered roots to a global inverse-separation power</h4>
+  <p>Compactness on each fixed compact set would allow its bound to grow arbitrarily as that set moves or expands. The stronger claim is a bound depending on the minimum separation but independent of the positions and their overall diameter. Its construction input is a centered chessboard-root bound \(B a_k^{-D}\). For a fixed finite field list, one first chooses \(B,D\) and a threshold \(M\) large enough for all signed and conjugated copies of those fields. These constants are chosen <em>before</em> the requested separation \(r\); the regulator tails may depend on the subsequently chosen scale.</p>
+  <p>Two scale choices turn this input into a power of \(r^{-1}\). Writing \(a_{u+1}=a_u/\ell_u\), the schedule condition \(\log\ell_u/\log(a_u^{-1})\to0\) implies \(\ell_u\le a_u^{-1}\) eventually. Hence \(a_{u+1}\ge c\,a_u^2\), with \(c&gt;0\) reduced to cover the finitely many initial levels. Consequently the first scale beyond \(M\) with \(a_u&lt;\delta\le1\) satisfies \(a_u\ge c_0\delta^2\), after reducing \(c_0&gt;0\) to include the initial scale. Choose first a cell scale \(m\), then a finer interior-buffer scale \(k\), so that</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Two controlled mesh crossings for a separation bound" tabindex="0">\[
+    a_m&lt;\frac r2,\qquad
+    a_k&lt;\frac{a_m}{6(n+1)},\qquad
+    a_m\ge c_1r^2,\qquad
+    a_k\ge c_2a_m^2\ge c_3r^4,
+    \qquad 0&lt;r\le1.
+  \]</div>
+  <p>The bound \(6na_k&lt;a_m\) leaves a translation of the \(m\)-scale tiling for which all \(n\) insertions avoid the boundary strips of half-width \(3a_k\). Separation puts them in distinct cells. Interior-root comparison and the chessboard inequality then give, for points separated by at least \(r\) in the coordinate maximum norm,</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Global power bound from centered chessboard roots" tabindex="0">\[
+    |S_n(v;x)|
+      \le (B a_k^{-D})^n
+      \le B^n c_3^{-Dn}\,r^{-4Dn}.
+  \]</div>
+  <p>The constant is independent of \(x\); the volume threshold needed to fit a particular configuration may depend on \(x\). Changing to another fixed norm only changes constants. The exponent \(4Dn\) is the sufficient choice obtained by Armstrong’s argument and the source’s <code>D05.answer</code>; the final <code>Capped</code> property only asks for some finite power. It is not a claim of optimal scaling dimension.</p>
+  <p>Higher derivatives use the corrected field calculus from the preceding subsection. A coordinate derivative is the correlation with a fixed degree-raised field label. Iterating this identity produces finitely many such correlations, each covered by the preceding estimate. Bounding the multilinear derivative norm by the sum of its coordinate components, and taking a common exponent over that finite list, yields</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="All-derivative separation bounds" tabindex="0">\[
+    \|D_x^\ell S_n(v;x)\|
+      \le C_{v,\ell}\,r^{-A_{v,\ell}},
+    \qquad x\in\operatorname{Conf}_n,\quad
+    \min_{i\ne j}\|x_i-x_j\|_\infty\ge r,\quad 0&lt;r\le1.
+  \]</div>
+  <p>This does not follow by differentiating an absolute-value bound. It uses the field-derivative identities. Nor is it a decay estimate as clusters move apart, a prescription for extending kernels onto collision diagonals, or a mass-gap estimate.</p>
+  <p class="technical-source">Source: <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/D05.lean" target="_blank" rel="noreferrer">D05: image_power, scales, answer ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/OS/Halves.lean" target="_blank" rel="noreferrer">Halves: thickness of the first mesh crossing ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/YM/Work/B10.lean" target="_blank" rel="noreferrer">B10: derivative labels and norm bounds ↗</a>.</p>
+
+  <h4 id="ir-inherited-lattice-origin">The public limit still refers to the mixed hierarchy</h4>
+  <p>The committee’s Theorem 5.1 states the common subsequential infinite-volume limit of the finite-torus continuum kernels. The original <code>WilsonBridge</code> identifies its public Wilson energy, normalized measure, moments, and smears with the construction’s objects; <code>fromWilson</code> transfers the ordered full-UV limit. The committee’s acceptance statement retains that identification together with the calibration data.</p>
+  <p>For a fixed word of corrected fields, <code>OctoberChain.every_field_word_has_lattice_origin</code> chooses raw field representatives once, independently of \(N,p\). For each admissible separated test \(t\), its conclusion has the form</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Ordered Wilson origin of the mixed field correlations" tabindex="0">\[
+    \lim_{N\to\infty} C_{N,p}(v;t)=R_p(t)
+      \quad\text{for every suitable fixed }p,
+    \qquad
+    \lim_{k\to\infty}R_{P(k)}(t)
+      =\int t(x)\,S_n^{\mathrm{mix}}(A;x)\,dx.
+  \]</div>
+  <p>The representatives are fixed, although their actual lattice insertions depend on the regulators. The full UV sequence remains intact. This theorem establishes a periodic Wilson origin for the <em>mixed</em> table. The later selection of an extremal vacuum phase is a separate step; it does not turn this statement into a claim that every selected phase is the periodic-torus limit, or that different allowed volume subsequences yield the same theory.</p>
+  <p class="technical-source">Source: <a href="references/assessment-1-2026-11-10.pdf#page=7" target="_blank" rel="noreferrer">committee assessment, Theorem 5.1 ↗</a>; <a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/blob/3456e5e75cf8d4cd558955a5c7638fba2d68f464/WilsonBridge.lean" target="_blank" rel="noreferrer">public Wilson bridge ↗</a>; <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/checks/CombinedAcceptance.lean" target="_blank" rel="noreferrer">CombinedAcceptance: lattice_and_scale ↗</a>; <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/OctoberChain.lean" target="_blank" rel="noreferrer">OctoberChain: lattice origin and subsequent phase bridge ↗</a>.</p>
+
+
+  <h3 id="ir-scope">6. What compactness leaves open</h3>
   <div id="eq-77" class="technical-equation" role="region" aria-label="The order of the two limits defining the mixed continuum hierarchy" tabindex="0">\[S_{\mathrm{mix}}(\boldsymbol v;f)=
   \lim_{k\to\infty}\left[\lim_{N\to\infty}
   C_{N,p(q(k))}(\boldsymbol v;f)\right].\]</div>
+  <p>For a fixed separated test, write \(P(k)=p(q(k))\). The two errors are controlled in a prescribed order:</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="Two errors and the order of choosing the volume and spacing thresholds" tabindex="0">\[\begin{aligned}
+  |C_{N,P(k)}(\boldsymbol v;f)-S_{\mathrm{mix}}(\boldsymbol v;f)|
+  &amp;\leq |C_{N,P(k)}(\boldsymbol v;f)-S_{P(k)}(\boldsymbol v;f)|\\
+  &amp;\quad+|S_{P(k)}(\boldsymbol v;f)-S_{\mathrm{mix}}(\boldsymbol v;f)|.
+  \end{aligned}\]</div>
+  <p>Choose \(k_0\) so the second term is below \(\varepsilon/2\) for \(k\geq k_0\). At each such fixed volume, choose \(N_0(k,\varepsilon)\) so the first term is below \(\varepsilon/2\) for every larger cutoff. Thus the resulting assertion is</p>
+  <div class="equation-scroll symmetry-equation" role="region" aria-label="The exact quantifiers of the ordered two-cutoff limit" tabindex="0">\[\forall\varepsilon&gt;0\ \exists k_0\ \forall k\geq k_0\
+  \exists N_0(k,\varepsilon)\ \forall N\geq N_0(k,\varepsilon):\quad
+  |C_{N,P(k)}(\boldsymbol v;f)-S_{\mathrm{mix}}(\boldsymbol v;f)|&lt;\varepsilon.
+  \]</div>
+  <p>A volume-independent bound on the correlations is not a volume-independent rate of UV convergence. This distinction is why the proof can remove both cutoffs in the stated order without proving convergence along every joint path.</p>
+
   <p>The inner limit uses the full chosen UV sequence; the outer limit uses a selected volume subsequence. Compactness supplies existence for every prescribed increasing volume sequence, without identifying different refinements. It neither permits exchanging the two limits nor proves convergence along an arbitrary joint trajectory \((a,R)\to(0,\infty)\). Nor does boundedness plus equicontinuity imply clustering or exponential decay. The subsequent phase decomposition and reconstruction address additional requirements, while infrared uniqueness and the mass gap remain separate questions. <a href="references/assessment-1-2026-11-10.pdf#page=7" target="_blank" rel="noopener">Assessment, Theorem 5.1 ↗</a> · <a href="https://github.com/yang-mills-group/YM/blob/55ba9fc36293b3f4d52c6b1f813169a0be76ee98/submissions/openai-20261028/docs/examples/OctoberChain.lean" target="_blank" rel="noopener">Accepted construction chain ↗</a></p>
 </section>
 
@@ -1603,7 +1877,7 @@ P_{ji}&amp;=\mathbf1_{j\in\Omega_i}(\mathsf A_{\Omega_i}^{-1})_{ji},
             <li id="ref-pdg"><strong><span class="source-number">[8]</span> Particle Data Group · Quantum Chromodynamics</strong><a href="https://pdg.lbl.gov/2025/reviews/rpp2025-rev-qcd.pdf" target="_blank" rel="noopener">Review of Particle Physics, QCD review (2025) ↗</a><p>Conventions for the beta function, running coupling, and the scale parameter. The notes specialize to pure gauge theory with no dynamical quarks.</p></li>
             <li id="ref-assessment"><strong><span class="source-number">[9]</span> Yang–Mills group · Validation of the OpenAI Yang–Mills construction</strong><a href="references/assessment-1-2026-11-10.pdf" target="_blank" rel="noopener">Read the November 10, 2026 assessment ↗</a> · <a href="https://github.com/yang-mills-group/YM/tree/55ba9fc36293b3f4d52c6b1f813169a0be76ee98" target="_blank" rel="noopener">Pinned review repository ↗</a><p>Part I states the construction and its limits; Part II records the formal verification, independent checks, and their scope. Revision <code>55ba9fc36293b3f4d52c6b1f813169a0be76ee98</code>. The committee describes this as an initial assessment and does not claim to fully understand the proof.</p></li>
             <li id="ref-submission"><strong><span class="source-number">[10]</span> OpenAI · October 28, 2026 Yang–Mills submission</strong><a href="https://github.com/yang-mills-group/OpenAI-YM-20261028/tree/3456e5e75cf8d4cd558955a5c7638fba2d68f464" target="_blank" rel="noopener">Pinned original source repository ↗</a><p>The released Lean source underlying this walkthrough, revision <code>3456e5e75cf8d4cd558955a5c7638fba2d68f464</code>. The explanations here are based on the assessment and source reading.</p></li>
-            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation; the ultraviolet convergence discussion compares §14. This is a developing, AI-assisted reconstruction from the released Lean source. Revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>; consulted 12 November 2026. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
+            <li id="ref-armstrong"><strong><span class="source-number">[11]</span> Scott Armstrong’s informalization project · A readable reconstruction of the Yang–Mills source</strong><a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/manuscript/main.pdf" target="_blank" rel="noopener">Read the manuscript draft ↗</a> · <a href="https://github.com/scottnarmstrong/yang-mills-informalization/blob/aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc/README.md" target="_blank" rel="noopener">Project description and review status ↗</a><p>The local integration discussion compares §§11 and 13 with the original implementation; the ultraviolet convergence discussion compares §14; the infinite-volume and field-calculus discussion compares §15. This is a developing, AI-assisted reconstruction from the released Lean source. Revision <code>aa8feb83b7d52d2b9fde5abb911a4fabd68e50fc</code>; consulted 12 November 2026. It should be read as a draft explanation, not as the original OpenAI prose manuscript or a completed independent verification.</p></li>
           </ol>
         </section>
         <a class="technical-endlink" href="index.html">Return to the visual field guide <span aria-hidden="true">↗</span></a>
